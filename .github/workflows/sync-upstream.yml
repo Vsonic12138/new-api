@@ -20,9 +20,12 @@ jobs:
 
       - name: Rebase main onto upstream
         run: |
+          set -euo pipefail
           git config user.name "sync-bot"
           git config user.email "sync-bot@users.noreply.github.com"
+          git checkout -B main origin/main
           git remote add upstream https://github.com/QuantumNous/new-api.git
           git fetch upstream main
           git rebase upstream/main
+          git merge-base --is-ancestor upstream/main main
           git push origin main --force-with-lease
