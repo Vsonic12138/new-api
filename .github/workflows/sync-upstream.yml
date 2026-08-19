@@ -8,6 +8,7 @@ on:
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: sync-upstream
@@ -21,6 +22,9 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
+          # GITHUB_TOKEN 无法推送 .github/workflows/ 变更（GitHub 安全限制），
+          # 必须用带 workflow 权限的 PAT。UPSTREAM_SYNC_TOKEN 已配置。
+          token: ${{ secrets.UPSTREAM_SYNC_TOKEN || secrets.SYNC_TOKEN || secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
 
       - name: Fetch upstream
         run: |
