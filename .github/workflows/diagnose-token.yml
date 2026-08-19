@@ -7,13 +7,17 @@ jobs:
   diagnose:
     runs-on: ubuntu-latest
     steps:
-      - name: Inspect UPSTREAM_SYNC_TOKEN
+      - name: Inspect sync tokens
         env:
-          TOKEN: ${{ secrets.UPSTREAM_SYNC_TOKEN }}
+          SYNC: ${{ secrets.SYNC_TOKEN }}
+          UPSTREAM: ${{ secrets.UPSTREAM_SYNC_TOKEN }}
+          PAT: ${{ secrets.PAT_TOKEN }}
         run: |
-          set -x
-          echo "prefix=${TOKEN:0:4}"          # ghp_=classic PAT, github_pat_=fine-grained, gho_=OAuth
-          # classic PAT: GET /user returns the account; fine-grained PAT: returns 404
-          echo "user: $(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $TOKEN" https://api.github.com/user)"
-          # check scopes header (classic PAT only)
-          echo "scopes: $(curl -s -I -H "Authorization: Bearer $TOKEN" https://api.github.com/rate_limit | grep -i '^x-oauth-scopes:' | tr -d '\r')"
+          for name in SYNC UPSTREAM PAT; do
+            val="${!name}"
+            echo "$name len=${#val} prefix=${val:0:4}"
+            if [[ -n "$val" ]]; then
+              echo "$name user_code=$(curl -s -o /dev/null -w '%{http_code}' -H "Authorization: Bearer $val" https://api.github.com/user)"
+              echo "$name scopes: $(curl -s -I -H "Authorization: Bearer $val" https://api.github.com/rate_limit | grep -i '^x-oauth-scopes:' | tr -d '\r')"
+            fi
+          done
