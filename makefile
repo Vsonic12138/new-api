@@ -1,3 +1,5 @@
+VERSION ?= $(shell ./scripts/resolve-version.sh custom)
+
 WEB_DIR = ./web
 API_DIR = .
 DEV_WEB_PORT ?= 5173
@@ -8,20 +10,24 @@ DEV_POSTGRES_DB = new-api
 DEV_POSTGRES_USER = root
 DEV_SQLITE_PATH ?= one-api.db
 
-.PHONY: all build-web build-all-web start-api dev dev-api dev-api-rebuild dev-web reset-setup test
+.PHONY: all build-web build-api build-all-web start-api dev dev-api dev-api-rebuild dev-web reset-setup test
 
 all: build-all-web start-api
 
 build-web:
-	@echo "Building web frontend..."
+	@echo "Building web frontend ($(VERSION))..."
 	@cd $(WEB_DIR) && bun install --frozen-lockfile
-	@cd $(WEB_DIR) && DISABLE_ESLINT_PLUGIN='true' VITE_REACT_APP_VERSION=$$(cat ../VERSION) bun run build
+	@cd $(WEB_DIR) && DISABLE_ESLINT_PLUGIN='true' VITE_REACT_APP_VERSION=$(VERSION) bun run build
+
+build-api:
+	@echo "Building api ($(VERSION))..."
+	@GOWORK=off go build -ldflags "-s -w -X github.com/QuantumNous/new-api/common.Version=$(VERSION)" -o new-api .
 
 build-all-web: build-web
 
 start-api:
-	@echo "Starting api dev server..."
-	@cd $(API_DIR) && go run main.go &
+	@echo "Starting api dev server ($(VERSION))..."
+	@cd $(API_DIR) && VERSION=$(VERSION) go run main.go &
 
 dev-api:
 	@echo "Starting api services (docker)..."

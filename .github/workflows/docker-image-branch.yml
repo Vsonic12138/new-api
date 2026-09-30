@@ -23,7 +23,7 @@ jobs:
       - name: Check out branch
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          fetch-depth: 1
+          fetch-depth: 0
           ref: ${{ inputs.branch }}
 
       - name: Resolve Docker tags
@@ -70,13 +70,25 @@ jobs:
       - name: Check out branch
         uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
-          fetch-depth: 1
+          fetch-depth: 0
           ref: ${{ needs.prepare.outputs.sha }}
 
-      - name: Write VERSION
+      - name: Resolve custom version
+        id: custom_version
         run: |
-          echo "${{ needs.prepare.outputs.version }}" > VERSION
-          echo "Publishing version: ${{ needs.prepare.outputs.version }} for ${{ matrix.arch }}"
+          git fetch --tags --force
+          BASE_TAG=$(git describe --tags --match 'v[0-9]*' --abbrev=0 2>/dev/null || true)
+          if [ -z "$BASE_TAG" ]; then
+            echo "::error::No official version tag is reachable from this branch"
+            exit 1
+          fi
+          BASE_TAG=${BASE_TAG%%+*}
+          VERSION="${BASE_TAG}+custom"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "Building custom version: $VERSION"
+
+      - name: Write VERSION
+        run: echo "$VERSION" > VERSION
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@bb05f3f5519dd87d3ba754cc423b652a5edd6d2c # v4.2.0
