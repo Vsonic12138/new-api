@@ -24,8 +24,10 @@ import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { formatTimestampToDate } from '@/lib/format'
 
+import { CUSTOM_CHANGELOG_DATA } from './custom-changelog'
 import { getSystemReleaseUrl, parseSystemVersion } from './releases'
 import {
   getUpdateErrorMessage,
@@ -46,7 +48,8 @@ type SystemUpdateDialogProps = {
 }
 
 export function SystemUpdateDialog(props: SystemUpdateDialogProps) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const isZh = i18n.language.startsWith('zh')
   const update = props.update
   const release = update.release
   const snapshot = update.snapshot
@@ -173,19 +176,107 @@ export function SystemUpdateDialog(props: SystemUpdateDialogProps) {
           </AlertDescription>
         </Alert>
       )}
-      {props.open && release && (
-        <Suspense fallback={<Skeleton className='h-24 w-full' />}>
-          {release.body ? (
-            <ReleaseMarkdown baseUrl={releaseUrl ?? undefined}>
-              {release.body}
-            </ReleaseMarkdown>
+
+      <Tabs defaultValue='custom' className='mt-2 w-full'>
+        <TabsList className='grid w-full grid-cols-2'>
+          <TabsTrigger value='custom'>{t('Custom Changelog')}</TabsTrigger>
+          <TabsTrigger value='upstream'>{t('Upstream Release')}</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value='custom' className='mt-3 space-y-4 outline-none'>
+          <div className='max-h-[340px] space-y-3 overflow-y-auto pr-1 text-sm'>
+            {CUSTOM_CHANGELOG_DATA.map((group) => (
+              <div
+                key={group.version}
+                className='rounded-lg border bg-card/60 p-3.5 space-y-3 shadow-xs'
+              >
+                <div className='flex flex-wrap items-center justify-between gap-2 border-b pb-2'>
+                  <div className='flex flex-wrap items-center gap-1.5'>
+                    <Badge variant='default' className='font-mono'>
+                      {group.version}
+                    </Badge>
+                    <Badge variant='outline' className='text-muted-foreground'>
+                      {t('Official upstream baseline: {{version}}', {
+                        version: group.upstreamBase,
+                      })}
+                    </Badge>
+                  </div>
+                  <span className='text-xs text-muted-foreground'>
+                    {group.date}
+                  </span>
+                </div>
+
+                <div className='space-y-2.5'>
+                  {group.items.map((item, idx) => (
+                    <div key={idx} className='flex items-start gap-2.5'>
+                      <Badge
+                        variant={
+                          item.tag === 'feat'
+                            ? 'default'
+                            : item.tag === 'fix'
+                              ? 'warning'
+                              : 'secondary'
+                        }
+                        className='mt-0.5 uppercase'
+                      >
+                        {item.tag}
+                      </Badge>
+                      <div className='min-w-0 flex-1'>
+                        <p className='font-medium text-foreground leading-snug'>
+                          {isZh ? item.titleZh : item.titleEn}
+                        </p>
+                        <p className='text-xs text-muted-foreground mt-0.5 leading-relaxed'>
+                          {isZh ? item.descZh : item.descEn}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value='upstream' className='mt-3 space-y-3 outline-none'>
+          {props.open && release?.body ? (
+            <div className='max-h-[340px] overflow-y-auto pr-1'>
+              <Suspense fallback={<Skeleton className='h-24 w-full' />}>
+                <ReleaseMarkdown baseUrl={releaseUrl ?? undefined}>
+                  {release.body}
+                </ReleaseMarkdown>
+              </Suspense>
+            </div>
           ) : (
-            <p className='text-muted-foreground text-sm'>
-              {t('No release notes provided.')}
-            </p>
+            <div className='rounded-lg border bg-muted/20 p-5 text-center space-y-3'>
+              <p className='text-sm text-muted-foreground'>
+                {t('No upstream release details loaded yet.')}
+              </p>
+              <p className='text-xs text-muted-foreground'>
+                {t('Official upstream baseline: {{version}}', {
+                  version: 'v1.0.0-rc.40',
+                })}
+              </p>
+              <div>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  nativeButton={false}
+                  role='link'
+                  render={
+                    <a
+                      href='https://github.com/QuantumNous/new-api/releases'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    />
+                  }
+                >
+                  {t('View full release notes on GitHub')}
+                </Button>
+              </div>
+            </div>
           )}
-        </Suspense>
-      )}
+        </TabsContent>
+      </Tabs>
     </Dialog>
   )
 }
