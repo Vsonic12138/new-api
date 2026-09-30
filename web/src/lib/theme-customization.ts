@@ -116,9 +116,9 @@ export type ThemeCustomization = {
 }
 
 export const DEFAULT_THEME_CUSTOMIZATION: ThemeCustomization = {
-  preset: 'ocean-breeze',
-  font: 'default',
-  radius: 'default',
+  preset: 'simple-large',
+  font: 'sans',
+  radius: 'md',
   scale: 'default',
   contentLayout: 'full',
 }
