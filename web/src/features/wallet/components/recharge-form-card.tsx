@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Gift, ExternalLink, Loader2, Receipt, WalletCards } from 'lucide-react'
+import { Gift, ExternalLink, Loader2, Receipt, ShoppingBag, WalletCards } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -477,6 +477,32 @@ export function RechargeFormCard({
             </>
           )}
         </div>
+      ) : topupLink ? (
+        <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-primary/20 bg-primary/5 dark:bg-primary/10 p-4 sm:p-5 transition-colors'>
+          <div className='flex items-start sm:items-center gap-3'>
+            <IconBadge tone='primary' size='title'>
+              <ShoppingBag />
+            </IconBadge>
+            <div className='space-y-0.5'>
+              <h4 className='text-sm font-semibold tracking-tight text-foreground'>
+                {t('Official Card Shop Available')}
+              </h4>
+              <p className='text-xs text-muted-foreground leading-relaxed'>
+                {t('Purchase redemption codes online with automatic delivery, then redeem below.')}
+              </p>
+            </div>
+          </div>
+          <Button
+            render={
+              <a href={topupLink} target='_blank' rel='noopener noreferrer' />
+            }
+            size='sm'
+            className='shrink-0 gap-1.5 font-medium shadow-xs'
+          >
+            {t('Go to Card Shop')}
+            <ExternalLink className='size-3.5' />
+          </Button>
+        </div>
       ) : (
         <Alert>
           <AlertDescription>
@@ -536,18 +562,21 @@ export function RechargeFormCard({
             </Button>
           </div>
           {topupLink && (
-            <p className='text-muted-foreground text-xs'>
-              {t('Need a redemption code?')}{' '}
+            <div className='flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/70 bg-muted/40 dark:bg-muted/20 px-3 py-2 text-xs'>
+              <span className='flex items-center gap-1.5 font-medium text-muted-foreground'>
+                <Gift className='size-3.5 text-warning' />
+                {t('Need a redemption code?')}
+              </span>
               <a
                 href={topupLink}
                 target='_blank'
                 rel='noopener noreferrer'
-                className='inline-flex items-center gap-1 underline-offset-4 hover:underline'
+                className='inline-flex items-center gap-1 font-semibold text-primary underline underline-offset-4 hover:opacity-80'
               >
                 {t('Get one here')}
-                <ExternalLink className='h-3 w-3' />
+                <ExternalLink className='size-3' />
               </a>
-            </p>
+            </div>
           )}
         </div>
       ) : (
