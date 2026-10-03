@@ -17,11 +17,12 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { Link } from '@tanstack/react-router'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ShoppingBag, ExternalLink } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { AnimateInView } from '@/components/animate-in-view'
 import { Button } from '@/components/ui/button'
+import { useStatus } from '@/hooks/use-status'
 
 interface CTAProps {
   className?: string
@@ -30,6 +31,8 @@ interface CTAProps {
 
 export function CTA(props: CTAProps) {
   const { t } = useTranslation()
+  const { status } = useStatus()
+  const topupLink = (status?.topup_link as string | undefined) || ''
 
   if (props.isAuthenticated) {
     return null
@@ -54,18 +57,18 @@ export function CTA(props: CTAProps) {
         animation='scale-in'
       >
         <h2 className='text-2xl leading-tight font-bold tracking-tight md:text-4xl'>
-          {t('Ready to simplify')}
+          {t('Ready to experience')}
           <br />
-          <span className='bg-gradient-to-r from-blue-400 via-violet-400 to-purple-500 bg-clip-text text-transparent'>
-            {t('your AI integration?')}
+          <span className='bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 bg-clip-text text-transparent'>
+            {t('supercharged AI power?')}
           </span>
         </h2>
         <p className='text-muted-foreground/80 mx-auto mt-5 max-w-md text-sm leading-relaxed md:text-base'>
           {t(
-            'Deploy your own gateway and start routing requests through your configured upstream services.'
+            'Get your API token now and start calling top-tier models with full speed and dependable stability.'
           )}
         </p>
-        <div className='mt-8 flex items-center justify-center gap-3'>
+        <div className='mt-8 flex flex-wrap items-center justify-center gap-3'>
           <Button className='group rounded-lg' render={<Link to='/sign-up' />}>
             {t('Get Started')}
             <ArrowRight className='ml-1 size-3.5 transition-transform duration-200 group-hover:translate-x-0.5' />
@@ -77,6 +80,19 @@ export function CTA(props: CTAProps) {
           >
             {t('View Pricing')}
           </Button>
+          {topupLink && (
+            <Button
+              variant='outline'
+              className='group border-amber-500/30 bg-amber-500/5 hover:border-amber-500/50 hover:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg'
+              render={
+                <a href={topupLink} target='_blank' rel='noopener noreferrer' />
+              }
+            >
+              <ShoppingBag className='size-3.5' />
+              <span>{t('Buy Credits / Codes')}</span>
+              <ExternalLink className='size-2.5 opacity-60' />
+            </Button>
+          )}
         </div>
       </AnimateInView>
     </section>

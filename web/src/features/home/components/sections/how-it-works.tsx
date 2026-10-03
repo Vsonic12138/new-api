@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Settings, Zap, BarChart3 } from 'lucide-react'
+import { KeyRound, Layers, Sparkles } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { AnimateInView } from '@/components/animate-in-view'
@@ -27,25 +27,27 @@ export function HowItWorks() {
   const steps = [
     {
       num: '1',
-      title: t('Configure'),
+      title: t('Get Your Token'),
       desc: t(
-        'Add your API keys, set up channels and configure access permissions'
+        'Sign in, visit Token Management, and generate your dedicated API key with one click.'
       ),
-      icon: <Settings className='size-6' strokeWidth={1.5} />,
+      icon: <KeyRound className='size-6 text-amber-500' strokeWidth={1.5} />,
     },
     {
       num: '2',
-      title: t('Connect'),
+      title: t('Plug into Clients'),
       desc: t(
-        'Connect through OpenAI, Claude, Gemini, and other compatible API routes'
+        'Set your Base URL and key into ZCode, Cherry Studio, Cursor, or your backend code.'
       ),
-      icon: <Zap className='size-6' strokeWidth={1.5} />,
+      icon: <Layers className='size-6 text-blue-500' strokeWidth={1.5} />,
     },
     {
       num: '3',
-      title: t('Monitor'),
-      desc: t('Track usage, costs and performance with real-time analytics'),
-      icon: <BarChart3 className='size-6' strokeWidth={1.5} />,
+      title: t('Prompt & Build'),
+      desc: t(
+        'Enjoy millisecond streaming responses across flagship models with reliable stability.'
+      ),
+      icon: <Sparkles className='size-6 text-violet-500' strokeWidth={1.5} />,
     },
   ]
 

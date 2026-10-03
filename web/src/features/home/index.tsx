@@ -132,7 +132,9 @@ export function Home() {
     <PublicLayout showMainContainer={false}>
       <Hero isAuthenticated={isAuthenticated} />
       <FeaturedModelsWall />
-      <ClientGuideCard />
+      <div id='client-guide'>
+        <ClientGuideCard />
+      </div>
       <Stats />
       <Features />
       <HowItWorks />
