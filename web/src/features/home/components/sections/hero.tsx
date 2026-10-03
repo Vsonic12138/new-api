@@ -207,14 +207,29 @@ export function Hero(props: HeroProps) {
               </p>
             </div>
             <div className='flex flex-wrap items-center gap-3'>
+              {/* ZCode (智谱) */}
+              <a
+                href='https://zcode.z.ai'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='group border-border/40 bg-muted/15 text-foreground/80 hover:border-border hover:bg-muted/30 hover:text-foreground flex items-center gap-2.5 rounded-full border px-4 py-2 text-sm font-medium shadow-[0_1px_2.5px_rgba(0,0,0,0.01)] backdrop-blur-xs transition-all duration-300 hover:scale-[1.02]'
+              >
+                <img
+                  src='/icons/zcode-192.png'
+                  alt='ZCode'
+                  className='size-5 shrink-0 rounded-md object-contain border border-border/40'
+                />
+                <span>ZCode</span>
+              </a>
+
               {/* Cherry Studio */}
               <a
                 href='https://cherry-ai.com'
                 target='_blank'
                 rel='noopener noreferrer'
-                className='group border-border/40 bg-muted/15 text-foreground/80 hover:border-border hover:bg-muted/30 hover:text-foreground flex items-center gap-3 rounded-full border px-5 py-2.5 text-sm font-medium shadow-[0_1px_2.5px_rgba(0,0,0,0.01)] backdrop-blur-xs transition-all duration-300 hover:scale-[1.02]'
+                className='group border-border/40 bg-muted/15 text-foreground/80 hover:border-border hover:bg-muted/30 hover:text-foreground flex items-center gap-2.5 rounded-full border px-4 py-2 text-sm font-medium shadow-[0_1px_2.5px_rgba(0,0,0,0.01)] backdrop-blur-xs transition-all duration-300 hover:scale-[1.02]'
               >
-                <CherryStudio.Color size={24} className='shrink-0' />
+                <CherryStudio.Color size={20} className='shrink-0' />
                 <span>Cherry Studio</span>
               </a>
 

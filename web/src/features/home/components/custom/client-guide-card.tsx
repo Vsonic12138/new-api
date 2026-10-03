@@ -41,15 +41,16 @@ import { Button } from '@/components/ui/button'
 import { useStatus } from '@/hooks/use-status'
 import { cn } from '@/lib/utils'
 
-// Stylized modern brand badge for ZCode
-function ZCodeLogo({ className }: { className?: string }) {
+// 智谱 ZCode 官方 Logo
+function ZCodeLogo({ className, size = 20 }: { className?: string; size?: number }) {
   return (
-    <div
-      className={`relative flex size-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-500 via-blue-600 to-cyan-500 shadow-xs text-white ${className ?? ''}`}
-    >
-      <span className='relative text-xs font-black tracking-wider'>Z</span>
-      <span className='absolute bottom-0.5 right-0.5 size-1 rounded-full bg-cyan-300 ring-1 ring-blue-600' />
-    </div>
+    <img
+      src='/icons/zcode-192.png'
+      alt='ZCode'
+      width={size}
+      height={size}
+      className={cn('rounded-md object-contain shrink-0 shadow-2xs border border-border/40', className)}
+    />
   )
 }
 
