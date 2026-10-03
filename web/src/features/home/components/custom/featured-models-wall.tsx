@@ -103,7 +103,7 @@ export function FeaturedModelsWall() {
         'Quick-witted open thinking, real-time exploration, and complex mathematical logic breakdown.'
       ),
       categories: ['grok-gemini'],
-      icon: <Grok.Color size={22} className='shrink-0' />,
+      icon: <Grok size={22} className='shrink-0' />,
     },
     {
       id: 'deepseek-v4-flash',
