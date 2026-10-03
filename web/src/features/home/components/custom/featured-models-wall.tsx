@@ -183,14 +183,14 @@ export function FeaturedModelsWall() {
           <div>
             <div className='mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/5 px-3 py-1 text-[11px] font-medium text-amber-600 dark:border-amber-400/20 dark:bg-amber-400/5 dark:text-amber-400'>
               <Flame className='size-3' />
-              <span>{t('Featured Models Matrix')}</span>
+              <span>{t('Curated AI Models')}</span>
             </div>
             <h2 className='text-2xl font-bold tracking-tight md:text-3xl'>
-              {t('Industry Leading AI Models at Your Fingertips')}
+              {t('One Gateway for All Flagships')}
             </h2>
             <p className='text-muted-foreground mt-1.5 max-w-xl text-sm leading-relaxed'>
               {t(
-                'Streamline access to the most powerful reasoning, coding, and multimodal models with standard OpenAI compatibility.'
+                'Curated flagship, reasoning, and high-efficiency models ready for instant deployment.'
               )}
             </p>
           </div>

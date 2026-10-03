@@ -57,13 +57,13 @@ export function Hero(props: HeroProps) {
     return (
       <Button
         variant='outline'
-        className='group border-amber-500/30 bg-amber-500/5 hover:border-amber-500/50 hover:bg-amber-500/10 text-amber-600 dark:text-amber-400 inline-flex h-11 items-center gap-1.5 rounded-lg px-4 text-sm font-medium transition-colors'
+        className='group border-amber-500/30 bg-amber-500/5 hover:border-amber-500/50 hover:bg-amber-500/10 text-amber-600 dark:text-amber-400 inline-flex h-11 items-center gap-1.5 rounded-lg px-4 text-sm font-medium transition-colors shadow-xs'
         render={
           <a href={topupLink} target='_blank' rel='noopener noreferrer' />
         }
       >
         <ShoppingBag className='size-4 transition-transform duration-200 group-hover:scale-110' />
-        <span>{t('Go to Card Shop')}</span>
+        <span>{t('Buy Credits / Codes')}</span>
         <ExternalLink className='size-3 opacity-60' />
       </Button>
     )
@@ -133,23 +133,23 @@ export function Hero(props: HeroProps) {
                 <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75' />
                 <span className='relative inline-flex size-1.5 rounded-full bg-amber-500 dark:bg-amber-400' />
               </span>
-              <span>{t('Official Card Shop Available')}</span>
+              <span>{t('Instant Card Shop Available')}</span>
               <span className='text-amber-500/40 dark:text-amber-400/40'>|</span>
               <span className='inline-flex items-center gap-1 opacity-90 group-hover:opacity-100'>
-                <span>{t('Go to Card Shop')}</span>
+                <span>{t('Buy Credits')}</span>
                 <ExternalLink className='size-2.5 transition-transform duration-200 group-hover:translate-x-0.5' />
               </span>
             </a>
           ) : (
             <div
-              className='landing-animate-fade-up mb-5 inline-flex items-center gap-1.5 rounded-full border border-blue-500/20 bg-blue-500/5 px-3 py-1.5 text-[11px] font-medium text-blue-600 opacity-0 shadow-xs dark:border-blue-400/20 dark:bg-blue-400/5 dark:text-blue-400'
+              className='landing-animate-fade-up mb-5 inline-flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 text-[11px] font-medium text-amber-700 opacity-0 shadow-xs dark:border-amber-400/25 dark:bg-amber-400/10 dark:text-amber-300'
               style={{ animationDelay: '0ms' }}
             >
               <span className='relative flex size-1.5'>
-                <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75' />
-                <span className='relative inline-flex size-1.5 rounded-full bg-blue-500 dark:bg-blue-400' />
+                <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75' />
+                <span className='relative inline-flex size-1.5 rounded-full bg-amber-500 dark:bg-amber-400' />
               </span>
-              <span>{t('AI Application Infrastructure Foundation')}</span>
+              <span>{t('DaHuang API is On Duty')}</span>
             </div>
           )}
 
@@ -157,18 +157,18 @@ export function Hero(props: HeroProps) {
             className='landing-animate-fade-up text-[clamp(2.25rem,4.5vw,3.25rem)] leading-[1.15] font-bold tracking-tight'
             style={{ animationDelay: '60ms' }}
           >
-            {t('Unified API Gateway for')}
+            <span>{status?.system_name || t('DaHuang API · Big Dog Bark')}</span>
             <br />
-            <span className='bg-gradient-to-r from-blue-400 via-violet-400 to-purple-500 bg-clip-text text-transparent'>
-              {t('Vast Range of AI Models')}
+            <span className='bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 dark:from-amber-400 dark:via-orange-400 dark:to-yellow-400 bg-clip-text text-transparent'>
+              {t('A Dependable & Friendly AI Gateway')}
             </span>
           </h1>
           <p
-            className='landing-animate-fade-up text-muted-foreground/80 mt-5 max-w-xl text-base leading-relaxed opacity-0 md:text-[15px]'
+            className='landing-animate-fade-up text-muted-foreground/85 mt-5 max-w-xl text-base leading-relaxed opacity-0 md:text-[15px]'
             style={{ animationDelay: '120ms' }}
           >
             {t(
-              'Access a vast selection of models via a standard, unified API protocol. Power AI applications, manage digital assets, and connect the Future.'
+              'A friendly, dependable AI gateway. Access mainstream flagship models through unified OpenAI and Claude protocols—ready right out of the box.'
             )}
           </p>
 
