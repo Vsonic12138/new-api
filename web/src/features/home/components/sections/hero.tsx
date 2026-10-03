@@ -18,7 +18,7 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { CherryStudio } from '@lobehub/icons'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, BookOpen } from 'lucide-react'
+import { ArrowRight, BookOpen, ExternalLink, ShoppingBag } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
@@ -50,6 +50,24 @@ export function Hero(props: HeroProps) {
   const { status } = useStatus()
   const docsUrl =
     (status?.docs_link as string | undefined) || 'https://docs.newapi.pro'
+  const topupLink = (status?.topup_link as string | undefined) || ''
+
+  const renderCardShopButton = () => {
+    if (!topupLink) return null
+    return (
+      <Button
+        variant='outline'
+        className='group border-amber-500/30 bg-amber-500/5 hover:border-amber-500/50 hover:bg-amber-500/10 text-amber-600 dark:text-amber-400 inline-flex h-11 items-center gap-1.5 rounded-lg px-4 text-sm font-medium transition-colors'
+        render={
+          <a href={topupLink} target='_blank' rel='noopener noreferrer' />
+        }
+      >
+        <ShoppingBag className='size-4 transition-transform duration-200 group-hover:scale-110' />
+        <span>{t('Go to Card Shop')}</span>
+        <ExternalLink className='size-3 opacity-60' />
+      </Button>
+    )
+  }
 
   const renderDocsButton = () => {
     const isExternal = docsUrl.startsWith('http')
@@ -103,16 +121,37 @@ export function Hero(props: HeroProps) {
         {/* Left Column: Title, description, action buttons and application support */}
         <div className='flex flex-col items-start text-left lg:col-span-6'>
           {/* Top Pill Badge */}
-          <div
-            className='landing-animate-fade-up mb-5 inline-flex items-center gap-1.5 rounded-full border border-blue-500/20 bg-blue-500/5 px-3 py-1.5 text-[11px] font-medium text-blue-600 opacity-0 shadow-xs dark:border-blue-400/20 dark:bg-blue-400/5 dark:text-blue-400'
-            style={{ animationDelay: '0ms' }}
-          >
-            <span className='relative flex size-1.5'>
-              <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75' />
-              <span className='relative inline-flex size-1.5 rounded-full bg-blue-500 dark:bg-blue-400' />
-            </span>
-            <span>{t('AI Application Infrastructure Foundation')}</span>
-          </div>
+          {topupLink ? (
+            <a
+              href={topupLink}
+              target='_blank'
+              rel='noopener noreferrer'
+              className='landing-animate-fade-up group mb-5 inline-flex items-center gap-2 rounded-full border border-amber-500/25 bg-amber-500/10 px-3.5 py-1.5 text-[11px] font-medium text-amber-700 opacity-0 shadow-xs transition-colors hover:border-amber-500/40 hover:bg-amber-500/15 dark:border-amber-400/25 dark:bg-amber-400/10 dark:text-amber-300'
+              style={{ animationDelay: '0ms' }}
+            >
+              <span className='relative flex size-1.5'>
+                <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75' />
+                <span className='relative inline-flex size-1.5 rounded-full bg-amber-500 dark:bg-amber-400' />
+              </span>
+              <span>{t('Official Card Shop Available')}</span>
+              <span className='text-amber-500/40 dark:text-amber-400/40'>|</span>
+              <span className='inline-flex items-center gap-1 opacity-90 group-hover:opacity-100'>
+                <span>{t('Go to Card Shop')}</span>
+                <ExternalLink className='size-2.5 transition-transform duration-200 group-hover:translate-x-0.5' />
+              </span>
+            </a>
+          ) : (
+            <div
+              className='landing-animate-fade-up mb-5 inline-flex items-center gap-1.5 rounded-full border border-blue-500/20 bg-blue-500/5 px-3 py-1.5 text-[11px] font-medium text-blue-600 opacity-0 shadow-xs dark:border-blue-400/20 dark:bg-blue-400/5 dark:text-blue-400'
+              style={{ animationDelay: '0ms' }}
+            >
+              <span className='relative flex size-1.5'>
+                <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-blue-400 opacity-75' />
+                <span className='relative inline-flex size-1.5 rounded-full bg-blue-500 dark:bg-blue-400' />
+              </span>
+              <span>{t('AI Application Infrastructure Foundation')}</span>
+            </div>
+          )}
 
           <h1
             className='landing-animate-fade-up text-[clamp(2.25rem,4.5vw,3.25rem)] leading-[1.15] font-bold tracking-tight'
@@ -147,6 +186,7 @@ export function Hero(props: HeroProps) {
                   <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
                 </Button>
                 {renderDocsButton()}
+                {renderCardShopButton()}
               </>
             ) : (
               <>
@@ -165,6 +205,7 @@ export function Hero(props: HeroProps) {
                   {t('View Pricing')}
                 </Button>
                 {renderDocsButton()}
+                {renderCardShopButton()}
               </>
             )}
           </div>
