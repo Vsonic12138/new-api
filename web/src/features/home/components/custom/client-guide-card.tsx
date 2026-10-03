@@ -20,7 +20,6 @@ import { CherryStudio, DeepSeek } from '@lobehub/icons'
 import { Link } from '@tanstack/react-router'
 import {
   AlertCircle,
-  Check,
   CheckCircle2,
   Code2,
   ExternalLink,
@@ -30,10 +29,9 @@ import {
   Sparkles,
   Terminal,
   X,
-  Sliders,
-  CheckCheck,
+  Layers,
 } from 'lucide-react'
-import { useState, useEffect, type ReactNode } from 'react'
+import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { CopyButton } from '@/components/copy-button'
@@ -41,7 +39,7 @@ import { Button } from '@/components/ui/button'
 import { useStatus } from '@/hooks/use-status'
 import { cn } from '@/lib/utils'
 
-// 智谱 ZCode 官方 Logo
+// 智谱 ZCode 官方原版 Logo
 function ZCodeLogo({ className, size = 20 }: { className?: string; size?: number }) {
   return (
     <img
@@ -73,139 +71,7 @@ function MockWindowHeader({ title, badge }: { title: string; badge?: string }) {
   )
 }
 
-// 高保真图解 1: ZCode 界面模拟图解
-function ZCodeMockupVisual({ openAiBaseUrl }: { openAiBaseUrl: string }) {
-  const { t } = useTranslation()
-  return (
-    <div className='overflow-hidden rounded-xl border border-border/60 bg-background shadow-xs select-none'>
-      <MockWindowHeader title='ZCode ADE — Model Settings' badge='Agent Harness' />
-      <div className='flex'>
-        {/* Mock Sidebar */}
-        <div className='w-24 border-r border-border/40 bg-muted/20 p-2 space-y-1 text-[10px] hidden sm:block'>
-          <div className='px-1.5 py-1 text-muted-foreground/60'>General</div>
-          <div className='rounded bg-blue-500/10 px-1.5 py-1 font-semibold text-blue-600 dark:text-blue-400'>
-            Models ⚙️
-          </div>
-          <div className='px-1.5 py-1 text-muted-foreground/60'>Agents</div>
-          <div className='px-1.5 py-1 text-muted-foreground/60'>MCP Tools</div>
-        </div>
-
-        {/* Mock Content */}
-        <div className='flex-1 p-3.5 space-y-2.5 text-xs'>
-          <div className='flex items-center justify-between border-b border-border/40 pb-2'>
-            <span className='font-semibold text-foreground text-[11px]'>Custom Provider (自定义服务商)</span>
-            <span className='rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[9px] font-medium text-emerald-600'>Active</span>
-          </div>
-
-          <div className='space-y-1.5 text-[11px]'>
-            <div>
-              <span className='text-[10px] text-muted-foreground'>Provider Name (服务商名称)</span>
-              <div className='mt-0.5 rounded border border-border/60 bg-muted/20 px-2 py-1 font-mono text-[11px]'>大黄API</div>
-            </div>
-
-            <div>
-              <span className='text-[10px] text-muted-foreground'>API Protocol (协议格式)</span>
-              <div className='mt-0.5 rounded border border-border/60 bg-muted/20 px-2 py-1 font-mono text-[11px]'>
-                ChatCompletions (OpenAI)
-              </div>
-            </div>
-
-            <div className='relative rounded-lg border-2 border-dashed border-blue-500/60 bg-blue-500/5 p-1.5'>
-              <span className='text-[10px] font-semibold text-blue-600 dark:text-blue-400 flex items-center justify-between'>
-                <span>Base URL (① 必须包含 /v1)</span>
-                <span className='text-[9px] bg-blue-500 text-white rounded px-1'>重点注意</span>
-              </span>
-              <div className='mt-0.5 truncate font-mono text-[10px] text-foreground'>{openAiBaseUrl}</div>
-            </div>
-
-            <div className='relative rounded-lg border-2 border-dashed border-amber-500/60 bg-amber-500/5 p-1.5'>
-              <span className='text-[10px] font-semibold text-amber-600 dark:text-amber-400'>API Key (② 填入令牌)</span>
-              <div className='mt-0.5 font-mono text-[10px] text-muted-foreground'>sk-your-token••••••••</div>
-            </div>
-
-            <div>
-              <span className='text-[10px] text-muted-foreground'>Models (③ 注册模型 ID)</span>
-              <div className='mt-1 flex flex-wrap gap-1'>
-                <span className='rounded bg-muted px-1.5 py-0.5 font-mono text-[9px] text-foreground'>claude-sonnet-5</span>
-                <span className='rounded bg-muted px-1.5 py-0.5 font-mono text-[9px] text-foreground'>gpt-6.1-sol</span>
-                <span className='rounded bg-muted px-1.5 py-0.5 font-mono text-[9px] text-foreground'>deepseek-v4-flash</span>
-              </div>
-            </div>
-          </div>
-
-          <div className='flex items-center justify-end gap-2 pt-1 border-t border-border/40'>
-            <span className='text-[9px] text-emerald-600 flex items-center gap-1 font-medium'>
-              <Check className='size-2.5' /> 连接测试通过
-            </span>
-            <span className='rounded bg-primary px-2 py-0.5 text-[10px] text-primary-foreground font-medium'>保存</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// 高保真图解 2: Cherry Studio 界面模拟图解
-function CherryStudioMockupVisual({ openAiBaseUrl }: { openAiBaseUrl: string }) {
-  return (
-    <div className='overflow-hidden rounded-xl border border-border/60 bg-background shadow-xs select-none'>
-      <MockWindowHeader title='Cherry Studio — 模型服务管理' badge='Desktop All-in-One' />
-      <div className='flex'>
-        {/* Mock Sidebar */}
-        <div className='w-20 border-r border-border/40 bg-muted/20 p-2 space-y-1 text-[10px] hidden sm:block'>
-          <div className='px-1.5 py-1 text-muted-foreground/60'>对话</div>
-          <div className='px-1.5 py-1 text-muted-foreground/60'>知识库</div>
-          <div className='rounded bg-red-500/10 px-1.5 py-1 font-semibold text-red-600 dark:text-red-400'>
-            设置 ⚙️
-          </div>
-        </div>
-
-        {/* Mock Content */}
-        <div className='flex-1 p-3.5 space-y-2 text-xs'>
-          <div className='flex items-center justify-between border-b border-border/40 pb-2'>
-            <div className='flex items-center gap-1.5'>
-              <CherryStudio.Color size={16} />
-              <span className='font-semibold text-foreground text-[11px]'>服务商: 大黄API · 大狗叫</span>
-            </div>
-            <span className='rounded bg-red-500/10 px-1.5 py-0.5 text-[9px] font-medium text-red-600 dark:text-red-400'>OpenAI 兼容</span>
-          </div>
-
-          <div className='space-y-2 text-[11px]'>
-            <div>
-              <span className='text-[10px] text-muted-foreground'>服务商类型</span>
-              <div className='mt-0.5 rounded border border-border/60 bg-muted/20 px-2 py-1 font-mono text-[10px]'>OpenAI</div>
-            </div>
-
-            <div className='relative rounded-lg border-2 border-dashed border-red-500/60 bg-red-500/5 p-1.5'>
-              <span className='text-[10px] font-semibold text-red-600 dark:text-red-400'>API 域名 (Base URL)</span>
-              <div className='mt-0.5 truncate font-mono text-[10px] text-foreground'>{openAiBaseUrl}</div>
-            </div>
-
-            <div className='relative rounded-lg border-2 border-dashed border-amber-500/60 bg-amber-500/5 p-1.5'>
-              <span className='text-[10px] font-semibold text-amber-600 dark:text-amber-400'>API 密钥 (API Key)</span>
-              <div className='mt-0.5 font-mono text-[10px] text-muted-foreground'>sk-your-token••••••••</div>
-            </div>
-
-            <div>
-              <span className='text-[10px] text-muted-foreground'>已载入模型</span>
-              <div className='mt-1 flex flex-wrap gap-1'>
-                <span className='rounded border border-border/60 bg-background px-1.5 py-0.5 font-mono text-[9px]'>claude-sonnet-5</span>
-                <span className='rounded border border-border/60 bg-background px-1.5 py-0.5 font-mono text-[9px]'>gpt-6.1-sol</span>
-                <span className='rounded border border-border/60 bg-background px-1.5 py-0.5 font-mono text-[9px]'>deepseek-v4-flash</span>
-              </div>
-            </div>
-          </div>
-
-          <div className='pt-1 text-[10px] text-emerald-600 flex items-center justify-end gap-1'>
-            <CheckCheck className='size-3' /> 支持一键唤醒协议导入
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-// 高保真图解 3: DSH (DeepSeek Harness) 界面模拟图解
+// DSH (DeepSeek Harness) 界面模拟图解
 function DshMockupVisual({ openAiBaseUrl }: { openAiBaseUrl: string }) {
   return (
     <div className='overflow-hidden rounded-xl border border-border/60 bg-background shadow-xs select-none'>
@@ -265,43 +131,13 @@ function DshMockupVisual({ openAiBaseUrl }: { openAiBaseUrl: string }) {
   )
 }
 
-// 统一包装带放大灯箱的卡片
-function MockupCardWithZoom({
-  title,
-  subtitle,
-  children,
-  onZoom,
-}: {
-  title: string
-  subtitle: string
-  children: ReactNode
-  onZoom: () => void
-}) {
-  return (
-    <div
-      onClick={onZoom}
-      className='group relative cursor-pointer overflow-hidden rounded-2xl border border-border/70 bg-card p-2.5 transition-all duration-300 hover:border-primary/40 hover:shadow-md'
-      title='点击放大查看高清图解'
-    >
-      <div className='mb-2 flex items-center justify-between px-1.5 pt-1'>
-        <span className='text-xs font-semibold text-foreground'>{title}</span>
-        <span className='inline-flex items-center gap-1 rounded bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground group-hover:bg-primary group-hover:text-primary-foreground transition-colors'>
-          <Maximize2 className='size-2.5' />
-          <span>点击放大图解</span>
-        </span>
-      </div>
-      {children}
-      <p className='mt-2 px-1 text-[10px] text-muted-foreground text-center'>{subtitle}</p>
-    </div>
-  )
-}
-
 export function ClientGuideCard() {
   const { t } = useTranslation()
   const { status } = useStatus()
   const [currentOrigin, setCurrentOrigin] = useState('')
   const [activeTab, setActiveTab] = useState<'zcode' | 'cherry' | 'dsh' | 'code'>('zcode')
-  const [zoomModal, setZoomModal] = useState<'zcode' | 'cherry' | 'dsh' | null>(null)
+  const [zcodeImageMode, setZcodeImageMode] = useState<'openai' | 'custom'>('openai')
+  const [zoomImage, setZoomImage] = useState<{ src: string; title: string } | null>(null)
 
   // 严格优先采用浏览器当前的真实访问地址，杜绝 localhost 与内网/公网错配
   useEffect(() => {
@@ -412,7 +248,7 @@ export function ClientGuideCard() {
                 : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
             )}
           >
-            <ZCodeLogo className='size-4 text-[9px]' />
+            <ZCodeLogo size={16} />
             <span>ZCode (智谱)</span>
           </button>
 
@@ -459,26 +295,26 @@ export function ClientGuideCard() {
           </button>
         </div>
 
-        {/* Tab 1: ZCode (左右双栏图文看板) */}
+        {/* Tab 1: ZCode (官方原版截图 + 步骤图文看板) */}
         {activeTab === 'zcode' && (
           <div className='mt-5 grid gap-5 lg:grid-cols-12 lg:items-start'>
             {/* Left: 步骤指引 & 参数 */}
-            <div className='rounded-2xl border border-border/70 bg-card p-5 shadow-xs lg:col-span-7 space-y-4'>
+            <div className='rounded-2xl border border-border/70 bg-card p-5 shadow-xs lg:col-span-6 space-y-4'>
               <div className='flex items-center justify-between border-b border-border/40 pb-3'>
                 <div className='flex items-center gap-2'>
-                  <ZCodeLogo />
+                  <ZCodeLogo size={24} />
                   <div>
                     <h3 className='text-sm font-bold text-foreground'>ZCode 官方接入步骤</h3>
-                    <p className='text-[11px] text-muted-foreground'>智谱 ADE 自定义服务商配置</p>
+                    <p className='text-[11px] text-muted-foreground'>智谱官方 ADE 开发者设置规范</p>
                   </div>
                 </div>
                 <Button
                   variant='ghost'
                   size='sm'
                   className='h-7 gap-1 px-2 text-xs text-muted-foreground'
-                  render={<a href='https://zcode.z.ai' target='_blank' rel='noopener noreferrer' />}
+                  render={<a href='https://zcode.z.ai/cn/docs/configuration' target='_blank' rel='noopener noreferrer' />}
                 >
-                  <span>官方主页</span>
+                  <span>官方文档</span>
                   <ExternalLink className='size-3' />
                 </Button>
               </div>
@@ -492,7 +328,7 @@ export function ClientGuideCard() {
                   <div>
                     <span className='font-semibold text-foreground'>{t('Open Settings Menu')}</span>
                     <p className='text-muted-foreground text-[11px] mt-0.5'>
-                      左下角设置 ⚙️ ➔ <b>Model Settings (模型设置)</b> ➔ 点击 <b>Add Provider</b> ➔ 选择 <b>Create custom provider</b>。
+                      左下角设置 ⚙️ ➔ <b>模型设置 (Model Settings)</b> ➔ 点击 <b>OpenAI</b> 或 <b>+ 添加供应商</b>。
                     </p>
                   </div>
                 </div>
@@ -504,7 +340,7 @@ export function ClientGuideCard() {
                   <div className='min-w-0 flex-1'>
                     <span className='font-semibold text-foreground'>{t('Fill Provider Parameters')}</span>
                     <p className='text-muted-foreground text-[11px] mt-0.5'>
-                      名称填 <b>大黄API</b>，协议选 <b>OpenAI</b>，地址填 Base URL，密钥填你的 API Key。
+                      在右图高亮位置填入接口地址与 API Key：
                     </p>
                     <div className='mt-2 flex items-center justify-between rounded-lg bg-background p-1.5 text-[10px] font-mono'>
                       <span className='truncate text-muted-foreground max-w-[160px]'>{openAiBaseUrl}</span>
@@ -522,7 +358,7 @@ export function ClientGuideCard() {
                   <div className='min-w-0 flex-1'>
                     <span className='font-semibold text-foreground'>{t('Register Model & Test Connection')}</span>
                     <p className='text-muted-foreground text-[11px] mt-0.5'>
-                      点击 <b>Add Model</b> 填入推荐模型 ID，点击 <b>Test Model</b> 测试连通通过后保存：
+                      在【模型列表】点击 <b>+ 添加模型</b>，输入推荐 ID：
                     </p>
                     <div className='mt-2 flex flex-wrap gap-1'>
                       {zcodeRecommendedModels.map((m) => (
@@ -546,28 +382,74 @@ export function ClientGuideCard() {
               {/* Caveat */}
               <div className='flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-2.5 py-1.5 text-[11px] text-amber-700 dark:text-amber-300'>
                 <AlertCircle className='size-3.5 shrink-0 text-amber-600 dark:text-amber-400' />
-                <span>ZCode 避坑要点：OpenAI 协议 Base URL 必须带 /v1；若选 Anthropic 协议末尾不要带 /v1。</span>
+                <span>官方规范：OpenAI 协议 Base URL 必须包含 /v1；选 Anthropic 协议末尾不要带 /v1。</span>
               </div>
             </div>
 
-            {/* Right: 高保真图解 (点击放大灯箱) */}
-            <div className='lg:col-span-5'>
-              <MockupCardWithZoom
-                title='ZCode 设置界面图解'
-                subtitle='示意图 · 点击任意位置可灯箱全屏放大查看'
-                onZoom={() => setZoomModal('zcode')}
-              >
-                <ZCodeMockupVisual openAiBaseUrl={openAiBaseUrl} />
-              </MockupCardWithZoom>
+            {/* Right: 官方原版截图展示与灯箱放大 */}
+            <div className='lg:col-span-6'>
+              <div className='rounded-2xl border border-border/70 bg-card p-3 shadow-xs'>
+                <div className='mb-2 flex items-center justify-between px-1'>
+                  <div className='flex items-center gap-1.5'>
+                    <button
+                      type='button'
+                      onClick={() => setZcodeImageMode('openai')}
+                      className={cn(
+                        'rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors',
+                        zcodeImageMode === 'openai' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted'
+                      )}
+                    >
+                      OpenAI 协议图解
+                    </button>
+                    <button
+                      type='button'
+                      onClick={() => setZcodeImageMode('custom')}
+                      className={cn(
+                        'rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors',
+                        zcodeImageMode === 'custom' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted'
+                      )}
+                    >
+                      DeepSeek / 自定义图解
+                    </button>
+                  </div>
+                  <span className='inline-flex items-center gap-1 text-[10px] text-muted-foreground'>
+                    <Maximize2 className='size-2.5' /> 点击放大
+                  </span>
+                </div>
+
+                <div
+                  className='relative group cursor-pointer overflow-hidden rounded-xl border border-border/60 bg-neutral-950/60'
+                  onClick={() =>
+                    setZoomImage({
+                      src: zcodeImageMode === 'openai' ? '/guides/zcode/zcode-openai.webp' : '/guides/zcode/zcode-custom-provider.webp',
+                      title: zcodeImageMode === 'openai' ? 'ZCode 官方 OpenAI 协议配置截图' : 'ZCode 官方自定义供应商配置截图',
+                    })
+                  }
+                >
+                  <img
+                    src={zcodeImageMode === 'openai' ? '/guides/zcode/zcode-openai.webp' : '/guides/zcode/zcode-custom-provider.webp'}
+                    alt='ZCode 官方配置教程截图'
+                    className='w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.01]'
+                  />
+                  <div className='absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center'>
+                    <span className='rounded-full bg-background/90 text-foreground px-3 py-1 text-xs font-medium shadow-md flex items-center gap-1.5 backdrop-blur-xs'>
+                      <Maximize2 className='size-3' /> 点击查看高清大图
+                    </span>
+                  </div>
+                </div>
+                <p className='mt-2 text-center text-[10px] text-muted-foreground'>
+                  来源：智谱官方文档配置截图 · 标明了接口地址与 API Key 填入位置
+                </p>
+              </div>
             </div>
           </div>
         )}
 
-        {/* Tab 2: Cherry Studio (左右双栏图文看板) */}
+        {/* Tab 2: Cherry Studio (官方原版截图 + 步骤图文看板) */}
         {activeTab === 'cherry' && (
           <div className='mt-5 grid gap-5 lg:grid-cols-12 lg:items-start'>
             {/* Left: 步骤指引 & 快捷导入 */}
-            <div className='rounded-2xl border border-border/70 bg-card p-5 shadow-xs lg:col-span-7 space-y-4'>
+            <div className='rounded-2xl border border-border/70 bg-card p-5 shadow-xs lg:col-span-6 space-y-4'>
               <div className='flex items-center justify-between border-b border-border/40 pb-3'>
                 <div className='flex items-center gap-2'>
                   <div className='flex size-8 items-center justify-center rounded-lg border border-border/50 bg-muted/30'>
@@ -591,7 +473,7 @@ export function ClientGuideCard() {
 
               <div className='space-y-2.5 text-xs'>
                 <div className='rounded-xl border border-border/50 bg-muted/20 p-3'>
-                  <span className='text-muted-foreground text-[11px] font-semibold'>手动配置参数表</span>
+                  <span className='text-muted-foreground text-[11px] font-semibold'>手动配置对照表</span>
                   <div className='mt-2 space-y-1.5 font-mono text-[11px]'>
                     <div className='flex justify-between'><span className='text-muted-foreground'>服务商类型:</span><span className='font-semibold'>OpenAI 兼容</span></div>
                     <div className='flex justify-between items-center'><span className='text-muted-foreground'>API Base URL:</span><span className='font-semibold truncate max-w-[160px]'>{openAiBaseUrl}</span></div>
@@ -615,15 +497,40 @@ export function ClientGuideCard() {
               </div>
             </div>
 
-            {/* Right: 高保真图解 (点击放大灯箱) */}
-            <div className='lg:col-span-5'>
-              <MockupCardWithZoom
-                title='Cherry Studio 设置界面图解'
-                subtitle='示意图 · 点击任意位置可灯箱全屏放大查看'
-                onZoom={() => setZoomModal('cherry')}
-              >
-                <CherryStudioMockupVisual openAiBaseUrl={openAiBaseUrl} />
-              </MockupCardWithZoom>
+            {/* Right: 官方原版截图展示与灯箱放大 */}
+            <div className='lg:col-span-6'>
+              <div className='rounded-2xl border border-border/70 bg-card p-3 shadow-xs'>
+                <div className='mb-2 flex items-center justify-between px-1'>
+                  <span className='text-xs font-semibold text-foreground'>Cherry Studio 官方模型服务设置截图</span>
+                  <span className='inline-flex items-center gap-1 text-[10px] text-muted-foreground'>
+                    <Maximize2 className='size-2.5' /> 点击放大
+                  </span>
+                </div>
+
+                <div
+                  className='relative group cursor-pointer overflow-hidden rounded-xl border border-border/60 bg-neutral-950/60'
+                  onClick={() =>
+                    setZoomImage({
+                      src: '/guides/cherry/cherry-3.webp',
+                      title: 'Cherry Studio 官方模型服务设置截图',
+                    })
+                  }
+                >
+                  <img
+                    src='/guides/cherry/cherry-3.webp'
+                    alt='Cherry Studio 设置截图'
+                    className='w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.01]'
+                  />
+                  <div className='absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center'>
+                    <span className='rounded-full bg-background/90 text-foreground px-3 py-1 text-xs font-medium shadow-md flex items-center gap-1.5 backdrop-blur-xs'>
+                      <Maximize2 className='size-3' /> 点击查看高清大图
+                    </span>
+                  </div>
+                </div>
+                <p className='mt-2 text-center text-[10px] text-muted-foreground'>
+                  来源：Cherry Studio 官方文档界面截图 · 展示了 API 密钥与地址填入方式
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -632,7 +539,7 @@ export function ClientGuideCard() {
         {activeTab === 'dsh' && (
           <div className='mt-5 grid gap-5 lg:grid-cols-12 lg:items-start'>
             {/* Left: 步骤指引 & 参数 */}
-            <div className='rounded-2xl border border-border/70 bg-card p-5 shadow-xs lg:col-span-7 space-y-4'>
+            <div className='rounded-2xl border border-border/70 bg-card p-5 shadow-xs lg:col-span-6 space-y-4'>
               <div className='flex items-center justify-between border-b border-border/40 pb-3'>
                 <div className='flex items-center gap-2'>
                   <div className='flex size-8 items-center justify-center rounded-lg border border-border/50 bg-muted/30'>
@@ -705,15 +612,30 @@ export function ClientGuideCard() {
               </div>
             </div>
 
-            {/* Right: 高保真图解 (点击放大灯箱) */}
-            <div className='lg:col-span-5'>
-              <MockupCardWithZoom
-                title='DSH (DeepSeek Harness) 设置界面图解'
-                subtitle='示意图 · 点击任意位置可灯箱全屏放大查看'
-                onZoom={() => setZoomModal('dsh')}
-              >
-                <DshMockupVisual openAiBaseUrl={openAiBaseUrl} />
-              </MockupCardWithZoom>
+            {/* Right: DSH 图解 */}
+            <div className='lg:col-span-6'>
+              <div className='rounded-2xl border border-border/70 bg-card p-3 shadow-xs'>
+                <div className='mb-2 flex items-center justify-between px-1'>
+                  <span className='text-xs font-semibold text-foreground'>DSH (DeepSeek Harness) 界面图解</span>
+                  <span className='inline-flex items-center gap-1 text-[10px] text-muted-foreground'>
+                    <Maximize2 className='size-2.5' /> 点击放大
+                  </span>
+                </div>
+                <div
+                  className='relative group cursor-pointer overflow-hidden rounded-xl border border-border/60'
+                  onClick={() =>
+                    setZoomImage({
+                      src: 'mockup-dsh',
+                      title: 'DeepSeek Harness (DSH) 界面配置图解',
+                    })
+                  }
+                >
+                  <DshMockupVisual openAiBaseUrl={openAiBaseUrl} />
+                </div>
+                <p className='mt-2 text-center text-[10px] text-muted-foreground'>
+                  DeepSeek 官方开源 Agent 框架 · 支持 Web、桌面与 CLI 模式
+                </p>
+              </div>
             </div>
           </div>
         )}
@@ -743,46 +665,50 @@ export function ClientGuideCard() {
         )}
       </div>
 
-      {/* 灯箱弹窗 (Lightbox Modal) */}
-      {zoomModal && (
+      {/* 灯箱高清大图弹窗 (Lightbox Modal) */}
+      {zoomImage && (
         <div
           role='dialog'
           aria-modal='true'
-          className='fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-md p-4 animate-in fade-in duration-200'
-          onClick={() => setZoomModal(null)}
+          className='fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-200'
+          onClick={() => setZoomImage(null)}
         >
           <div
-            className='relative w-full max-w-2xl rounded-2xl border border-border bg-card p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 duration-200'
+            className='relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border/50 bg-card p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 duration-200'
             onClick={(e) => e.stopPropagation()}
           >
             <div className='mb-3 flex items-center justify-between border-b border-border/40 pb-2.5'>
               <div className='flex items-center gap-2'>
                 <Sparkles className='size-4 text-primary' />
-                <span className='font-bold text-sm text-foreground'>
-                  {zoomModal === 'zcode' && 'ZCode (智谱 ADE) 界面配置图解'}
-                  {zoomModal === 'cherry' && 'Cherry Studio 界面配置图解'}
-                  {zoomModal === 'dsh' && 'DeepSeek Harness (DSH) 界面配置图解'}
-                </span>
+                <span className='font-bold text-sm text-foreground'>{zoomImage.title}</span>
               </div>
               <button
                 type='button'
-                onClick={() => setZoomModal(null)}
+                onClick={() => setZoomImage(null)}
                 className='rounded-lg p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors'
               >
                 <X className='size-5' />
               </button>
             </div>
 
-            {/* 大图展示区域 */}
-            <div className='py-2'>
-              {zoomModal === 'zcode' && <ZCodeMockupVisual openAiBaseUrl={openAiBaseUrl} />}
-              {zoomModal === 'cherry' && <CherryStudioMockupVisual openAiBaseUrl={openAiBaseUrl} />}
-              {zoomModal === 'dsh' && <DshMockupVisual openAiBaseUrl={openAiBaseUrl} />}
+            {/* 大图容器 */}
+            <div className='py-2 flex items-center justify-center'>
+              {zoomImage.src === 'mockup-dsh' ? (
+                <div className='w-full'>
+                  <DshMockupVisual openAiBaseUrl={openAiBaseUrl} />
+                </div>
+              ) : (
+                <img
+                  src={zoomImage.src}
+                  alt={zoomImage.title}
+                  className='w-full h-auto max-h-[75vh] rounded-xl object-contain shadow-md'
+                />
+              )}
             </div>
 
             <div className='mt-3 flex items-center justify-between text-xs text-muted-foreground border-t border-border/40 pt-2.5'>
-              <span>点击空白处或右上角可关闭图解</span>
-              <Button variant='outline' size='sm' className='h-7 text-xs' onClick={() => setZoomModal(null)}>
+              <span>点击遮罩层或右上角关闭</span>
+              <Button variant='outline' size='sm' className='h-7 text-xs' onClick={() => setZoomImage(null)}>
                 完成查看
               </Button>
             </div>
