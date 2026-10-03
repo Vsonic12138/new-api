@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Claude, DeepSeek, Gemini, OpenAI, Qwen } from '@lobehub/icons'
+import { Claude, DeepSeek, Gemini, Grok, OpenAI, Qwen } from '@lobehub/icons'
 import { Link } from '@tanstack/react-router'
 import { ArrowUpRight, Flame, Layers } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
@@ -26,7 +26,7 @@ import { CopyButton } from '@/components/copy-button'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-type ModelCategory = 'all' | 'reasoning' | 'coding' | 'multimodal' | 'efficient'
+type ModelCategory = 'all' | 'claude' | 'gpt' | 'grok-gemini' | 'cn'
 
 interface ModelItem {
   id: string
@@ -46,115 +46,115 @@ export function FeaturedModelsWall() {
 
   const categories: { key: ModelCategory; label: string }[] = [
     { key: 'all', label: t('All Models') },
-    { key: 'reasoning', label: t('Reasoning') },
-    { key: 'coding', label: t('Coding') },
-    { key: 'multimodal', label: t('Multimodal') },
-    { key: 'efficient', label: t('High Efficiency') },
+    { key: 'claude', label: t('Claude Series') },
+    { key: 'gpt', label: t('GPT Series') },
+    { key: 'grok-gemini', label: t('Grok & Gemini') },
+    { key: 'cn', label: t('DeepSeek & CN') },
   ]
 
   const models: ModelItem[] = [
     {
-      id: 'deepseek-reasoner',
-      name: 'DeepSeek-R1',
-      vendor: 'DeepSeek',
-      context: '128K',
-      tag: t('Chain-of-Thought Reasoning'),
-      tagTone: 'blue',
-      description: t(
-        'Top-tier open-weight reasoning model with transparent thinking process and exceptional math/code capability.'
-      ),
-      categories: ['reasoning', 'coding'],
-      icon: <DeepSeek.Color size={22} className='shrink-0' />,
-    },
-    {
-      id: 'claude-3-7-sonnet',
-      name: 'Claude 3.7 Sonnet',
+      id: 'claude-sonnet-5',
+      name: 'Claude Sonnet 5',
       vendor: 'Anthropic',
-      context: '200K',
-      tag: t('Hybrid Reasoning & Coding'),
+      context: '1.0x · 200K',
+      tag: t('Coding & Deep Logic'),
       tagTone: 'purple',
       description: t(
-        'Flagship model with adjustable thinking depth, leading industry benchmarks in software engineering.'
+        'Top-tier software engineering, long-context code refactoring, and dependable logic synthesis.'
       ),
-      categories: ['reasoning', 'coding'],
+      categories: ['claude'],
       icon: <Claude.Color size={22} className='shrink-0' />,
     },
     {
-      id: 'gpt-4o',
-      name: 'GPT-4o',
+      id: 'gpt-6.1-sol',
+      name: 'GPT-6.1 Sol',
       vendor: 'OpenAI',
-      context: '128K',
-      tag: t('Omni Multimodal Flagship'),
+      context: '1.0x · Sol High Compute',
+      tag: t('Uncapped Intelligence Flagship'),
       tagTone: 'emerald',
       description: t(
-        'High-speed, highly reliable flagship model supporting text, visual reasoning, and diverse developer tasks.'
+        'Full-speed Sol flagship with unthrottled high intelligence, visual reasoning, and multi-turn stability.'
       ),
-      categories: ['coding', 'multimodal'],
+      categories: ['gpt'],
       icon: <OpenAI size={22} className='shrink-0' />,
     },
     {
-      id: 'deepseek-chat',
-      name: 'DeepSeek-V3',
-      vendor: 'DeepSeek',
-      context: '128K',
-      tag: t('MoE Daily Driver'),
+      id: 'gpt-5.6-luna',
+      name: 'GPT-5.6 Luna',
+      vendor: 'OpenAI',
+      context: '0.1x · Super Low Cost',
+      tag: t('Ultra Cost-Effective Driver'),
+      tagTone: 'amber',
+      description: t(
+        'High-speed cost-effective group for daily chats, text summarization, and high-frequency code completions.'
+      ),
+      categories: ['gpt'],
+      icon: <OpenAI size={22} className='shrink-0' />,
+    },
+    {
+      id: 'grok-4.7',
+      name: 'Grok 4.7',
+      vendor: 'xAI',
+      context: '1.0x · Latest Gen',
+      tag: t('Real-time Agile Reasoning'),
       tagTone: 'blue',
       description: t(
-        'Ultra-fast MoE architecture designed for versatile conversation, text generation, and everyday productivity.'
+        'Quick-witted open thinking, real-time exploration, and complex mathematical logic breakdown.'
       ),
-      categories: ['efficient', 'coding'],
+      categories: ['grok-gemini'],
+      icon: <Grok.Color size={22} className='shrink-0' />,
+    },
+    {
+      id: 'deepseek-v4-flash',
+      name: 'DeepSeek V4 Flash',
+      vendor: 'DeepSeek',
+      context: '1.27x · CoT Flash',
+      tag: t('Open Weights Wonder'),
+      tagTone: 'cyan',
+      description: t(
+        'Next-gen reasoning speed with transparent Chain-of-Thought, delivering deep thinking at great value.'
+      ),
+      categories: ['cn'],
       icon: <DeepSeek.Color size={22} className='shrink-0' />,
     },
     {
-      id: 'gemini-2.5-flash',
-      name: 'Gemini 2.5 Flash',
+      id: 'claude-opus-5-5',
+      name: 'Claude Opus 5.5',
+      vendor: 'Anthropic',
+      context: '2.0x · Extreme Reasoning',
+      tag: t('Highest Complexity Benchmark'),
+      tagTone: 'purple',
+      description: t(
+        'Deep architectural design, nuanced research analysis, and solving mission-critical edge cases.'
+      ),
+      categories: ['claude'],
+      icon: <Claude.Color size={22} className='shrink-0' />,
+    },
+    {
+      id: 'gemini-3.7-flash',
+      name: 'Gemini 3.7 Flash',
       vendor: 'Google',
-      context: '1M',
-      tag: t('Million Token Context'),
+      context: 'Million Token · Sub-second',
+      tag: t('Massive Multi-modal Context'),
       tagTone: 'cyan',
       description: t(
-        'Sub-second latency with enormous 1,000,000 token context window for massive documents and video analysis.'
+        'Sub-second responses across colossal 1,000,000+ token context windows for full-repo and document intake.'
       ),
-      categories: ['multimodal', 'efficient'],
+      categories: ['grok-gemini'],
       icon: <Gemini.Color size={22} className='shrink-0' />,
     },
     {
-      id: 'claude-3-5-sonnet',
-      name: 'Claude 3.5 Sonnet',
-      vendor: 'Anthropic',
-      context: '200K',
-      tag: t('Proven Developer Favorite'),
-      tagTone: 'purple',
+      id: 'glm-5.3-flash',
+      name: 'GLM 5.3 Flash',
+      vendor: 'Zhipu AI',
+      context: 'Lightning Fast · CN Eco',
+      tag: t('Domestic Ecosystem Choice'),
+      tagTone: 'blue',
       description: t(
-        'Praised by engineers worldwide for precise instruction following, architecture design, and complex problem solving.'
+        'Native Chinese cultural understanding, rapid tool invocation, and seamless local developer workflows.'
       ),
-      categories: ['coding'],
-      icon: <Claude.Color size={22} className='shrink-0' />,
-    },
-    {
-      id: 'o3-mini',
-      name: 'o3-mini',
-      vendor: 'OpenAI',
-      context: '200K',
-      tag: t('STEM & Math Specialist'),
-      tagTone: 'amber',
-      description: t(
-        'Cost-effective reasoning powerhouse built for competitive coding, STEM inquiries, and structured generation.'
-      ),
-      categories: ['reasoning', 'coding'],
-      icon: <OpenAI size={22} className='shrink-0' />,
-    },
-    {
-      id: 'qwen-2.5-coder-32b',
-      name: 'Qwen 2.5 Coder 32B',
-      vendor: 'Qwen',
-      context: '128K',
-      tag: t('Open Source Coding Leader'),
-      tagTone: 'cyan',
-      description: t(
-        'Fine-tuned for programming across 90+ languages, competitive with proprietary models at a fraction of the cost.'
-      ),
-      categories: ['coding', 'efficient'],
+      categories: ['cn'],
       icon: <Qwen.Color size={22} className='shrink-0' />,
     },
   ]
