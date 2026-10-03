@@ -28,10 +28,10 @@
 ```
 
 ### 示例速览
-* `feat(home): embed official ZCode setup screenshots with lightbox`
-* `fix(i18n): fix translation namespace structure in 7 locales`
-* `perf(home): eliminate scroll lag by cleaning static will-change`
-* `chore(merge): merge official-main v1.0.0-rc.41 into custom-main`
+* `feat(home): 接入 ZCode 配置截图`
+* `fix(i18n): 修复多语言字典命名空间`
+* `perf(home): 优化首页滚动渲染`
+* `chore(merge): 合并官方 v1.0.0-rc.41 到二开分支`
 
 ---
 
@@ -39,12 +39,12 @@
 
 | Type | 中文含义 | 适用场景 | 系统更新展示徽章 |
 |:---|:---|:---|:---:|
-| **`feat`** | 新功能 / 新特性 | 新增组件、新客户端适配、新模型支持、业务功能落地 | 黑色/主题高亮 `FEAT` |
-| **`fix`** | 缺陷修复 | 解决界面崩溃、i18n 缺失、路由 404、计费与逻辑错误 | 黄色/警示 `FIX` |
-| **`perf`** | 性能优化 | 消除卡顿、减少渲染重绘、内存优化、编译与加载提速 | 绿色/加速 `PERF` |
-| **`chore`** | 日常维护 / 构建工具 | 依赖升级、同步官方上游（merge）、更新构建脚本等 | 灰色/中性 `CHORE` |
-| **`refactor`** | 代码重构 | 内部结构调整，不改变外部业务行为也非修 bug | 灰色/中性 `CHORE` |
-| **`docs`** | 文档更新 | `my_docs/` 规划、架构说明、设计规范撰写 | 灰色/中性 `CHORE` |
+| **`feat`** | 新功能 / 新特性 | 新增组件、客户端适配、模型支持或业务功能 | `FEAT` |
+| **`fix`** | 缺陷修复 | 修复界面、翻译、路由或业务逻辑问题 | `FIX` |
+| **`perf`** | 性能优化 | 减少渲染开销、内存占用或加载时间 | `PERF` |
+| **`chore`** | 日常维护 / 构建工具 | 依赖、构建脚本、配置或上游代码同步 | `CHORE` |
+| **`refactor`** | 代码重构 | 调整内部结构，不改变外部行为 | `CHORE` |
+| **`docs`** | 文档更新 | 更新 `my_docs/`、架构说明或研发规范 | `CHORE` |
 
 ---
 
