@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Claude, DeepSeek, Gemini, Grok, OpenAI, Qwen } from '@lobehub/icons'
+import { Claude, DeepSeek, Grok, OpenAI } from '@lobehub/icons'
 import { Link } from '@tanstack/react-router'
 import { ArrowUpRight, Flame, Layers } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
@@ -26,7 +26,7 @@ import { CopyButton } from '@/components/copy-button'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-type ModelCategory = 'all' | 'claude' | 'gpt' | 'grok-gemini' | 'cn'
+type ModelCategory = 'all' | 'claude' | 'gpt' | 'grok' | 'deepseek'
 
 interface ModelItem {
   id: string
@@ -48,8 +48,8 @@ export function FeaturedModelsWall() {
     { key: 'all', label: t('All Models') },
     { key: 'claude', label: t('Claude Series') },
     { key: 'gpt', label: t('GPT Series') },
-    { key: 'grok-gemini', label: t('Grok & Gemini') },
-    { key: 'cn', label: t('DeepSeek & CN') },
+    { key: 'grok', label: 'Grok' },
+    { key: 'deepseek', label: 'DeepSeek' },
   ]
 
   const models: ModelItem[] = [
@@ -80,6 +80,19 @@ export function FeaturedModelsWall() {
       icon: <OpenAI size={22} className='shrink-0' />,
     },
     {
+      id: 'claude-opus-5-5',
+      name: 'Claude Opus 5.5',
+      vendor: 'Anthropic',
+      context: '2.0x · Extreme Reasoning',
+      tag: t('Highest Complexity Benchmark'),
+      tagTone: 'purple',
+      description: t(
+        'Deep architectural design, nuanced research analysis, and solving mission-critical edge cases.'
+      ),
+      categories: ['claude'],
+      icon: <Claude.Color size={22} className='shrink-0' />,
+    },
+    {
       id: 'gpt-5.6-luna',
       name: 'GPT-5.6 Luna',
       vendor: 'OpenAI',
@@ -102,7 +115,7 @@ export function FeaturedModelsWall() {
       description: t(
         'Quick-witted open thinking, real-time exploration, and complex mathematical logic breakdown.'
       ),
-      categories: ['grok-gemini'],
+      categories: ['grok'],
       icon: <Grok size={22} className='shrink-0' />,
     },
     {
@@ -115,47 +128,8 @@ export function FeaturedModelsWall() {
       description: t(
         'Next-gen reasoning speed with transparent Chain-of-Thought, delivering deep thinking at great value.'
       ),
-      categories: ['cn'],
+      categories: ['deepseek'],
       icon: <DeepSeek.Color size={22} className='shrink-0' />,
-    },
-    {
-      id: 'claude-opus-5-5',
-      name: 'Claude Opus 5.5',
-      vendor: 'Anthropic',
-      context: '2.0x · Extreme Reasoning',
-      tag: t('Highest Complexity Benchmark'),
-      tagTone: 'purple',
-      description: t(
-        'Deep architectural design, nuanced research analysis, and solving mission-critical edge cases.'
-      ),
-      categories: ['claude'],
-      icon: <Claude.Color size={22} className='shrink-0' />,
-    },
-    {
-      id: 'gemini-3.7-flash',
-      name: 'Gemini 3.7 Flash',
-      vendor: 'Google',
-      context: 'Million Token · Sub-second',
-      tag: t('Massive Multi-modal Context'),
-      tagTone: 'cyan',
-      description: t(
-        'Sub-second responses across colossal 1,000,000+ token context windows for full-repo and document intake.'
-      ),
-      categories: ['grok-gemini'],
-      icon: <Gemini.Color size={22} className='shrink-0' />,
-    },
-    {
-      id: 'glm-5.3-flash',
-      name: 'GLM 5.3 Flash',
-      vendor: 'Zhipu AI',
-      context: 'Lightning Fast · CN Eco',
-      tag: t('Domestic Ecosystem Choice'),
-      tagTone: 'blue',
-      description: t(
-        'Native Chinese cultural understanding, rapid tool invocation, and seamless local developer workflows.'
-      ),
-      categories: ['cn'],
-      icon: <Qwen.Color size={22} className='shrink-0' />,
     },
   ]
 
@@ -229,7 +203,7 @@ export function FeaturedModelsWall() {
         </div>
 
         {/* Models Grid */}
-        <div className='mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
+        <div className='mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3'>
           {filteredModels.map((model) => (
             <div
               key={model.id}
