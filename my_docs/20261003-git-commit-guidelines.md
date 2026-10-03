@@ -67,17 +67,29 @@
 
 ---
 
-## 五、 Subject（简短摘要）撰写要点
+## 五、 提交信息语言与文风规范（强制）
 
-1. **祈使语气，直奔主题**：
-   - ✅ `feat(home): add official ZCode logo and quick setup guide`
-   - ❌ `feat: added some icons and fixed stuff`
-2. **语言推荐**：
-   - 英文（推荐与开源生态规范一致，自动化日志双语友好）或清晰简明的中文：
-   - ✅ `feat(models): refine featured models wall to 6 flagship drivers`
-   - ✅ `feat(models): 精简热门模型展示墙为 6 款主力旗舰`
-3. **字数控制**：
-   - 简短摘要建议控制在 **50 ~ 72 个字符** 内，过长的详细说明可换行写在正文（Body）中。
+### 1. 统一使用中文
+为了让中转站管理人员和团队成员最直观地理解变更内容，**Commit 的摘要（Subject）与正文统一使用简体中文编写**：
+* ✅ `feat(home): 接入 ZCode 与 Cherry Studio 官方配置截图及全屏查看`
+* ✅ `fix(i18n): 修复多语言字典命名空间层级`
+* ✅ `perf(home): 移除静态 will-change 优化页面滚动流畅度`
+* ❌ `feat(home): embed official ZCode setup screenshots`（不再使用纯英文）
+
+### 2. 客观克制原则，严禁夸张修饰词
+Commit 信息作为工程与版本历史的技术依据，**必须保持平静、严谨、事实导向**，严禁使用任何主观夸张或营销式的形容词：
+* 🚫 **严禁词汇**：`顶尖`、`极致`、`超强`、`绝美`、`重磅`、`毫无水分`、`假大空`、`神器` 等。
+* 📝 **正反对比示范**：
+  * ❌ 浮夸写法：`feat(models): 引入 6 款绝美顶尖主力模型，毫无水分`
+  * ✅ 客观写法：`feat(models): 调整热门模型展示列表为 6 款主力模型及 3x2 网格`
+  * ❌ 浮夸写法：`perf(home): 彻底消除卡顿，带来极致丝滑体验`
+  * ✅ 客观写法：`perf(home): 移除静态 will-change 样式，优化滚动渲染开销`
+  * ❌ 浮夸写法：`feat(home): 大刀阔斧消融假大空营销模块，负荷骤降 70%`
+  * ✅ 客观写法：`feat(home): 移除 Features 与 Stats 等宣传模块，精简首页结构`
+
+### 3. 字数与格式控制
+* 简短摘要建议控制在 **15 ~ 35 个汉字** 之间；
+* 动词开头，直述改动的“操作 + 对象 + 目的”，不拖泥带水。
 
 ---
 

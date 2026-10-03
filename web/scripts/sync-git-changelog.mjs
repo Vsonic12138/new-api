@@ -26,6 +26,23 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(__dirname, '../../')
 const targetFile = path.resolve(__dirname, '../src/features/system-update/custom-changelog.ts')
 
+// 历史英文提交转为克制简明中文的平滑映射（新提交将直接编写规范中文）
+const legacyEnToZh = {
+  'update auto-generated custom changelog': '自动同步 Git 提交记录至更新日志',
+  'automate changelog generation from git log and establish commit guidelines': '自动化提取 Git 提交记录生成更新日志并制定提交规范',
+  'update custom changelog to v1.0.0-rc.41+custom with latest deliverables': '更新二开更新日志数据',
+  'embed official ZCode & CherryStudio setup screenshots with mode switch and lightbox': '接入 ZCode 与 Cherry Studio 官方配置截图及全屏查看',
+  'use official ZCode icon from z.ai and add to hero supported apps': '使用 ZCode 官方图标并添加到首页支持应用列表',
+  'add visual mockup diagram with lightbox zoom for ZCode, CherryStudio, and DSH': '添加 ZCode、Cherry Studio 与 DSH 界面配置图解',
+  'remove Gemini 3.7 Flash and GLM 5.3 Flash from featured models, optimize 6-card grid': '调整热门模型展示列表为 6 款主力模型及 3x2 网格',
+  'fix tokens route to keys and perform extensive ablation of redundant sections': '修正令牌路由为 /keys 并精简首页冗余模块',
+  'remove external docs, align homepage with relay service, and enhance ZCode guide with accurate origin': '移除外部文档跳转，聚焦中转服务，自适应端点地址',
+  'fix Grok icon reference in featured models wall': '修复热门模型墙中 Grok 图标组件引用',
+  'fix locale namespace structure and align featured models with platform offerings': '修复多语言字典命名空间层级并对齐平台可用模型',
+  'customize branding, copy, and i18n for DaHuang API': '调整首页品牌文案与多语言配置',
+  'eliminate scroll lag, add card shop quick link, client guide, and featured models wall': '优化首页滚动流畅度，添加发卡网链接与客户端配置指南',
+}
+
 function getLatestTag() {
   try {
     return execSync("git describe --tags --match 'v[0-9]*' --abbrev=0", {
@@ -41,7 +58,7 @@ function getLatestTag() {
 function getRecentCommits() {
   try {
     const raw = execSync(
-      "git log -n 25 --pretty=format:'%h|%an|%ad|%s' --date=short",
+      "git log -n 30 --pretty=format:'%h|%an|%ad|%s' --date=short",
       {
         cwd: rootDir,
         encoding: 'utf-8',
@@ -64,23 +81,25 @@ function parseCommitToItem(commit) {
   const match = commit.subject.match(/^(feat|fix|perf|chore|docs|refactor)(?:\(([^)]+)\))?:\s*(.+)$/i)
   let tag = 'chore'
   let scope = ''
-  let subject = commit.subject
+  let rawSubject = commit.subject
 
   if (match) {
     const rawTag = match[1].toLowerCase()
     tag = rawTag === 'perf' ? 'perf' : rawTag === 'feat' ? 'feat' : rawTag === 'fix' ? 'fix' : 'chore'
     scope = match[2] ? match[2].trim() : ''
-    subject = match[3].trim()
+    rawSubject = match[3].trim()
   }
 
-  const title = scope ? `[${scope}] ${subject}` : subject
+  // 优先匹配克制简明的中文映射，没有则直接使用提交原文本
+  const localizedSubject = legacyEnToZh[rawSubject] || rawSubject
+  const title = scope ? `[${scope}] ${localizedSubject}` : localizedSubject
 
   return {
     tag,
     titleEn: title,
     titleZh: title,
-    descEn: `Commit: ${commit.hash} by ${commit.author} on ${commit.date}`,
-    descZh: `提交: ${commit.hash} · 提交者: ${commit.author} (${commit.date})`,
+    descEn: `Commit: ${commit.hash} (${commit.date})`,
+    descZh: `提交: ${commit.hash} · ${commit.date}`,
     commitHash: commit.hash,
   }
 }
@@ -154,25 +173,25 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       {
         tag: 'feat',
         titleEn: 'Card shop recharge banner and redemption guide',
-        titleZh: '钱包充值支持官方发卡网直达横幅与兑换引导',
-        descEn: 'Added a responsive, theme-adaptive official card shop recharge banner with direct access button, plus redemption capsules and full 7-locale i18n support.',
-        descZh: '在钱包充值页引入主题自适应的发卡网自动充值大横幅与直达购买按钮，增加卡密兑换引导胶囊，适配 7 种语言完整国际化。',
+        titleZh: '钱包充值支持发卡网横幅与兑换引导',
+        descEn: 'Added card shop recharge banner with direct access button and redemption guide.',
+        descZh: '在钱包充值页增加发卡网自动充值横幅与直达购买按钮，增加卡密兑换引导胶囊。',
         commitHash: '75d4a0c',
       },
       {
         tag: 'feat',
         titleEn: 'Preset theme aligned to simple-large with 0.5 radius',
-        titleZh: '系统出厂默认主题对齐超大字体简约 (simple-large) 与 0.5 圆角',
-        descEn: 'Set system default customization to simple-large, sans font, 0.5 radius (md), and system dark/light adaptation; fixed underlying data-theme attribute cascade.',
-        descZh: '统一系统默认预设为超大字体简约、Sans 字体、0.5 圆角 (md) 及跟随系统深浅自适应，修复底层主题属性映射，新访客与无痕窗口开箱即用。',
+        titleZh: '系统出厂默认主题调整为简约大字体与 0.5 圆角',
+        descEn: 'Set system default theme to simple-large, sans font, 0.5 radius (md), and auto dark mode.',
+        descZh: '系统默认预设调整为超大字体简约、Sans 字体、0.5 圆角 (md) 及跟随系统深浅模式。',
         commitHash: '3fc6f2f',
       },
       {
         tag: 'feat',
         titleEn: 'Official tiered billing expressions and model pricing',
-        titleZh: '模型官方阶梯计费 (tiered_expr) 与倍率对齐',
-        descEn: 'Aligned gpt-6.1-sol, claude-opus-5-5, claude-opus-5, and claude-sonnet-5 with official tiered billing expressions to accurately calculate cache read/write differentials.',
-        descZh: '对齐 gpt-6.1-sol、claude-opus-5-5、claude-opus-5、claude-sonnet-5 官方动态阶梯计费表达式，精准核算 Prompt Caching 读写差价与官方费率。',
+        titleZh: '模型官方阶梯计费与倍率对齐',
+        descEn: 'Aligned model pricing expressions with official tiered rates for prompt caching reads and writes.',
+        descZh: '对齐常用模型官方动态阶梯计费表达式，核算 Prompt Caching 读写差价与费率。',
         commitHash: '75d4a0c',
       },
     ],
