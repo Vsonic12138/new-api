@@ -34,6 +34,58 @@ export interface CustomReleaseGroup {
 
 export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
   {
+    version: 'v1.0.0-rc.41+custom',
+    upstreamBase: 'v1.0.0-rc.41',
+    date: '2026-10-03',
+    items: [
+      {
+        tag: 'feat',
+        titleEn: 'Upstream baseline v1.0.0-rc.41 sync & merge',
+        titleZh: '同步合并官方 v1.0.0-rc.41 最新基线',
+        descEn:
+          'Merged 19 upstream commits including fine-grained access tokens, step-up authentication, MoeJS task plugin runtime upgrade, and Responses protocol Claude/Gemini tool calling fixes.',
+        descZh:
+          '合并官方 19 个最新提交，包含访问令牌细粒度权限作用域、二次身份核验、MoeJS 任务插件引擎升级，以及 Responses 协议 Claude 与 Gemini 复杂工具调用修复。',
+      },
+      {
+        tag: 'feat',
+        titleEn: 'Homepage relay service overhaul and extensive section ablation',
+        titleZh: '首页中转服务全面重构与冗余模块消融',
+        descEn:
+          'Refocused entire landing page on DaHuang API relay service. Extensively ablated 4 redundant promotional blocks (Features, Stats, HowItWorks, CTA), reducing cognitive load by 70% while improving scroll smoothness.',
+        descZh:
+          '全站全面聚焦“大黄API · 大狗叫”中转服务。深度消融砍掉 Features、Stats、HowItWorks、CTA 等 4 大假大空营销模块，阅读负荷骤降 70%，消除页面滚动掉帧。',
+      },
+      {
+        tag: 'feat',
+        titleEn: 'Curated 6-flagship models matrix with transparent pricing',
+        titleZh: '精选 6 大核心旗舰模型矩阵与真实费率展示',
+        descEn:
+          'Refined featured models to 6 top-tier drivers (claude-sonnet-5, gpt-6.1-sol, claude-opus-5-5, gpt-5.6-luna, grok-4.7, deepseek-v4-flash) with 3x2 grid layout and one-click real model ID copy.',
+        descZh:
+          '移除低质模型，锁定 6 款顶级主力模型（Sonnet 5、Sol、Opus 5.5、Luna、Grok 4.7、DeepSeek V4），优化 3×2 规整布局，真实倍率一目了然，支持一键复制真实 Model ID。',
+      },
+      {
+        tag: 'feat',
+        titleEn: 'Official visual setup guides for ZCode, Cherry Studio, and DSH',
+        titleZh: 'ZCode、Cherry Studio 与 DSH 官方原版图文指引与灯箱放大',
+        descEn:
+          'Embedded official setup screenshots with parameter highlights from ZCode and Cherry Studio documentation, integrated official ZCode logo from z.ai, and added interactive full-screen lightbox zoom.',
+        descZh:
+          '引入智谱官方文档配置原图（带接口地址与 Key 填入指引）及 Cherry Studio 官方截图，接入官方原版 Logo，增加全屏灯箱沉浸式放大；DSH 支持环境变量一行代码免配置启动。',
+      },
+      {
+        tag: 'fix',
+        titleEn: 'Adaptive network origin detection & i18n namespace fix',
+        titleZh: '自适应网络端点智能感知与国际化命名空间修复',
+        descEn:
+          'Fixed incorrect localhost base URL fallback by binding strictly to window.location.origin across public and local LAN environments; standardized all 7 locale files under the translation namespace.',
+        descZh:
+          '彻底修复复制端点回退至 localhost 的问题，优先绑定浏览器真实访问地址，内网 IP 与公网域名 100% 自动对齐；将 7 种语言字典严格归位至 translation 命名空间并修复 /keys 路由。',
+      },
+    ],
+  },
+  {
     version: 'v1.0.0-rc.40+custom',
     upstreamBase: 'v1.0.0-rc.40',
     date: '2026-09-30',

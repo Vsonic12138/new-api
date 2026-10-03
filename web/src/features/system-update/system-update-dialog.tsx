@@ -78,6 +78,8 @@ export function SystemUpdateDialog(props: SystemUpdateDialogProps) {
     statusText = t('No releases found.')
   }
 
+  const isCustomBuild = Boolean(parseSystemVersion(update.currentVersion)?.build)
+
   return (
     <Dialog
       open={props.open}
@@ -177,7 +179,10 @@ export function SystemUpdateDialog(props: SystemUpdateDialogProps) {
         </Alert>
       )}
 
-      <Tabs defaultValue='custom' className='mt-2 w-full'>
+      <Tabs
+        defaultValue={isCustomBuild ? 'custom' : 'upstream'}
+        className='mt-2 w-full'
+      >
         <TabsList className='grid w-full grid-cols-2'>
           <TabsTrigger value='custom'>{t('Custom Changelog')}</TabsTrigger>
           <TabsTrigger value='upstream'>{t('Upstream Release')}</TabsTrigger>
@@ -253,7 +258,7 @@ export function SystemUpdateDialog(props: SystemUpdateDialogProps) {
               </p>
               <p className='text-xs text-muted-foreground'>
                 {t('Official upstream baseline: {{version}}', {
-                  version: 'v1.0.0-rc.40',
+                  version: CUSTOM_CHANGELOG_DATA[0]?.upstreamBase || 'v1.0.0-rc.41',
                 })}
               </p>
               <div>
