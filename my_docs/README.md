@@ -11,6 +11,7 @@
 | 📑 [20261003-commits-history.md](./20261003-commits-history.md) | **二开提交历史归档**<br>包含所有定制提交的 Hash、修改范围、业务背景及分阶段设计说明。 | 追踪二开功能由来源由、排查历史变更、查看变更明细。 |
 | 🌿 [20261003-branches-architecture.md](./20261003-branches-architecture.md) | **分支架构与协作规范**<br>定义 `custom-main`、`official-main` 等分支定位、自动化同步机制与合并 SOP。 | 日常跟进官方主线升级、创建新特性、防冲突开发指引。 |
 | 🚀 [plan/20261003-home-page-enhancement-plan.md](./plan/20261003-home-page-enhancement-plan.md) | **首页现代化重构与体验优化规划**<br>涵盖滑动卡顿根治方案、发卡网直达联动、ZCode & Cherry Studio 快速配置卡片与热门模型展示墙架构设计。 | 指导首页二开落地实施与防合并冲突规范。 |
+| 📝 [20261003-git-commit-guidelines.md](./20261003-git-commit-guidelines.md) | **Git Commit 规范与更新日志自动同步**<br>定义 Conventional Commits 提交格式、模块 Scope、以及自动提取 Git Log 生成二开日志的构建流水线。 | 规范日常 Git 提交、驱动系统更新弹窗自动生成二开日志。 |
 
 ---
 

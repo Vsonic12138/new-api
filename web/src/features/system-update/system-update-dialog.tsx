@@ -227,9 +227,16 @@ export function SystemUpdateDialog(props: SystemUpdateDialogProps) {
                         {item.tag}
                       </Badge>
                       <div className='min-w-0 flex-1'>
-                        <p className='font-medium text-foreground leading-snug'>
-                          {isZh ? item.titleZh : item.titleEn}
-                        </p>
+                        <div className='flex items-center justify-between gap-2'>
+                          <p className='font-medium text-foreground leading-snug'>
+                            {isZh ? item.titleZh : item.titleEn}
+                          </p>
+                          {item.commitHash && (
+                            <span className='font-mono text-[10px] text-muted-foreground/70 rounded border border-border/50 px-1 shrink-0'>
+                              {item.commitHash}
+                            </span>
+                          )}
+                        </div>
                         <p className='text-xs text-muted-foreground mt-0.5 leading-relaxed'>
                           {isZh ? item.descZh : item.descEn}
                         </p>
