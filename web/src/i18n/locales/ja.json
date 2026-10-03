@@ -6995,6 +6995,9 @@
     "max context tokens": "max context tokens",
     "ready out of the box": "ready out of the box",
     "Supports one-click configuration and perfectly adapts to standard OpenAI & Claude protocols.": "Supports one-click configuration and perfectly adapts to standard OpenAI & Claude protocols.",
-    "A dependable and friendly multi-model AI gateway service.": "A dependable and friendly multi-model AI gateway service."
+    "A dependable and friendly multi-model AI gateway service.": "A dependable and friendly multi-model AI gateway service.",
+    "Cluster Endpoints": "Cluster Endpoints",
+    "Auto Network Adapted": "Auto Network Adapted",
+    "One key, standard endpoints. Plug into ZCode, Cherry Studio, or code in seconds.": "One key, standard endpoints. Plug into ZCode, Cherry Studio, or code in seconds."
   }
 }

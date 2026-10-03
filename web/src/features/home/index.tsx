@@ -27,13 +27,9 @@ import { isLikelyHtml } from '@/lib/content-format'
 import { useAuthStore } from '@/stores/auth-store'
 
 import {
-  CTA,
   ClientGuideCard,
-  Features,
   FeaturedModelsWall,
   Hero,
-  HowItWorks,
-  Stats,
 } from './components'
 import { useHomePageContent } from './hooks'
 
@@ -135,10 +131,6 @@ export function Home() {
       <div id='client-guide'>
         <ClientGuideCard />
       </div>
-      <Stats />
-      <Features />
-      <HowItWorks />
-      <CTA isAuthenticated={isAuthenticated} />
       <Footer />
     </PublicLayout>
   )

@@ -6995,6 +6995,9 @@
     "max context tokens": "超长上下文支持",
     "ready out of the box": "零门槛即开即用",
     "Supports one-click configuration and perfectly adapts to standard OpenAI & Claude protocols.": "支持一键接入与主流客户端快速配置，完美适配 OpenAI 与 Claude 多协议标准。",
-    "A dependable and friendly multi-model AI gateway service.": "稳定顺手、认真做事的多模型中转网关。"
+    "A dependable and friendly multi-model AI gateway service.": "稳定顺手、认真做事的多模型中转网关。",
+    "Cluster Endpoints": "集群接入端点",
+    "Auto Network Adapted": "自适应当前网络",
+    "One key, standard endpoints. Plug into ZCode, Cherry Studio, or code in seconds.": "统一密钥与标准端点，秒级接入 ZCode、Cherry Studio 与开发代码。"
   }
 }
