@@ -44,6 +44,22 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     items: [
     {
       "tag": "chore",
+      "titleEn": "[guidelines] 补充中文提交示例与文案要求",
+      "titleZh": "[guidelines] 补充中文提交示例与文案要求",
+      "descEn": "Commit: f50eecb70 (2026-10-03)",
+      "descZh": "提交: f50eecb70 · 2026-10-03",
+      "commitHash": "f50eecb70"
+    },
+    {
+      "tag": "chore",
+      "titleEn": "[changelog] 自动同步客观中文提交记录至更新日志",
+      "titleZh": "[changelog] 自动同步客观中文提交记录至更新日志",
+      "descEn": "Commit: 61721ace2 (2026-10-03)",
+      "descZh": "提交: 61721ace2 · 2026-10-03",
+      "commitHash": "61721ace2"
+    },
+    {
+      "tag": "chore",
       "titleEn": "[guidelines] 统一 Commit 规范为客观克制中文并更新日志脚本",
       "titleZh": "[guidelines] 统一 Commit 规范为客观克制中文并更新日志脚本",
       "descEn": "Commit: 2e903d88b (2026-10-03)",
@@ -105,22 +121,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 9d5f78a62 (2026-10-03)",
       "descZh": "提交: 9d5f78a62 · 2026-10-03",
       "commitHash": "9d5f78a62"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "[home] 修正令牌路由为 /keys 并精简首页冗余模块",
-      "titleZh": "[home] 修正令牌路由为 /keys 并精简首页冗余模块",
-      "descEn": "Commit: d34c47f04 (2026-10-03)",
-      "descZh": "提交: d34c47f04 · 2026-10-03",
-      "commitHash": "d34c47f04"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 移除外部文档跳转，聚焦中转服务，自适应端点地址",
-      "titleZh": "[home] 移除外部文档跳转，聚焦中转服务，自适应端点地址",
-      "descEn": "Commit: cc28fbacb (2026-10-03)",
-      "descZh": "提交: cc28fbacb · 2026-10-03",
-      "commitHash": "cc28fbacb"
     }
 ],
   },
