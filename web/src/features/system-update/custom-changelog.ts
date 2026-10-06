@@ -43,6 +43,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-06',
     items: [
     {
+      "tag": "feat",
+      "titleEn": "[home] 接入 magpie 本地网关客户端并修复首页多语言缺失",
+      "titleZh": "[home] 接入 magpie 本地网关客户端并修复首页多语言缺失",
+      "descEn": "Commit: 47230be4a (2026-10-06)",
+      "descZh": "提交: 47230be4a · 2026-10-06",
+      "commitHash": "47230be4a"
+    },
+    {
       "tag": "chore",
       "titleEn": "[changelog] 在 AGENTS.md 中增补提交规范与更新日志保障要求",
       "titleZh": "[changelog] 在 AGENTS.md 中增补提交规范与更新日志保障要求",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 4924361ae (2026-09-30)",
       "descZh": "提交: 4924361ae · 2026-09-30",
       "commitHash": "4924361ae"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "[auth] reject non-standard roles when creating a user",
-      "titleZh": "[auth] reject non-standard roles when creating a user",
-      "descEn": "Commit: 2506e1b98 (2026-09-30)",
-      "descZh": "提交: 2506e1b98 · 2026-09-30",
-      "commitHash": "2506e1b98"
     }
 ],
   },
