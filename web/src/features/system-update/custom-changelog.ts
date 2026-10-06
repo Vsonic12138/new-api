@@ -43,6 +43,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-06',
     items: [
     {
+      "tag": "chore",
+      "titleEn": "[changelog] 在 AGENTS.md 中增补提交规范与更新日志保障要求",
+      "titleZh": "[changelog] 在 AGENTS.md 中增补提交规范与更新日志保障要求",
+      "descEn": "Commit: 6501e2a74 (2026-10-06)",
+      "descZh": "提交: 6501e2a74 · 2026-10-06",
+      "commitHash": "6501e2a74"
+    },
+    {
       "tag": "fix",
       "titleEn": "[changelog] 扩充日志提取深度并过滤内部构建提交",
       "titleZh": "[changelog] 扩充日志提取深度并过滤内部构建提交",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 2506e1b98 (2026-09-30)",
       "descZh": "提交: 2506e1b98 · 2026-09-30",
       "commitHash": "2506e1b98"
-    },
-    {
-      "tag": "chore",
-      "titleEn": "build: derive custom versions from official tags",
-      "titleZh": "build: derive custom versions from official tags",
-      "descEn": "Commit: 56719a753 (2026-09-30)",
-      "descZh": "提交: 56719a753 · 2026-09-30",
-      "commitHash": "56719a753"
     }
 ],
   },
