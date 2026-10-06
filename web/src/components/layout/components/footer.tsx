@@ -24,6 +24,8 @@ import { useStatus } from '@/hooks/use-status'
 import { useSystemConfig } from '@/hooks/use-system-config'
 import { cn } from '@/lib/utils'
 
+import { isPlainFooterCopyright } from '../lib/footer-copyright'
+
 interface FooterLink {
   text: string
   href: string
@@ -230,12 +232,19 @@ export function Footer(props: FooterProps) {
           props.className
         )}
       >
-        <div className='mx-auto w-full max-w-6xl px-6 py-5'>
+        <div className='mx-auto w-full max-w-7xl px-6 py-5 2xl:max-w-[1440px]'>
           <div className='bg-muted/20 border-border/50 flex flex-col items-center justify-between gap-4 rounded-2xl border px-4 py-4 backdrop-blur-sm sm:flex-row sm:px-5'>
-            <div
-              className='custom-footer text-muted-foreground min-w-0 text-center text-sm sm:text-left'
-              dangerouslySetInnerHTML={{ __html: footerHtml }}
-            />
+            {isPlainFooterCopyright(footerHtml) ? (
+              <p className='custom-footer text-muted-foreground min-w-0 text-center text-sm sm:text-left'>
+                &copy; {currentYear} {displayName}.{' '}
+                {t('footer.defaultCopyright')}
+              </p>
+            ) : (
+              <div
+                className='custom-footer text-muted-foreground min-w-0 text-center text-sm sm:text-left'
+                dangerouslySetInnerHTML={{ __html: footerHtml }}
+              />
+            )}
             <div className='border-border/60 text-muted-foreground/45 flex w-full flex-wrap items-center justify-center gap-x-3 gap-y-1 border-t pt-4 text-xs sm:w-auto sm:justify-end sm:border-t-0 sm:border-l sm:pt-0 sm:pl-5'>
               <LegalLinks />
               <ProjectAttribution currentYear={currentYear} inline />
@@ -250,7 +259,7 @@ export function Footer(props: FooterProps) {
     <footer
       className={cn('border-border/40 relative z-10 border-t', props.className)}
     >
-      <div className='mx-auto max-w-6xl px-6 py-12 md:py-16'>
+      <div className='mx-auto max-w-7xl px-6 py-12 md:py-16 2xl:max-w-[1440px]'>
         <div className='flex flex-col justify-between gap-10 md:flex-row md:gap-16'>
           {/* Brand column */}
           <div className='shrink-0'>
@@ -272,14 +281,14 @@ export function Footer(props: FooterProps) {
           {/* Links columns */}
           {isDemoSiteMode && (
             <div className='grid grid-cols-3 gap-8 md:gap-16'>
-              {displayColumns.map((column, index) => (
-                <div key={index}>
+              {displayColumns.map((column) => (
+                <div key={column.title}>
                   <p className='text-muted-foreground/50 mb-3 text-xs font-medium tracking-wider uppercase'>
                     {t(column.title)}
                   </p>
                   <ul className='space-y-2.5'>
-                    {column.links.map((link, linkIndex) => (
-                      <li key={linkIndex}>
+                    {column.links.map((link) => (
+                      <li key={`${column.title}-${link.href}-${link.text}`}>
                         <FooterLinkItem link={link} />
                       </li>
                     ))}

@@ -32,7 +32,7 @@ import { requireServerSuccess } from '@/lib/server-error-message'
 
 const APP_CONFIGS = {
   claude: {
-    label: 'Claude',
+    label: 'Claude Code',
     defaultName: 'My Claude',
     modelFields: [
       { key: 'model', labelKey: 'Primary Model', required: true },
@@ -46,13 +46,16 @@ const APP_CONFIGS = {
     defaultName: 'My Codex',
     modelFields: [{ key: 'model', labelKey: 'Primary Model', required: true }],
   },
-  gemini: {
-    label: 'Gemini',
-    defaultName: 'My Gemini',
+  opencode: {
+    label: 'OpenCode',
+    defaultName: 'My OpenCode',
     modelFields: [{ key: 'model', labelKey: 'Primary Model', required: true }],
   },
 } as const
 
+// Pi is absent on purpose: this dialog only builds `ccswitch://` links, and CC
+// Switch refuses to import a Pi provider from one ("Pi providers must be added
+// from the Pi provider page"), so offering it here would always fail.
 type AppType = keyof typeof APP_CONFIGS
 
 function getServerAddress(): string {
@@ -75,7 +78,9 @@ function buildCCSwitchURL(
   apiKey: string
 ): string {
   const serverAddress = getServerAddress()
-  const endpoint = app === 'codex' ? `${serverAddress}/v1` : serverAddress
+  // Claude Code reads the Anthropic protocol from the site root; the
+  // OpenAI-compatible clients read it from the /v1 path.
+  const endpoint = app === 'claude' ? serverAddress : `${serverAddress}/v1`
   const params = new URLSearchParams()
   params.set('resource', 'provider')
   params.set('app', app)

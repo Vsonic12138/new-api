@@ -12,6 +12,7 @@
 | 🌿 [20261003-branches-architecture.md](./20261003-branches-architecture.md) | **分支架构与协作规范**<br>定义 `custom-main`、`official-main` 等分支定位、自动化同步机制与合并 SOP。 | 日常跟进官方主线升级、创建新特性、防冲突开发指引。 |
 | 🚀 [plan/20261003-home-page-enhancement-plan.md](./plan/20261003-home-page-enhancement-plan.md) | **首页现代化重构与体验优化规划**<br>涵盖滑动卡顿根治方案、发卡网直达联动、ZCode & Cherry Studio 快速配置卡片与热门模型展示墙架构设计。 | 指导首页二开落地实施与防合并冲突规范。 |
 | 📝 [20261003-git-commit-guidelines.md](./20261003-git-commit-guidelines.md) | **Git Commit 规范与更新日志自动同步**<br>定义 Conventional Commits 提交格式、模块 Scope、以及自动提取 Git Log 生成二开日志的构建流水线。 | 规范日常 Git 提交、驱动系统更新弹窗自动生成二开日志。 |
+| 🚢 [20261005-binary-deployment-guide.md](./20261005-binary-deployment-guide.md) | **生产环境二进制热替换部署指南**<br>记录“本地静态交叉编译 + 宿主机二进制热替换 + 重启容器”的标准流水线、验证检查、秒级回滚与一键脚本。 | 生产服务器版本发布、功能热更新与应急故障回滚。 |
 
 ---
 

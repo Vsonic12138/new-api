@@ -83,7 +83,7 @@ export function CTA(props: CTAProps) {
           {topupLink && (
             <Button
               variant='outline'
-              className='group border-amber-500/30 bg-amber-500/5 hover:border-amber-500/50 hover:bg-amber-500/10 text-amber-600 dark:text-amber-400 rounded-lg'
+              className='group rounded-lg border-amber-500/30 bg-amber-500/5 text-amber-600 hover:border-amber-500/50 hover:bg-amber-500/10 dark:text-amber-400'
               render={
                 <a href={topupLink} target='_blank' rel='noopener noreferrer' />
               }

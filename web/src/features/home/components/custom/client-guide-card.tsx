@@ -24,30 +24,87 @@ import {
   Code2,
   ExternalLink,
   KeyRound,
+  Loader2,
   Maximize2,
   Network,
   Sparkles,
   Terminal,
   X,
-  Layers,
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
 
 import { CopyButton } from '@/components/copy-button'
 import { Button } from '@/components/ui/button'
 import { useStatus } from '@/hooks/use-status'
 import { cn } from '@/lib/utils'
 
+import {
+  buildCCSwitchImportUrl,
+  buildCherryStudioImportUrl,
+  buildMagpieImportUrl,
+  CLIENT_IMPORT_PLACEHOLDER_KEY,
+  preferPublicOrigin,
+  type CCSwitchApp,
+} from '../../lib/client-import'
+
 // 智谱 ZCode 官方原版 Logo
-function ZCodeLogo({ className, size = 20 }: { className?: string; size?: number }) {
+function ZCodeLogo({
+  className,
+  size = 20,
+}: {
+  className?: string
+  size?: number
+}) {
   return (
     <img
       src='/icons/zcode-192.png'
       alt='ZCode'
       width={size}
       height={size}
-      className={cn('rounded-md object-contain shrink-0 shadow-2xs border border-border/40', className)}
+      className={cn(
+        'rounded-md object-contain shrink-0 shadow-2xs border border-border/40',
+        className
+      )}
+    />
+  )
+}
+
+// CC Switch 官方原版 Logo
+function CCSwitchLogo({
+  className,
+  size = 20,
+}: {
+  className?: string
+  size?: number
+}) {
+  return (
+    <img
+      src='/icons/ccswitch.png'
+      alt='CC Switch'
+      width={size}
+      height={size}
+      className={cn('rounded-md object-contain shrink-0', className)}
+    />
+  )
+}
+
+// magpie 官方 Logo
+function MagpieLogo({
+  className,
+  size = 20,
+}: {
+  className?: string
+  size?: number
+}) {
+  return (
+    <img
+      src='/icons/magpie.svg'
+      alt='magpie'
+      width={size}
+      height={size}
+      className={cn('rounded-md object-contain shrink-0', className)}
     />
   )
 }
@@ -55,15 +112,17 @@ function ZCodeLogo({ className, size = 20 }: { className?: string; size?: number
 // 模拟窗口顶栏部件
 function MockWindowHeader({ title, badge }: { title: string; badge?: string }) {
   return (
-    <div className='flex items-center justify-between border-b border-border/50 bg-muted/40 px-3 py-2'>
+    <div className='border-border/50 bg-muted/40 flex items-center justify-between border-b px-3 py-2'>
       <div className='flex items-center gap-1.5'>
         <span className='size-2.5 rounded-full bg-rose-500/70' />
         <span className='size-2.5 rounded-full bg-amber-500/70' />
         <span className='size-2.5 rounded-full bg-emerald-500/70' />
-        <span className='ml-2 text-[11px] font-mono text-muted-foreground'>{title}</span>
+        <span className='text-muted-foreground ml-2 font-mono text-[11px]'>
+          {title}
+        </span>
       </div>
       {badge && (
-        <span className='rounded bg-primary/10 px-1.5 py-0.5 text-[9px] font-medium text-primary'>
+        <span className='bg-primary/10 text-primary rounded px-1.5 py-0.5 text-[9px] font-medium'>
           {badge}
         </span>
       )}
@@ -72,58 +131,94 @@ function MockWindowHeader({ title, badge }: { title: string; badge?: string }) {
 }
 
 // DSH (DeepSeek Harness) 界面模拟图解
-function DshMockupVisual({ openAiBaseUrl }: { openAiBaseUrl: string }) {
+function DshMockupVisual(props: {
+  openAiBaseUrl: string
+  providerName: string
+}) {
+  const { t } = useTranslation()
+
   return (
-    <div className='overflow-hidden rounded-xl border border-border/60 bg-background shadow-xs select-none'>
-      <MockWindowHeader title='DeepSeek Harness (DSH) — Settings' badge='@deepseek-ai/dsh' />
+    <div className='border-border/60 bg-background overflow-hidden rounded-xl border shadow-xs select-none'>
+      <MockWindowHeader
+        title={t('DeepSeek Harness (DSH) — Settings')}
+        badge='@deepseek-ai/dsh'
+      />
       <div className='flex'>
         {/* Mock Sidebar */}
-        <div className='w-24 border-r border-border/40 bg-muted/20 p-2 space-y-1 text-[10px] hidden sm:block'>
-          <div className='px-1.5 py-1 text-muted-foreground/60'>Workspace</div>
-          <div className='px-1.5 py-1 text-muted-foreground/60'>Cordis Kernel</div>
+        <div className='border-border/40 bg-muted/20 hidden w-24 space-y-1 border-r p-2 text-[10px] sm:block'>
+          <div className='text-muted-foreground/60 px-1.5 py-1'>
+            {t('Workspace')}
+          </div>
+          <div className='text-muted-foreground/60 px-1.5 py-1'>
+            Cordis Kernel
+          </div>
           <div className='rounded bg-cyan-500/10 px-1.5 py-1 font-semibold text-cyan-600 dark:text-cyan-400'>
-            Models ⚙️
+            {t('Models')}
           </div>
         </div>
 
         {/* Mock Content */}
-        <div className='flex-1 p-3.5 space-y-2 text-xs'>
-          <div className='flex items-center justify-between border-b border-border/40 pb-2'>
+        <div className='flex-1 space-y-2 p-3.5 text-xs'>
+          <div className='border-border/40 flex items-center justify-between border-b pb-2'>
             <div className='flex items-center gap-1.5'>
               <DeepSeek.Color size={16} />
-              <span className='font-semibold text-foreground text-[11px]'>Custom Agent Model Provider</span>
+              <span className='text-foreground text-[11px] font-semibold'>
+                {t('Custom Agent Model Provider')}
+              </span>
             </div>
-            <span className='rounded-full bg-cyan-500/10 px-1.5 py-0.5 text-[9px] font-medium text-cyan-600 dark:text-cyan-400'>Web / Desktop</span>
+            <span className='rounded-full bg-cyan-500/10 px-1.5 py-0.5 text-[9px] font-medium text-cyan-600 dark:text-cyan-400'>
+              {t('Web / Desktop')}
+            </span>
           </div>
 
           <div className='space-y-2 text-[11px]'>
             <div>
-              <span className='text-[10px] text-muted-foreground'>Provider Name</span>
-              <div className='mt-0.5 rounded border border-border/60 bg-muted/20 px-2 py-1 font-mono text-[10px]'>大黄API</div>
+              <span className='text-muted-foreground text-[10px]'>
+                {t('Provider Name')}
+              </span>
+              <div className='border-border/60 bg-muted/20 mt-0.5 rounded border px-2 py-1 font-mono text-[10px]'>
+                {props.providerName}
+              </div>
             </div>
 
             <div className='relative rounded-lg border-2 border-dashed border-cyan-500/60 bg-cyan-500/5 p-1.5'>
-              <span className='text-[10px] font-semibold text-cyan-600 dark:text-cyan-400'>Base URL (① 兼容 OpenAI 端点)</span>
-              <div className='mt-0.5 truncate font-mono text-[10px] text-foreground'>{openAiBaseUrl}</div>
+              <span className='text-[10px] font-semibold text-cyan-600 dark:text-cyan-400'>
+                {t('Base URL (OpenAI-compatible endpoint)')}
+              </span>
+              <div className='text-foreground mt-0.5 font-mono text-[10px] break-all'>
+                {props.openAiBaseUrl}
+              </div>
             </div>
 
             <div className='relative rounded-lg border-2 border-dashed border-amber-500/60 bg-amber-500/5 p-1.5'>
-              <span className='text-[10px] font-semibold text-amber-600 dark:text-amber-400'>API Key (② 凭据验证)</span>
-              <div className='mt-0.5 font-mono text-[10px] text-muted-foreground'>sk-your-token••••••••</div>
+              <span className='text-[10px] font-semibold text-amber-600 dark:text-amber-400'>
+                {t('API Key (credential)')}
+              </span>
+              <div className='text-muted-foreground mt-0.5 font-mono text-[10px]'>
+                sk-your-token••••••••
+              </div>
             </div>
 
             <div>
-              <span className='text-[10px] text-muted-foreground'>Default Agent Model</span>
+              <span className='text-muted-foreground text-[10px]'>
+                {t('Default Agent Model')}
+              </span>
               <div className='mt-1 flex items-center gap-2'>
-                <span className='rounded bg-muted px-2 py-0.5 font-mono text-[10px] text-foreground font-semibold'>deepseek-v4-flash</span>
-                <span className='text-[10px] text-muted-foreground'>或 claude-sonnet-5</span>
+                <span className='bg-muted text-foreground rounded px-2 py-0.5 font-mono text-[10px] font-semibold'>
+                  deepseek-flash
+                </span>
+                <span className='text-muted-foreground text-[10px]'>
+                  {t('or {{model}}', { model: 'claude-sonnet-5' })}
+                </span>
               </div>
             </div>
           </div>
 
-          <div className='pt-1 border-t border-border/40 flex items-center justify-between text-[10px] font-mono text-muted-foreground'>
+          <div className='border-border/40 text-muted-foreground flex items-center justify-between border-t pt-1 font-mono text-[10px]'>
             <span>CLI: export DEEPSEEK_API_KEY="..."</span>
-            <span className='text-emerald-600 flex items-center gap-1 font-medium'>Ready</span>
+            <span className='flex items-center gap-1 font-medium text-emerald-600'>
+              {t('Ready')}
+            </span>
           </div>
         </div>
       </div>
@@ -131,13 +226,32 @@ function DshMockupVisual({ openAiBaseUrl }: { openAiBaseUrl: string }) {
   )
 }
 
+/** Tabs shown for CC Switch. Pi is guide-only because CC Switch cannot import
+ * a Pi provider from a deep link, so it is not part of CCSwitchApp. */
+type CCSwitchTab = CCSwitchApp | 'pi'
+
 export function ClientGuideCard() {
   const { t } = useTranslation()
   const { status } = useStatus()
   const [currentOrigin, setCurrentOrigin] = useState('')
-  const [activeTab, setActiveTab] = useState<'zcode' | 'cherry' | 'dsh' | 'code'>('zcode')
-  const [zcodeImageMode, setZcodeImageMode] = useState<'openai' | 'custom'>('openai')
-  const [zoomImage, setZoomImage] = useState<{ src: string; title: string } | null>(null)
+  const [activeTab, setActiveTab] = useState<
+    'zcode' | 'cherry' | 'ccswitch' | 'magpie' | 'dsh' | 'code'
+  >('zcode')
+  const [ccSwitchApp, setCcSwitchApp] = useState<CCSwitchTab>('claude')
+  const [ccSwitchImage, setCcSwitchImage] = useState<'add' | 'main'>('add')
+  const [magpieImage, setMagpieImage] = useState<'import' | 'agents' | 'add'>(
+    'import'
+  )
+  const [zcodeImageMode, setZcodeImageMode] = useState<'openai' | 'custom'>(
+    'openai'
+  )
+  const [zoomImage, setZoomImage] = useState<{
+    src: string
+    title: string
+  } | null>(null)
+  const [importingClient, setImportingClient] = useState<
+    'cherry' | 'ccswitch' | 'magpie' | null
+  >(null)
 
   // 严格优先采用浏览器当前的真实访问地址，杜绝 localhost 与内网/公网错配
   useEffect(() => {
@@ -146,24 +260,161 @@ export function ClientGuideCard() {
     }
   }, [])
 
-  const effectiveOrigin =
-    currentOrigin ||
-    (status?.server_address && !status.server_address.includes('localhost')
-      ? (status.server_address as string).replace(/\/+$/, '')
-      : 'https://newapi.vsonic12138.shop')
+  const configuredAddress =
+    typeof status?.server_address === 'string' ? status.server_address : ''
+  const effectiveOrigin = preferPublicOrigin(
+    currentOrigin,
+    configuredAddress,
+    'https://newapi.vsonic12138.shop'
+  )
 
   const openAiBaseUrl = `${effectiveOrigin}/v1`
   const anthropicBaseUrl = effectiveOrigin
 
-  const zcodeRecommendedModels = ['claude-sonnet-5', 'gpt-6.1-sol', 'deepseek-v4-flash']
+  const zcodeRecommendedModels = [
+    'claude-sonnet-5',
+    'claude-opus-5-5',
+    'gpt-6.1-sol',
+    'deepseek-flash',
+  ]
 
-  const cherryConfigData = {
-    name: status?.system_name || '大黄API · 大狗叫',
-    apiHost: openAiBaseUrl,
-    apiKey: 'sk-your-api-token',
-    models: ['claude-sonnet-5', 'gpt-6.1-sol', 'deepseek-v4-flash'],
+  const providerName =
+    (typeof status?.system_name === 'string' && status.system_name.trim()) ||
+    'New API'
+  const importModels = [
+    'claude-sonnet-5',
+    'claude-opus-5-5',
+    'gpt-6.1-sol',
+    'deepseek-flash',
+  ]
+  const ccSwitchModelMap: Record<CCSwitchTab, Record<string, string>> = {
+    claude: {
+      model: 'claude-opus-5-5',
+      opusModel: 'claude-opus-5-5',
+      opus_model: 'claude-opus-5-5',
+      sonnetModel: 'claude-sonnet-5',
+      sonnet_model: 'claude-sonnet-5',
+    },
+    codex: { model: 'gpt-6.1-sol' },
+    opencode: { model: 'gpt-6.1-sol' },
+    pi: { model: 'gpt-6.1-sol' },
   }
-  const cherryDeepLink = `cherrystudio://providers/api-keys?v=1&data=${encodeURIComponent(JSON.stringify(cherryConfigData))}`
+  const ccSwitchAltModels: Record<CCSwitchTab, string[]> = {
+    claude: ['claude-opus-5-5', 'claude-sonnet-5'],
+    codex: ['gpt-6.1-sol', 'gpt-6-sol', 'gpt-5.6-luna'],
+    opencode: ['gpt-6.1-sol', 'claude-sonnet-5', 'deepseek-flash'],
+    pi: ['gpt-6.1-sol', 'deepseek-flash'],
+  }
+  const ccSwitchModel = ccSwitchModelMap[ccSwitchApp].model ?? ''
+
+  const handleCherryImport = () => {
+    setImportingClient('cherry')
+    const link = buildCherryStudioImportUrl({
+      name: providerName,
+      apiHost: effectiveOrigin,
+      apiKey: CLIENT_IMPORT_PLACEHOLDER_KEY,
+    })
+
+    try {
+      window.location.href = link
+    } catch {
+      window.open(link, '_blank')
+    }
+
+    toast.info(
+      t(
+        'One-click import opens Cherry Studio. Replace the placeholder API key with a key from this site before use.'
+      )
+    )
+    setImportingClient(null)
+  }
+
+  const handleCCSwitchImport = () => {
+    // Pi is documented here but has no deep-link import; the button is not
+    // rendered for it, so this guard is only a safety net.
+    if (ccSwitchApp === 'pi') return
+    setImportingClient('ccswitch')
+
+    const link = buildCCSwitchImportUrl({
+      app: ccSwitchApp,
+      name: providerName,
+      origin: effectiveOrigin,
+      models: ccSwitchModelMap[ccSwitchApp],
+      apiKey: CLIENT_IMPORT_PLACEHOLDER_KEY,
+    })
+
+    try {
+      window.location.href = link
+    } catch {
+      window.open(link, '_blank')
+    }
+
+    toast.info(
+      t(
+        'One-click import opens CC Switch and shows a confirmation. Replace the placeholder API key with a key from this site before confirming.'
+      )
+    )
+    setImportingClient(null)
+  }
+
+  const ccSwitchEndpoint =
+    ccSwitchApp === 'claude' ? anthropicBaseUrl : openAiBaseUrl
+  const ccSwitchSupportsImport = ccSwitchApp !== 'pi'
+  const ccSwitchStepText = ccSwitchSupportsImport
+    ? t(
+        'One-click import opens CC Switch and shows a confirmation. Replace the placeholder API key with a key from this site before confirming.'
+      )
+    : t(
+        'Open CC Switch, switch to Pi, and add a provider with the address and model above.'
+      )
+  const ccSwitchShot =
+    ccSwitchImage === 'add'
+      ? {
+          src: '/guides/ccswitch/add-provider.png',
+          title: t('CC Switch add provider screenshot'),
+        }
+      : {
+          src: '/guides/ccswitch/main-window.png',
+          title: t('CC Switch main window screenshot'),
+        }
+
+  const handleMagpieImport = () => {
+    setImportingClient('magpie')
+    const link = buildMagpieImportUrl({
+      name: providerName,
+      origin: effectiveOrigin,
+      models: zcodeRecommendedModels,
+      apiKey: CLIENT_IMPORT_PLACEHOLDER_KEY,
+    })
+    try {
+      window.open(link, '_blank')
+    } catch {
+      window.location.href = link
+    }
+    toast.info(
+      t(
+        'One-click import opens magpie. Confirm the provider parameters to add to your local gateway.'
+      )
+    )
+    setImportingClient(null)
+  }
+
+  const magpieShot =
+    magpieImage === 'import'
+      ? {
+          src: '/guides/magpie/import-provider.png',
+          title: t('magpie import provider screenshot'),
+        }
+      : magpieImage === 'agents'
+        ? {
+            src: '/guides/magpie/agents-models.png',
+            title: t('magpie agents model management screenshot'),
+          }
+        : {
+            src: '/guides/magpie/add-provider.png',
+            title: t('magpie add provider panel screenshot'),
+          }
+
 
   const curlExample = `curl -X POST "${openAiBaseUrl}/chat/completions" \\
   -H "Authorization: Bearer sk-your-token" \\
@@ -171,8 +422,8 @@ export function ClientGuideCard() {
   -d '{"model": "claude-sonnet-5", "messages": [{"role": "user", "content": "Hello!"}]}'`
 
   return (
-    <section className='relative z-10 px-6 py-10 md:py-14'>
-      <div className='mx-auto max-w-5xl'>
+    <section className='relative z-10 px-4 py-10 sm:px-6 md:py-14'>
+      <div className='mx-auto max-w-7xl 2xl:max-w-[1440px]'>
         {/* Section Header */}
         <div className='mb-6 flex flex-col items-center text-center'>
           <div className='mb-2 inline-flex items-center gap-1.5 rounded-full border border-blue-500/20 bg-blue-500/5 px-2.5 py-0.5 text-[11px] font-medium text-blue-600 dark:border-blue-400/20 dark:bg-blue-400/5 dark:text-blue-400'>
@@ -183,19 +434,23 @@ export function ClientGuideCard() {
             {t('Call Once, Ready to Code')}
           </h2>
           <p className='text-muted-foreground mt-1 text-xs sm:text-sm'>
-            {t('One key, standard endpoints. Plug into ZCode, Cherry Studio, DSH, or code in seconds.')}
+            {t(
+              'One key, standard endpoints. Plug into ZCode, Cherry Studio, CC Switch, magpie, DSH, or code in seconds.'
+            )}
           </p>
         </div>
 
         {/* Global Endpoints Bar */}
-        <div className='mb-6 rounded-2xl border border-border/70 bg-muted/20 p-4 backdrop-blur-xs'>
+        <div className='border-border/70 bg-muted/20 mb-6 rounded-2xl border p-4 backdrop-blur-xs'>
           <div className='flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between'>
             <div className='flex items-center gap-2.5'>
-              <Network className='size-4 text-primary shrink-0' />
+              <Network className='text-primary size-4 shrink-0' />
               <div className='flex flex-wrap items-center gap-2 text-xs'>
-                <span className='font-semibold text-foreground'>{t('Cluster Endpoints')}</span>
+                <span className='text-foreground font-semibold'>
+                  {t('Cluster Endpoints')}
+                </span>
                 <span className='inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:text-emerald-400'>
-                  <span className='size-1.5 rounded-full bg-emerald-500 animate-pulse' />
+                  <span className='size-1.5 animate-pulse rounded-full bg-emerald-500' />
                   {t('Auto Network Adapted')}
                 </span>
               </div>
@@ -204,7 +459,7 @@ export function ClientGuideCard() {
             <Button
               variant='default'
               size='sm'
-              className='h-8 gap-1.5 px-3 text-xs font-medium self-start sm:self-auto'
+              className='h-8 gap-1.5 self-start px-3 text-xs font-medium sm:self-auto'
               render={<Link to='/keys' />}
             >
               <KeyRound className='size-3.5' />
@@ -214,30 +469,52 @@ export function ClientGuideCard() {
 
           {/* Endpoints Dual Row */}
           <div className='mt-3 grid gap-2.5 sm:grid-cols-2'>
-            <div className='flex items-center justify-between gap-2 rounded-xl border border-border/50 bg-background/80 px-3 py-2'>
-              <div className='min-w-0'>
-                <span className='text-[10px] font-medium text-muted-foreground'>OpenAI Base URL (/v1)</span>
-                <p className='truncate font-mono text-xs font-semibold text-foreground select-all'>{openAiBaseUrl}</p>
+            <div className='border-border/50 bg-background/80 flex items-center justify-between gap-2 rounded-xl border px-3 py-2'>
+              <div className='min-w-0 flex-1'>
+                <span className='text-muted-foreground text-[10px] font-medium'>
+                  {t('OpenAI Base URL (/v1)')}
+                </span>
+                <p className='text-foreground font-mono text-xs font-semibold break-all select-all'>
+                  {openAiBaseUrl}
+                </p>
               </div>
-              <CopyButton value={openAiBaseUrl} variant='ghost' size='sm' className='h-7 shrink-0 px-2 text-xs' tooltip={t('Copy')} successTooltip={t('Copied!')}>
+              <CopyButton
+                value={openAiBaseUrl}
+                variant='ghost'
+                size='sm'
+                className='h-7 shrink-0 px-2 text-xs'
+                tooltip={t('Copy')}
+                successTooltip={t('Copied!')}
+              >
                 <span>{t('Copy')}</span>
               </CopyButton>
             </div>
 
-            <div className='flex items-center justify-between gap-2 rounded-xl border border-border/50 bg-background/80 px-3 py-2'>
-              <div className='min-w-0'>
-                <span className='text-[10px] font-medium text-muted-foreground'>Anthropic Base URL (Root)</span>
-                <p className='truncate font-mono text-xs font-semibold text-foreground select-all'>{anthropicBaseUrl}</p>
+            <div className='border-border/50 bg-background/80 flex items-center justify-between gap-2 rounded-xl border px-3 py-2'>
+              <div className='min-w-0 flex-1'>
+                <span className='text-muted-foreground text-[10px] font-medium'>
+                  {t('Anthropic Base URL (Root)')}
+                </span>
+                <p className='text-foreground font-mono text-xs font-semibold break-all select-all'>
+                  {anthropicBaseUrl}
+                </p>
               </div>
-              <CopyButton value={anthropicBaseUrl} variant='ghost' size='sm' className='h-7 shrink-0 px-2 text-xs' tooltip={t('Copy')} successTooltip={t('Copied!')}>
+              <CopyButton
+                value={anthropicBaseUrl}
+                variant='ghost'
+                size='sm'
+                className='h-7 shrink-0 px-2 text-xs'
+                tooltip={t('Copy')}
+                successTooltip={t('Copied!')}
+              >
                 <span>{t('Copy')}</span>
               </CopyButton>
             </div>
           </div>
         </div>
 
-        {/* Tab Switcher: ZCode, Cherry Studio, DSH, Cursor/Code */}
-        <div className='flex flex-wrap items-center justify-center gap-1.5 border-b border-border/60 pb-3'>
+        {/* Tab Switcher: ZCode, Cherry Studio, CC Switch, magpie, DSH, Cursor/Code */}
+        <div className='border-border/60 flex flex-wrap items-center justify-center gap-1.5 border-b pb-3'>
           <button
             type='button'
             onClick={() => setActiveTab('zcode')}
@@ -249,7 +526,7 @@ export function ClientGuideCard() {
             )}
           >
             <ZCodeLogo size={16} />
-            <span>ZCode (智谱)</span>
+            <span>{t('ZCode (Zhipu)')}</span>
           </button>
 
           <button
@@ -264,6 +541,34 @@ export function ClientGuideCard() {
           >
             <CherryStudio.Color size={16} />
             <span>Cherry Studio</span>
+          </button>
+
+          <button
+            type='button'
+            onClick={() => setActiveTab('ccswitch')}
+            className={cn(
+              'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all',
+              activeTab === 'ccswitch'
+                ? 'bg-primary text-primary-foreground shadow-xs'
+                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+            )}
+          >
+            <CCSwitchLogo size={16} />
+            <span>CC Switch</span>
+          </button>
+
+          <button
+            type='button'
+            onClick={() => setActiveTab('magpie')}
+            className={cn(
+              'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all',
+              activeTab === 'magpie'
+                ? 'bg-primary text-primary-foreground shadow-xs'
+                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+            )}
+          >
+            <MagpieLogo size={16} />
+            <span>magpie</span>
           </button>
 
           <button
@@ -291,7 +596,7 @@ export function ClientGuideCard() {
             )}
           >
             <Terminal className='size-3.5' />
-            <span>Cursor / cURL / 代码</span>
+            <span>{t('Cursor / cURL / Code')}</span>
           </button>
         </div>
 
@@ -299,66 +604,97 @@ export function ClientGuideCard() {
         {activeTab === 'zcode' && (
           <div className='mt-5 grid gap-5 lg:grid-cols-12 lg:items-start'>
             {/* Left: 步骤指引 & 参数 */}
-            <div className='rounded-2xl border border-border/70 bg-card p-5 shadow-xs lg:col-span-6 space-y-4'>
-              <div className='flex items-center justify-between border-b border-border/40 pb-3'>
+            <div className='border-border/70 bg-card space-y-4 rounded-2xl border p-5 shadow-xs lg:col-span-6'>
+              <div className='border-border/40 flex items-center justify-between border-b pb-3'>
                 <div className='flex items-center gap-2'>
                   <ZCodeLogo size={24} />
                   <div>
-                    <h3 className='text-sm font-bold text-foreground'>ZCode 官方接入步骤</h3>
-                    <p className='text-[11px] text-muted-foreground'>智谱官方 ADE 开发者设置规范</p>
+                    <h3 className='text-foreground text-sm font-bold'>
+                      {t('Official ZCode setup steps')}
+                    </h3>
+                    <p className='text-muted-foreground text-[11px]'>
+                      {t('Zhipu ADE developer settings')}
+                    </p>
                   </div>
                 </div>
                 <Button
                   variant='ghost'
                   size='sm'
-                  className='h-7 gap-1 px-2 text-xs text-muted-foreground'
-                  render={<a href='https://zcode.z.ai/cn/docs/configuration' target='_blank' rel='noopener noreferrer' />}
+                  className='text-muted-foreground h-7 gap-1 px-2 text-xs'
+                  render={
+                    <a
+                      href='https://zcode.z.ai/cn/docs/configuration'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    />
+                  }
                 >
-                  <span>官方文档</span>
+                  <span>{t('Official docs')}</span>
                   <ExternalLink className='size-3' />
                 </Button>
               </div>
 
               {/* 3 Steps */}
               <div className='space-y-2.5 text-xs'>
-                <div className='flex items-start gap-2.5 rounded-xl border border-border/40 bg-muted/20 p-2.5'>
+                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
                   <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-[11px] font-bold text-blue-600 dark:text-blue-400'>
                     1
                   </span>
                   <div>
-                    <span className='font-semibold text-foreground'>{t('Open Settings Menu')}</span>
-                    <p className='text-muted-foreground text-[11px] mt-0.5'>
-                      左下角设置 ⚙️ ➔ <b>模型设置 (Model Settings)</b> ➔ 点击 <b>OpenAI</b> 或 <b>+ 添加供应商</b>。
+                    <span className='text-foreground font-semibold'>
+                      {t('Open Settings Menu')}
+                    </span>
+                    <p className='text-muted-foreground mt-0.5 text-[11px]'>
+                      {t(
+                        'Open the settings gear, then Model Settings, then OpenAI or add a provider.'
+                      )}
                     </p>
                   </div>
                 </div>
 
-                <div className='flex items-start gap-2.5 rounded-xl border border-border/40 bg-muted/20 p-2.5'>
+                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
                   <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-[11px] font-bold text-blue-600 dark:text-blue-400'>
                     2
                   </span>
                   <div className='min-w-0 flex-1'>
-                    <span className='font-semibold text-foreground'>{t('Fill Provider Parameters')}</span>
-                    <p className='text-muted-foreground text-[11px] mt-0.5'>
-                      在右图高亮位置填入接口地址与 API Key：
+                    <span className='text-foreground font-semibold'>
+                      {t('Fill Provider Parameters')}
+                    </span>
+                    <p className='text-muted-foreground mt-0.5 text-[11px]'>
+                      {t(
+                        'Enter the API address and API key in the highlighted fields.'
+                      )}
                     </p>
-                    <div className='mt-2 flex items-center justify-between rounded-lg bg-background p-1.5 text-[10px] font-mono'>
-                      <span className='truncate text-muted-foreground max-w-[160px]'>{openAiBaseUrl}</span>
-                      <CopyButton value={openAiBaseUrl} variant='ghost' size='sm' className='h-5 px-1.5 text-[10px]' tooltip={t('Copy')} successTooltip={t('Copied!')}>
-                        <span>复制</span>
+                    <div className='bg-background mt-2 flex items-center justify-between gap-2 rounded-lg p-2 font-mono text-xs'>
+                      <span className='text-foreground font-semibold break-all select-all'>
+                        {openAiBaseUrl}
+                      </span>
+                      <CopyButton
+                        value={openAiBaseUrl}
+                        variant='ghost'
+                        size='sm'
+                        className='h-6 shrink-0 px-2 text-xs'
+                        tooltip={t('Copy')}
+                        successTooltip={t('Copied!')}
+                      >
+                        <span>{t('Copy')}</span>
                       </CopyButton>
                     </div>
                   </div>
                 </div>
 
-                <div className='flex items-start gap-2.5 rounded-xl border border-border/40 bg-muted/20 p-2.5'>
+                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
                   <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-[11px] font-bold text-blue-600 dark:text-blue-400'>
                     3
                   </span>
                   <div className='min-w-0 flex-1'>
-                    <span className='font-semibold text-foreground'>{t('Register Model & Test Connection')}</span>
-                    <p className='text-muted-foreground text-[11px] mt-0.5'>
-                      在【模型列表】点击 <b>+ 添加模型</b>，输入推荐 ID：
+                    <span className='text-foreground font-semibold'>
+                      {t('Register Model & Test Connection')}
+                    </span>
+                    <p className='text-muted-foreground mt-0.5 text-[11px]'>
+                      {t(
+                        'In the model list, click add model and enter a recommended ID.'
+                      )}
                     </p>
                     <div className='mt-2 flex flex-wrap gap-1'>
                       {zcodeRecommendedModels.map((m) => (
@@ -367,7 +703,7 @@ export function ClientGuideCard() {
                           value={m}
                           variant='outline'
                           size='sm'
-                          className='h-6 rounded px-1.5 text-[10px] font-mono'
+                          className='h-6 rounded px-1.5 font-mono text-[10px]'
                           tooltip={t('Click to copy model ID')}
                           successTooltip={t('Copied!')}
                         >
@@ -382,13 +718,17 @@ export function ClientGuideCard() {
               {/* Caveat */}
               <div className='flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-2.5 py-1.5 text-[11px] text-amber-700 dark:text-amber-300'>
                 <AlertCircle className='size-3.5 shrink-0 text-amber-600 dark:text-amber-400' />
-                <span>官方规范：OpenAI 协议 Base URL 必须包含 /v1；选 Anthropic 协议末尾不要带 /v1。</span>
+                <span>
+                  {t(
+                    'OpenAI Base URL must include /v1. Anthropic Base URL must not end with /v1.'
+                  )}
+                </span>
               </div>
             </div>
 
             {/* Right: 官方原版截图展示与灯箱放大 */}
             <div className='lg:col-span-6'>
-              <div className='rounded-2xl border border-border/70 bg-card p-3 shadow-xs'>
+              <div className='border-border/70 bg-card rounded-2xl border p-3 shadow-xs'>
                 <div className='mb-2 flex items-center justify-between px-1'>
                   <div className='flex items-center gap-1.5'>
                     <button
@@ -396,49 +736,66 @@ export function ClientGuideCard() {
                       onClick={() => setZcodeImageMode('openai')}
                       className={cn(
                         'rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors',
-                        zcodeImageMode === 'openai' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted'
+                        zcodeImageMode === 'openai'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:bg-muted'
                       )}
                     >
-                      OpenAI 协议图解
+                      {t('OpenAI protocol diagram')}
                     </button>
                     <button
                       type='button'
                       onClick={() => setZcodeImageMode('custom')}
                       className={cn(
                         'rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors',
-                        zcodeImageMode === 'custom' ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:bg-muted'
+                        zcodeImageMode === 'custom'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:bg-muted'
                       )}
                     >
-                      DeepSeek / 自定义图解
+                      {t('DeepSeek / custom provider diagram')}
                     </button>
                   </div>
-                  <span className='inline-flex items-center gap-1 text-[10px] text-muted-foreground'>
-                    <Maximize2 className='size-2.5' /> 点击放大
+                  <span className='text-muted-foreground inline-flex items-center gap-1 text-[10px]'>
+                    <Maximize2 className='size-2.5' /> {t('Click to enlarge')}
                   </span>
                 </div>
 
                 <div
-                  className='relative group cursor-pointer overflow-hidden rounded-xl border border-border/60 bg-neutral-950/60'
+                  className='group border-border/60 relative cursor-pointer overflow-hidden rounded-xl border bg-neutral-950/60'
                   onClick={() =>
                     setZoomImage({
-                      src: zcodeImageMode === 'openai' ? '/guides/zcode/zcode-openai.webp' : '/guides/zcode/zcode-custom-provider.webp',
-                      title: zcodeImageMode === 'openai' ? 'ZCode 官方 OpenAI 协议配置截图' : 'ZCode 官方自定义供应商配置截图',
+                      src:
+                        zcodeImageMode === 'openai'
+                          ? '/guides/zcode/zcode-openai.webp'
+                          : '/guides/zcode/zcode-custom-provider.webp',
+                      title:
+                        zcodeImageMode === 'openai'
+                          ? t('ZCode official OpenAI setup screenshot')
+                          : t('ZCode official custom provider screenshot'),
                     })
                   }
                 >
                   <img
-                    src={zcodeImageMode === 'openai' ? '/guides/zcode/zcode-openai.webp' : '/guides/zcode/zcode-custom-provider.webp'}
-                    alt='ZCode 官方配置教程截图'
-                    className='w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.01]'
+                    src={
+                      zcodeImageMode === 'openai'
+                        ? '/guides/zcode/zcode-openai.webp'
+                        : '/guides/zcode/zcode-custom-provider.webp'
+                    }
+                    alt={t('ZCode official setup screenshot')}
+                    className='h-auto w-full object-cover transition-transform duration-300 group-hover:scale-[1.01]'
                   />
-                  <div className='absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center'>
-                    <span className='rounded-full bg-background/90 text-foreground px-3 py-1 text-xs font-medium shadow-md flex items-center gap-1.5 backdrop-blur-xs'>
-                      <Maximize2 className='size-3' /> 点击查看高清大图
+                  <div className='absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100'>
+                    <span className='bg-background/90 text-foreground flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium shadow-md backdrop-blur-xs'>
+                      <Maximize2 className='size-3' />{' '}
+                      {t('Click to view the full image')}
                     </span>
                   </div>
                 </div>
-                <p className='mt-2 text-center text-[10px] text-muted-foreground'>
-                  来源：智谱官方文档配置截图 · 标明了接口地址与 API Key 填入位置
+                <p className='text-muted-foreground mt-2 text-center text-[10px]'>
+                  {t(
+                    'Source: Zhipu official docs. The screenshot marks where to enter the API address and API key.'
+                  )}
                 </p>
               </div>
             </div>
@@ -449,47 +806,101 @@ export function ClientGuideCard() {
         {activeTab === 'cherry' && (
           <div className='mt-5 grid gap-5 lg:grid-cols-12 lg:items-start'>
             {/* Left: 步骤指引 & 快捷导入 */}
-            <div className='rounded-2xl border border-border/70 bg-card p-5 shadow-xs lg:col-span-6 space-y-4'>
-              <div className='flex items-center justify-between border-b border-border/40 pb-3'>
+            <div className='border-border/70 bg-card space-y-4 rounded-2xl border p-5 shadow-xs lg:col-span-6'>
+              <div className='border-border/40 flex items-center justify-between border-b pb-3'>
                 <div className='flex items-center gap-2'>
-                  <div className='flex size-8 items-center justify-center rounded-lg border border-border/50 bg-muted/30'>
+                  <div className='border-border/50 bg-muted/30 flex size-8 items-center justify-center rounded-lg border'>
                     <CherryStudio.Color size={20} />
                   </div>
                   <div>
-                    <h3 className='text-sm font-bold text-foreground'>Cherry Studio 全能桌面客户端</h3>
-                    <p className='text-[11px] text-muted-foreground'>多模型并排对比、知识库 RAG 与思考可视化</p>
+                    <h3 className='text-foreground text-sm font-bold'>
+                      {t('Cherry Studio desktop client')}
+                    </h3>
+                    <p className='text-muted-foreground text-[11px]'>
+                      {t(
+                        'Compare models side by side, with knowledge RAG and visible reasoning.'
+                      )}
+                    </p>
                   </div>
                 </div>
                 <Button
                   variant='outline'
                   size='sm'
-                  className='h-7 gap-1 px-2.5 text-xs text-red-600 border-red-500/30 hover:bg-red-500/5'
-                  render={<a href={cherryDeepLink} target='_blank' rel='noopener noreferrer' />}
+                  disabled={importingClient === 'cherry'}
+                  className='h-7 gap-1 border-red-500/30 px-2.5 text-xs text-red-600 hover:bg-red-500/5'
+                  onClick={handleCherryImport}
                 >
-                  <CheckCircle2 className='size-3' />
-                  <span>一键导入</span>
+                  {importingClient === 'cherry' ? (
+                    <Loader2 className='size-3 animate-spin' />
+                  ) : (
+                    <CheckCircle2 className='size-3' />
+                  )}
+                  <span>{t('One-click import')}</span>
                 </Button>
               </div>
 
               <div className='space-y-2.5 text-xs'>
-                <div className='rounded-xl border border-border/50 bg-muted/20 p-3'>
-                  <span className='text-muted-foreground text-[11px] font-semibold'>手动配置对照表</span>
+                <div className='border-border/50 bg-muted/20 rounded-xl border p-3'>
+                  <span className='text-muted-foreground text-[11px] font-semibold'>
+                    {t('Manual setup reference')}
+                  </span>
                   <div className='mt-2 space-y-1.5 font-mono text-[11px]'>
-                    <div className='flex justify-between'><span className='text-muted-foreground'>服务商类型:</span><span className='font-semibold'>OpenAI 兼容</span></div>
-                    <div className='flex justify-between items-center'><span className='text-muted-foreground'>API Base URL:</span><span className='font-semibold truncate max-w-[160px]'>{openAiBaseUrl}</span></div>
-                    <div className='flex justify-between'><span className='text-muted-foreground'>API Key:</span><span className='text-muted-foreground'>sk-xxxx</span></div>
+                    <div className='flex justify-between'>
+                      <span className='text-muted-foreground'>
+                        {t('Provider type')}:
+                      </span>
+                      <span className='font-semibold'>
+                        {t('OpenAI compatible')}
+                      </span>
+                    </div>
+                    <div className='flex items-center justify-between gap-2'>
+                      <span className='text-muted-foreground shrink-0'>
+                        API Base URL:
+                      </span>
+                      <span className='text-right font-semibold break-all select-all'>
+                        {openAiBaseUrl}
+                      </span>
+                    </div>
+                    <div className='flex justify-between'>
+                      <span className='text-muted-foreground'>API Key:</span>
+                      <span className='text-muted-foreground'>sk-xxxx</span>
+                    </div>
                   </div>
                 </div>
 
-                <div className='rounded-xl border border-border/50 bg-muted/20 p-3 flex flex-col justify-between'>
-                  <span className='text-muted-foreground text-[11px] font-semibold'>推荐模型</span>
-                  <p className='mt-1 text-[11px] text-muted-foreground'>在【管理模型】中添加：`claude-sonnet-5`, `gpt-6.1-sol`, `deepseek-v4-flash`。</p>
-                  <div className='flex items-center gap-2 mt-3'>
-                    <CopyButton value={openAiBaseUrl} variant='outline' size='sm' className='h-7 text-xs flex-1' tooltip={t('Copy')} successTooltip={t('Copied!')}>
-                      <span>复制 Base URL</span>
+                <div className='border-border/50 bg-muted/20 flex flex-col justify-between rounded-xl border p-3'>
+                  <span className='text-muted-foreground text-[11px] font-semibold'>
+                    {t('Recommended models')}
+                  </span>
+                  <p className='text-muted-foreground mt-1 text-[11px]'>
+                    {t('Add these models in model management: {{models}}.', {
+                      models: importModels.join(', '),
+                    })}
+                  </p>
+                  <div className='mt-3 flex items-center gap-2'>
+                    <CopyButton
+                      value={openAiBaseUrl}
+                      variant='outline'
+                      size='sm'
+                      className='h-7 flex-1 text-xs'
+                      tooltip={t('Copy')}
+                      successTooltip={t('Copied!')}
+                    >
+                      <span>{t('Copy Base URL')}</span>
                     </CopyButton>
-                    <Button variant='ghost' size='sm' className='h-7 px-2 text-xs' render={<a href='https://cherry-ai.com' target='_blank' rel='noopener noreferrer' />}>
-                      <span>下载客户端</span>
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      className='h-7 px-2 text-xs'
+                      render={
+                        <a
+                          href='https://cherry-ai.com'
+                          target='_blank'
+                          rel='noopener noreferrer'
+                        />
+                      }
+                    >
+                      <span>{t('Download client')}</span>
                       <ExternalLink className='size-3' />
                     </Button>
                   </div>
@@ -499,105 +910,726 @@ export function ClientGuideCard() {
 
             {/* Right: 官方原版截图展示与灯箱放大 */}
             <div className='lg:col-span-6'>
-              <div className='rounded-2xl border border-border/70 bg-card p-3 shadow-xs'>
+              <div className='border-border/70 bg-card rounded-2xl border p-3 shadow-xs'>
                 <div className='mb-2 flex items-center justify-between px-1'>
-                  <span className='text-xs font-semibold text-foreground'>Cherry Studio 官方模型服务设置截图</span>
-                  <span className='inline-flex items-center gap-1 text-[10px] text-muted-foreground'>
-                    <Maximize2 className='size-2.5' /> 点击放大
+                  <span className='text-foreground text-xs font-semibold'>
+                    {t('Cherry Studio model service screenshot')}
+                  </span>
+                  <span className='text-muted-foreground inline-flex items-center gap-1 text-[10px]'>
+                    <Maximize2 className='size-2.5' /> {t('Click to enlarge')}
                   </span>
                 </div>
 
                 <div
-                  className='relative group cursor-pointer overflow-hidden rounded-xl border border-border/60 bg-neutral-950/60'
+                  className='group border-border/60 relative cursor-pointer overflow-hidden rounded-xl border bg-neutral-950/60'
                   onClick={() =>
                     setZoomImage({
                       src: '/guides/cherry/cherry-3.webp',
-                      title: 'Cherry Studio 官方模型服务设置截图',
+                      title: t('Cherry Studio model service screenshot'),
                     })
                   }
                 >
                   <img
                     src='/guides/cherry/cherry-3.webp'
-                    alt='Cherry Studio 设置截图'
-                    className='w-full h-auto object-cover transition-transform duration-300 group-hover:scale-[1.01]'
+                    alt={t('Cherry Studio settings screenshot')}
+                    className='h-auto w-full object-cover transition-transform duration-300 group-hover:scale-[1.01]'
                   />
-                  <div className='absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center'>
-                    <span className='rounded-full bg-background/90 text-foreground px-3 py-1 text-xs font-medium shadow-md flex items-center gap-1.5 backdrop-blur-xs'>
-                      <Maximize2 className='size-3' /> 点击查看高清大图
+                  <div className='absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100'>
+                    <span className='bg-background/90 text-foreground flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium shadow-md backdrop-blur-xs'>
+                      <Maximize2 className='size-3' />{' '}
+                      {t('Click to view the full image')}
                     </span>
                   </div>
                 </div>
-                <p className='mt-2 text-center text-[10px] text-muted-foreground'>
-                  来源：Cherry Studio 官方文档界面截图 · 展示了 API 密钥与地址填入方式
+                <p className='text-muted-foreground mt-2 text-center text-[10px]'>
+                  {t(
+                    'Source: Cherry Studio docs. The screenshot shows where to enter the API key and address.'
+                  )}
                 </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* Tab 3: DSH (DeepSeek Harness) (左右双栏图文看板) */}
-        {activeTab === 'dsh' && (
+        {activeTab === 'ccswitch' && (
           <div className='mt-5 grid gap-5 lg:grid-cols-12 lg:items-start'>
-            {/* Left: 步骤指引 & 参数 */}
-            <div className='rounded-2xl border border-border/70 bg-card p-5 shadow-xs lg:col-span-6 space-y-4'>
-              <div className='flex items-center justify-between border-b border-border/40 pb-3'>
+            <div className='border-border/70 bg-card space-y-4 rounded-2xl border p-5 shadow-xs lg:col-span-6'>
+              <div className='border-border/40 flex items-center justify-between border-b pb-3'>
                 <div className='flex items-center gap-2'>
-                  <div className='flex size-8 items-center justify-center rounded-lg border border-border/50 bg-muted/30'>
-                    <DeepSeek.Color size={20} />
+                  <div className='border-border/50 bg-muted/30 flex size-8 items-center justify-center rounded-lg border'>
+                    <CCSwitchLogo size={20} />
                   </div>
                   <div>
-                    <h3 className='text-sm font-bold text-foreground'>DeepSeek Harness (DSH)</h3>
-                    <p className='text-[11px] text-muted-foreground'>DeepSeek 官方 Agent Harness 开发者客户端</p>
+                    <h3 className='text-foreground text-sm font-bold'>
+                      {t('CC Switch provider manager')}
+                    </h3>
+                    <p className='text-muted-foreground text-[11px]'>
+                      {t(
+                        'Switch Claude Code, Codex, OpenCode, and Pi providers from one desktop app.'
+                      )}
+                    </p>
                   </div>
                 </div>
-                <span className='rounded bg-cyan-500/10 px-2 py-0.5 text-[10px] font-semibold text-cyan-600 dark:text-cyan-400'>
-                  Web / Desktop
-                </span>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  className='text-muted-foreground h-7 gap-1 px-2 text-xs'
+                  render={
+                    <a
+                      href='https://ccswitch.io/zh/docs?section=getting-started&item=quickstart'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    />
+                  }
+                >
+                  <span>{t('Official docs')}</span>
+                  <ExternalLink className='size-3' />
+                </Button>
+              </div>
+
+              <div className='flex flex-wrap items-center justify-between gap-2'>
+                <div className='flex flex-wrap gap-1.5'>
+                  {(
+                    [
+                      ['claude', 'Claude Code'],
+                      ['codex', 'Codex'],
+                      ['opencode', 'OpenCode'],
+                      ['pi', 'Pi'],
+                    ] as const
+                  ).map(([app, label]) => (
+                    <button
+                      key={app}
+                      type='button'
+                      onClick={() => setCcSwitchApp(app)}
+                      className={cn(
+                        'rounded-lg px-3 py-1.5 text-xs font-medium transition-colors',
+                        ccSwitchApp === app
+                          ? 'bg-primary text-primary-foreground shadow-xs'
+                          : 'bg-muted/60 text-muted-foreground hover:bg-muted hover:text-foreground'
+                      )}
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+                {ccSwitchSupportsImport ? (
+                  <Button
+                    variant='outline'
+                    size='sm'
+                    disabled={importingClient === 'ccswitch'}
+                    className='h-7 gap-1 border-blue-500/30 px-2.5 text-xs text-blue-600 hover:bg-blue-500/5'
+                    onClick={handleCCSwitchImport}
+                  >
+                    {importingClient === 'ccswitch' ? (
+                      <Loader2 className='size-3 animate-spin' />
+                    ) : (
+                      <CheckCircle2 className='size-3' />
+                    )}
+                    <span>{t('One-click import')}</span>
+                  </Button>
+                ) : (
+                  <span className='text-muted-foreground max-w-56 text-end text-[10px] leading-snug'>
+                    {t('Link import is unavailable for Pi.')}
+                  </span>
+                )}
               </div>
 
               <div className='space-y-2.5 text-xs'>
-                <div className='flex items-start gap-2.5 rounded-xl border border-border/40 bg-muted/20 p-2.5'>
+                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
+                  <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-[11px] font-bold text-blue-600 dark:text-blue-400'>
+                    1
+                  </span>
+                  <div className='min-w-0 flex-1'>
+                    <span className='text-foreground font-semibold'>
+                      {t('Add provider')}
+                    </span>
+                    <p className='text-muted-foreground mt-0.5 text-[11px]'>
+                      {t(
+                        'Click the plus button, choose Custom, then fill in the API key and endpoint. A preset only needs an API key.'
+                      )}
+                    </p>
+                    <div className='mt-2 grid gap-2 sm:grid-cols-2'>
+                      <div className='bg-background rounded-lg p-2'>
+                        <div className='flex items-center justify-between'>
+                          <span className='text-muted-foreground text-[10px] font-semibold'>
+                            {t('Imported address')}
+                          </span>
+                          <CopyButton
+                            value={ccSwitchEndpoint}
+                            variant='ghost'
+                            size='sm'
+                            className='h-4 px-1 text-[10px]'
+                            tooltip={t('Copy')}
+                            successTooltip={t('Copied!')}
+                          >
+                            <span>{t('Copy')}</span>
+                          </CopyButton>
+                        </div>
+                        <p className='text-foreground mt-1 font-mono text-[11px] font-semibold break-all select-all'>
+                          {ccSwitchEndpoint}
+                        </p>
+                      </div>
+                      <div className='bg-background rounded-lg p-2'>
+                        <div className='flex items-center justify-between'>
+                          <span className='text-muted-foreground text-[10px] font-semibold'>
+                            {t('Primary Model')}
+                          </span>
+                          {ccSwitchModel && (
+                            <CopyButton
+                              value={ccSwitchModel}
+                              variant='ghost'
+                              size='sm'
+                              className='h-4 px-1 text-[10px]'
+                              tooltip={t('Copy')}
+                              successTooltip={t('Copied!')}
+                            >
+                              <span>{t('Copy')}</span>
+                            </CopyButton>
+                          )}
+                        </div>
+                        <p className='text-foreground mt-1 font-mono text-[11px] font-semibold break-all select-all'>
+                          {ccSwitchModel || t('Choose a model from this site')}
+                        </p>
+                      </div>
+                    </div>
+                    {ccSwitchApp === 'claude' ? (
+                      <div className='mt-2 flex flex-wrap items-center gap-1.5 text-[11px]'>
+                        <span className='text-muted-foreground text-[10px]'>
+                          {t('Recommended models')}:
+                        </span>
+                        <CopyButton
+                          value='claude-opus-5-5'
+                          variant='outline'
+                          size='sm'
+                          className='h-5 rounded px-1.5 font-mono text-[10px]'
+                          tooltip={t('Copy')}
+                          successTooltip={t('Copied!')}
+                        >
+                          <span>opus: claude-opus-5-5</span>
+                        </CopyButton>
+                        <CopyButton
+                          value='claude-sonnet-5'
+                          variant='outline'
+                          size='sm'
+                          className='h-5 rounded px-1.5 font-mono text-[10px]'
+                          tooltip={t('Copy')}
+                          successTooltip={t('Copied!')}
+                        >
+                          <span>sonnet: claude-sonnet-5</span>
+                        </CopyButton>
+                      </div>
+                    ) : (
+                      <div className='mt-2 flex flex-wrap items-center gap-1.5 text-[11px]'>
+                        <span className='text-muted-foreground text-[10px]'>
+                          {t('Recommended models')}:
+                        </span>
+                        {ccSwitchAltModels[ccSwitchApp].map((model) => (
+                          <CopyButton
+                            key={model}
+                            value={model}
+                            variant='outline'
+                            size='sm'
+                            className='h-5 rounded px-1.5 font-mono text-[10px]'
+                            tooltip={t('Copy')}
+                            successTooltip={t('Copied!')}
+                          >
+                            <span>{model}</span>
+                          </CopyButton>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
+                  <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-[11px] font-bold text-blue-600 dark:text-blue-400'>
+                    2
+                  </span>
+                  <div>
+                    <span className='text-foreground font-semibold'>
+                      {ccSwitchSupportsImport
+                        ? t('Confirm the import')
+                        : t('Add the provider in CC Switch')}
+                    </span>
+                    <p className='text-muted-foreground mt-0.5 text-[11px]'>
+                      {ccSwitchStepText}
+                    </p>
+                  </div>
+                </div>
+
+                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
+                  <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-[11px] font-bold text-blue-600 dark:text-blue-400'>
+                    3
+                  </span>
+                  <div>
+                    <span className='text-foreground font-semibold'>
+                      {t('Enable the provider')}
+                    </span>
+                    <p className='text-muted-foreground mt-0.5 text-[11px]'>
+                      {t(
+                        'Click Enable on the provider card. Claude Code applies immediately. For Codex and OpenCode, restart the terminal or CLI. Pi writes the provider config, then you choose the model inside Pi.'
+                      )}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Caveat */}
+              <div className='flex items-center gap-2 rounded-lg border border-blue-500/20 bg-blue-500/5 px-2.5 py-1.5 text-[11px] text-blue-700 dark:text-blue-300'>
+                <AlertCircle className='size-3.5 shrink-0 text-blue-600 dark:text-blue-400' />
+                <span>
+                  {t(
+                    'Claude Code uses the site root with the Anthropic protocol. Codex, OpenCode, and Pi use the OpenAI-compatible /v1 address.'
+                  )}
+                </span>
+              </div>
+            </div>
+
+            <div className='lg:col-span-6'>
+              <div className='border-border/70 bg-card rounded-2xl border p-3 shadow-xs'>
+                <div className='mb-2 flex items-center justify-between px-1'>
+                  <div className='flex gap-1'>
+                    <button
+                      type='button'
+                      onClick={() => setCcSwitchImage('add')}
+                      className={cn(
+                        'rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors',
+                        ccSwitchImage === 'add'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:bg-muted'
+                      )}
+                    >
+                      {t('Add provider')}
+                    </button>
+                    <button
+                      type='button'
+                      onClick={() => setCcSwitchImage('main')}
+                      className={cn(
+                        'rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors',
+                        ccSwitchImage === 'main'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:bg-muted'
+                      )}
+                    >
+                      {t('Main window')}
+                    </button>
+                  </div>
+                  <span className='text-muted-foreground inline-flex items-center gap-1 text-[10px]'>
+                    <Maximize2 className='size-2.5' /> {t('Click to enlarge')}
+                  </span>
+                </div>
+                <div
+                  className='group border-border/60 relative cursor-pointer overflow-hidden rounded-xl border bg-neutral-950/60'
+                  onClick={() => setZoomImage(ccSwitchShot)}
+                >
+                  <img
+                    src={ccSwitchShot.src}
+                    alt={ccSwitchShot.title}
+                    className='h-auto w-full object-cover transition-transform duration-300 group-hover:scale-[1.01]'
+                  />
+                  <div className='absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100'>
+                    <span className='bg-background/90 text-foreground flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium shadow-md backdrop-blur-xs'>
+                      <Maximize2 className='size-3' />{' '}
+                      {t('Click to view the full image')}
+                    </span>
+                  </div>
+                </div>
+                <p className='text-muted-foreground mt-2 text-center text-[10px]'>
+                  {t(
+                    'Source: CC Switch official quick start. The screenshot shows where to add a provider and API key.'
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tab: magpie (菜单栏统一 Agent 本地网关) */}
+        {activeTab === 'magpie' && (
+          <div className='mt-5 grid gap-5 lg:grid-cols-12 lg:items-start'>
+            {/* Left: 步骤指引 & 参数 */}
+            <div className='border-border/70 bg-card space-y-4 rounded-2xl border p-5 shadow-xs lg:col-span-6'>
+              <div className='border-border/40 flex items-center justify-between border-b pb-3'>
+                <div className='flex items-center gap-2'>
+                  <div className='border-border/50 bg-muted/30 flex size-8 items-center justify-center rounded-lg border'>
+                    <MagpieLogo size={20} />
+                  </div>
+                  <div>
+                    <h3 className='text-foreground text-sm font-bold'>
+                      magpie
+                    </h3>
+                    <p className='text-muted-foreground text-[11px]'>
+                      {t(
+                        'Manage models for all Agents in one place. One-click selection via local gateway.'
+                      )}
+                    </p>
+                  </div>
+                </div>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  className='text-muted-foreground h-7 gap-1 px-2 text-xs'
+                  render={
+                    <a
+                      href='https://usemagpie.ai/docs/zh/start'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    />
+                  }
+                >
+                  <span>{t('Official docs')}</span>
+                  <ExternalLink className='size-3' />
+                </Button>
+              </div>
+
+              {/* Supported Agents Chips & One-Click Import */}
+              <div className='flex flex-wrap items-center justify-between gap-2'>
+                <div className='flex flex-wrap gap-1.5'>
+                  {['Claude Code', 'Codex', 'Gemini CLI', 'OpenCode', 'Pi'].map(
+                    (app) => (
+                      <span
+                        key={app}
+                        className='bg-muted/60 text-muted-foreground rounded-lg px-2.5 py-1 text-[11px] font-medium'
+                      >
+                        {app}
+                      </span>
+                    )
+                  )}
+                </div>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  disabled={importingClient === 'magpie'}
+                  className='h-7 gap-1 border-blue-500/30 px-2.5 text-xs text-blue-600 hover:bg-blue-500/5 dark:text-blue-400'
+                  onClick={handleMagpieImport}
+                >
+                  {importingClient === 'magpie' ? (
+                    <Loader2 className='size-3 animate-spin' />
+                  ) : (
+                    <Sparkles className='size-3 text-amber-500' />
+                  )}
+                  <span>{t('One-click import')}</span>
+                </Button>
+              </div>
+
+              {/* Steps */}
+              <div className='space-y-2.5 text-xs'>
+                {/* Step 1 */}
+                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
+                  <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-[11px] font-bold text-blue-600 dark:text-blue-400'>
+                    1
+                  </span>
+                  <div className='min-w-0 flex-1'>
+                    <span className='text-foreground font-semibold'>
+                      {t('Add Provider (One-Click or Manual)')}
+                    </span>
+                    <p className='text-muted-foreground mt-0.5 text-[11px]'>
+                      {t(
+                        'Click One-Click Import to launch magpie, or add a Custom provider in the Providers tab.'
+                      )}
+                    </p>
+
+                    <div className='mt-2 grid gap-1.5 sm:grid-cols-2'>
+                      <div className='bg-background rounded-lg p-2'>
+                        <div className='flex items-center justify-between'>
+                          <span className='text-muted-foreground text-[10px] font-semibold'>
+                            {t('OpenAI Base URL (/v1)')}
+                          </span>
+                          <CopyButton
+                            value={openAiBaseUrl}
+                            variant='ghost'
+                            size='sm'
+                            className='h-4 px-1 text-[10px]'
+                            tooltip={t('Copy')}
+                            successTooltip={t('Copied!')}
+                          >
+                            <span>{t('Copy')}</span>
+                          </CopyButton>
+                        </div>
+                        <p className='text-foreground mt-1 font-mono text-[11px] font-semibold break-all select-all'>
+                          {openAiBaseUrl}
+                        </p>
+                      </div>
+
+                      <div className='bg-background rounded-lg p-2'>
+                        <div className='flex items-center justify-between'>
+                          <span className='text-muted-foreground text-[10px] font-semibold'>
+                            {t('Anthropic Base URL (Root)')}
+                          </span>
+                          <CopyButton
+                            value={anthropicBaseUrl}
+                            variant='ghost'
+                            size='sm'
+                            className='h-4 px-1 text-[10px]'
+                            tooltip={t('Copy')}
+                            successTooltip={t('Copied!')}
+                          >
+                            <span>{t('Copy')}</span>
+                          </CopyButton>
+                        </div>
+                        <p className='text-foreground mt-1 font-mono text-[11px] font-semibold break-all select-all'>
+                          {anthropicBaseUrl}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className='mt-2 flex flex-wrap items-center gap-1.5 text-[11px]'>
+                      <span className='text-muted-foreground text-[10px]'>
+                        {t('Recommended models')}:
+                      </span>
+                      {zcodeRecommendedModels.map((model) => (
+                        <CopyButton
+                          key={model}
+                          value={model}
+                          variant='outline'
+                          size='sm'
+                          className='h-5 rounded px-1.5 font-mono text-[10px]'
+                          tooltip={t('Copy')}
+                          successTooltip={t('Copied!')}
+                        >
+                          <span>{model}</span>
+                        </CopyButton>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Step 2 */}
+                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
+                  <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-[11px] font-bold text-blue-600 dark:text-blue-400'>
+                    2
+                  </span>
+                  <div>
+                    <span className='text-foreground font-semibold'>
+                      {t('Select Models for Each Agent')}
+                    </span>
+                    <p className='text-muted-foreground mt-0.5 text-[11px]'>
+                      {t(
+                        'In the Agents tab, choose your preferred model from DaHuang API for Claude Code, Codex, Gemini CLI, OpenCode, or Pi.'
+                      )}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Step 3 */}
+                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
+                  <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-[11px] font-bold text-blue-600 dark:text-blue-400'>
+                    3
+                  </span>
+                  <div className='min-w-0 flex-1'>
+                    <span className='text-foreground font-semibold'>
+                      {t('Enjoy Unified Local Gateway')}
+                    </span>
+                    <p className='text-muted-foreground mt-0.5 text-[11px]'>
+                      {t(
+                        'magpie runs locally at 127.0.0.1:3425, translating OpenAI, Anthropic, and Gemini protocols with streaming and tool calls.'
+                      )}
+                    </p>
+                    <div className='mt-2 flex items-center gap-2'>
+                      <Button
+                        variant='ghost'
+                        size='sm'
+                        className='h-7 px-2 text-xs'
+                        render={
+                          <a
+                            href='https://usemagpie.ai/zh/#get'
+                            target='_blank'
+                            rel='noopener noreferrer'
+                          />
+                        }
+                      >
+                        <span>{t('Download magpie')}</span>
+                        <ExternalLink className='size-3' />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right: 官方截图展示与放大 */}
+            <div className='lg:col-span-6'>
+              <div className='border-border/70 bg-card rounded-2xl border p-3 shadow-xs'>
+                <div className='mb-2 flex items-center justify-between px-1'>
+                  <div className='flex gap-1'>
+                    <button
+                      type='button'
+                      onClick={() => setMagpieImage('import')}
+                      className={cn(
+                        'rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors',
+                        magpieImage === 'import'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:bg-muted'
+                      )}
+                    >
+                      {t('Import confirmation')}
+                    </button>
+                    <button
+                      type='button'
+                      onClick={() => setMagpieImage('agents')}
+                      className={cn(
+                        'rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors',
+                        magpieImage === 'agents'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:bg-muted'
+                      )}
+                    >
+                      {t('Agent models')}
+                    </button>
+                    <button
+                      type='button'
+                      onClick={() => setMagpieImage('add')}
+                      className={cn(
+                        'rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors',
+                        magpieImage === 'add'
+                          ? 'bg-primary text-primary-foreground'
+                          : 'text-muted-foreground hover:bg-muted'
+                      )}
+                    >
+                      {t('Add provider')}
+                    </button>
+                  </div>
+                  <span className='text-muted-foreground inline-flex items-center gap-1 text-[10px]'>
+                    <Maximize2 className='size-2.5' /> {t('Click to enlarge')}
+                  </span>
+                </div>
+                <div
+                  className='group border-border/60 relative cursor-pointer overflow-hidden rounded-xl border bg-neutral-950/60'
+                  onClick={() => setZoomImage(magpieShot)}
+                >
+                  <img
+                    src={magpieShot.src}
+                    alt={magpieShot.title}
+                    className='h-auto w-full object-cover transition-transform duration-300 group-hover:scale-[1.01]'
+                  />
+                  <div className='absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100'>
+                    <span className='bg-background/90 text-foreground flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium shadow-md backdrop-blur-xs'>
+                      <Maximize2 className='size-3' />{' '}
+                      {t('Click to view the full image')}
+                    </span>
+                  </div>
+                </div>
+                <p className='text-muted-foreground mt-2 text-center text-[10px]'>
+                  {t(
+                    'Source: magpie official docs. Screenshot shows one-click provider import and agent model selection.'
+                  )}
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tab: DSH (DeepSeek Harness) (左右双栏图文看板) */}
+        {activeTab === 'dsh' && (
+          <div className='mt-5 grid gap-5 lg:grid-cols-12 lg:items-start'>
+            {/* Left: 步骤指引 & 参数 */}
+            <div className='border-border/70 bg-card space-y-4 rounded-2xl border p-5 shadow-xs lg:col-span-6'>
+              <div className='border-border/40 flex items-center justify-between border-b pb-3'>
+                <div className='flex items-center gap-2'>
+                  <div className='border-border/50 bg-muted/30 flex size-8 items-center justify-center rounded-lg border'>
+                    <DeepSeek.Color size={20} />
+                  </div>
+                  <div>
+                    <h3 className='text-foreground text-sm font-bold'>
+                      DeepSeek Harness (DSH)
+                    </h3>
+                    <p className='text-muted-foreground text-[11px]'>
+                      {t('DeepSeek official Agent Harness client')}
+                    </p>
+                  </div>
+                </div>
+                <div className='flex items-center gap-2'>
+                  <span className='rounded bg-cyan-500/10 px-2 py-0.5 text-[10px] font-semibold text-cyan-600 dark:text-cyan-400'>
+                    {t('Web / Desktop')}
+                  </span>
+                  <Button
+                    variant='ghost'
+                    size='sm'
+                    className='text-muted-foreground h-7 gap-1 px-2 text-xs'
+                    render={
+                      <a
+                        href='https://github.com/deepseek-ai/deepseek-harness'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                      />
+                    }
+                  >
+                    <span>{t('Official docs')}</span>
+                    <ExternalLink className='size-3' />
+                  </Button>
+                </div>
+              </div>
+
+              <div className='space-y-2.5 text-xs'>
+                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
                   <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 text-[11px] font-bold text-cyan-600 dark:text-cyan-400'>
                     1
                   </span>
                   <div>
-                    <span className='font-semibold text-foreground'>Web 启动或打开桌面端</span>
-                    <p className='text-muted-foreground text-[11px] mt-0.5 font-mono'>
-                      npx @deepseek-ai/dsh web （或打开已安装的 DSH 客户端）
+                    <span className='text-foreground font-semibold'>
+                      {t('Start on the web or open the desktop app')}
+                    </span>
+                    <p className='text-muted-foreground mt-0.5 font-mono text-[11px]'>
+                      npx @deepseek-ai/dsh web (
+                      {t('or open the installed DSH client')})
                     </p>
                   </div>
                 </div>
 
-                <div className='flex items-start gap-2.5 rounded-xl border border-border/40 bg-muted/20 p-2.5'>
+                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
                   <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 text-[11px] font-bold text-cyan-600 dark:text-cyan-400'>
                     2
                   </span>
                   <div className='min-w-0 flex-1'>
-                    <span className='font-semibold text-foreground'>Settings ⚙️ ➔ Models 添加自定义服务商</span>
-                    <p className='text-muted-foreground text-[11px] mt-0.5'>
-                      Base URL 填入本站 OpenAI 兼容地址，API Key 填入大黄API生成的令牌。
+                    <span className='text-foreground font-semibold'>
+                      {t('In Settings, open Models and add a custom provider')}
+                    </span>
+                    <p className='text-muted-foreground mt-0.5 text-[11px]'>
+                      {t(
+                        "Set Base URL to this site's OpenAI-compatible address and API Key to a token from this site."
+                      )}
                     </p>
-                    <div className='mt-2 flex items-center justify-between rounded-lg bg-background p-1.5 text-[10px] font-mono'>
-                      <span className='truncate text-muted-foreground max-w-[160px]'>{openAiBaseUrl}</span>
-                      <CopyButton value={openAiBaseUrl} variant='ghost' size='sm' className='h-5 px-1.5 text-[10px]' tooltip={t('Copy')} successTooltip={t('Copied!')}>
-                        <span>复制</span>
+                    <div className='bg-background mt-2 flex items-center justify-between gap-2 rounded-lg p-2 font-mono text-xs'>
+                      <span className='text-foreground font-semibold break-all select-all'>
+                        {openAiBaseUrl}
+                      </span>
+                      <CopyButton
+                        value={openAiBaseUrl}
+                        variant='ghost'
+                        size='sm'
+                        className='h-6 shrink-0 px-2 text-xs'
+                        tooltip={t('Copy')}
+                        successTooltip={t('Copied!')}
+                      >
+                        <span>{t('Copy')}</span>
                       </CopyButton>
                     </div>
                   </div>
                 </div>
 
-                <div className='flex items-start gap-2.5 rounded-xl border border-border/40 bg-muted/20 p-2.5'>
+                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
                   <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-cyan-500/10 text-[11px] font-bold text-cyan-600 dark:text-cyan-400'>
                     3
                   </span>
                   <div className='min-w-0 flex-1'>
-                    <span className='font-semibold text-foreground'>指定模型 ID</span>
-                    <p className='text-muted-foreground text-[11px] mt-0.5'>
-                      默认推荐填入 <b>deepseek-v4-flash</b>，体验秒级思维链与透明推理。
+                    <span className='text-foreground font-semibold'>
+                      {t('Set the model ID')}
+                    </span>
+                    <p className='text-muted-foreground mt-0.5 text-[11px]'>
+                      {t('The recommended default is {{model}}.', {
+                        model: 'deepseek-flash',
+                      })}
                     </p>
                     <div className='mt-1.5'>
-                      <CopyButton value='deepseek-v4-flash' variant='outline' size='sm' className='h-6 rounded px-1.5 text-[10px] font-mono' tooltip={t('Click to copy model ID')} successTooltip={t('Copied!')}>
-                        <span>deepseek-v4-flash</span>
+                      <CopyButton
+                        value='deepseek-flash'
+                        variant='outline'
+                        size='sm'
+                        className='h-6 rounded px-1.5 font-mono text-[10px]'
+                        tooltip={t('Click to copy model ID')}
+                        successTooltip={t('Copied!')}
+                      >
+                        <span>deepseek-flash</span>
                       </CopyButton>
                     </div>
                   </div>
@@ -605,35 +1637,77 @@ export function ClientGuideCard() {
               </div>
 
               {/* CLI tip */}
-              <div className='rounded-lg border border-border/50 bg-muted/40 p-2 text-[10px] font-mono text-muted-foreground'>
-                # 也可直接注入环境变量启动：<br />
-                <span className='text-foreground'>export DEEPSEEK_API_KEY="sk-your-token"</span><br />
-                <span className='text-foreground'>export OPENAI_BASE_URL="{openAiBaseUrl}"</span>
+              <div className='border-border/50 bg-muted/40 text-muted-foreground rounded-lg border p-2 font-mono text-[10px]'>
+                # {t('You can also start with these environment variables:')}
+                <br />
+                <span className='text-foreground'>
+                  export DEEPSEEK_API_KEY="sk-your-token"
+                </span>
+                <br />
+                <span className='text-foreground'>
+                  export OPENAI_BASE_URL="{openAiBaseUrl}"
+                </span>
+              </div>
+
+              {/* Bottom links */}
+              <div className='border-border/40 flex items-center justify-between border-t pt-3'>
+                <CopyButton
+                  value={openAiBaseUrl}
+                  variant='ghost'
+                  size='sm'
+                  className='h-7 flex-1 text-xs'
+                  tooltip={t('Copy')}
+                  successTooltip={t('Copied!')}
+                >
+                  <span>{t('Copy Base URL')}</span>
+                </CopyButton>
+                <Button
+                  variant='ghost'
+                  size='sm'
+                  className='text-muted-foreground h-7 px-2 text-xs'
+                  render={
+                    <a
+                      href='https://github.com/deepseek-ai/deepseek-harness'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    />
+                  }
+                >
+                  <span>{t('Official Site')}</span>
+                  <ExternalLink className='size-3' />
+                </Button>
               </div>
             </div>
 
             {/* Right: DSH 图解 */}
             <div className='lg:col-span-6'>
-              <div className='rounded-2xl border border-border/70 bg-card p-3 shadow-xs'>
+              <div className='border-border/70 bg-card rounded-2xl border p-3 shadow-xs'>
                 <div className='mb-2 flex items-center justify-between px-1'>
-                  <span className='text-xs font-semibold text-foreground'>DSH (DeepSeek Harness) 界面图解</span>
-                  <span className='inline-flex items-center gap-1 text-[10px] text-muted-foreground'>
-                    <Maximize2 className='size-2.5' /> 点击放大
+                  <span className='text-foreground text-xs font-semibold'>
+                    {t('DSH interface diagram')}
+                  </span>
+                  <span className='text-muted-foreground inline-flex items-center gap-1 text-[10px]'>
+                    <Maximize2 className='size-2.5' /> {t('Click to enlarge')}
                   </span>
                 </div>
                 <div
-                  className='relative group cursor-pointer overflow-hidden rounded-xl border border-border/60'
+                  className='group border-border/60 relative cursor-pointer overflow-hidden rounded-xl border'
                   onClick={() =>
                     setZoomImage({
                       src: 'mockup-dsh',
-                      title: 'DeepSeek Harness (DSH) 界面配置图解',
+                      title: t('DeepSeek Harness interface diagram'),
                     })
                   }
                 >
-                  <DshMockupVisual openAiBaseUrl={openAiBaseUrl} />
+                  <DshMockupVisual
+                    openAiBaseUrl={openAiBaseUrl}
+                    providerName={providerName}
+                  />
                 </div>
-                <p className='mt-2 text-center text-[10px] text-muted-foreground'>
-                  DeepSeek 官方开源 Agent 框架 · 支持 Web、桌面与 CLI 模式
+                <p className='text-muted-foreground mt-2 text-center text-[10px]'>
+                  {t(
+                    'DeepSeek open-source agent framework supports web, desktop, and CLI.'
+                  )}
                 </p>
               </div>
             </div>
@@ -642,23 +1716,41 @@ export function ClientGuideCard() {
 
         {/* Tab 4: Universal Code / cURL */}
         {activeTab === 'code' && (
-          <div className='mt-5 rounded-2xl border border-border/70 bg-card p-5 shadow-xs'>
-            <div className='flex items-center justify-between border-b border-border/40 pb-3'>
+          <div className='border-border/70 bg-card mt-5 rounded-2xl border p-5 shadow-xs'>
+            <div className='border-border/40 flex items-center justify-between border-b pb-3'>
               <div className='flex items-center gap-2'>
                 <Terminal className='size-4 text-violet-500' />
-                <h3 className='text-sm font-bold text-foreground'>Cursor / Claude Code / SDK 代码调用</h3>
+                <h3 className='text-foreground text-sm font-bold'>
+                  {t('Cursor / Claude Code / SDK calls')}
+                </h3>
               </div>
-              <CopyButton value={curlExample} variant='outline' size='sm' className='h-7 gap-1 text-xs' tooltip={t('Copy')} successTooltip={t('Copied!')}>
+              <CopyButton
+                value={curlExample}
+                variant='outline'
+                size='sm'
+                className='h-7 gap-1 text-xs'
+                tooltip={t('Copy')}
+                successTooltip={t('Copied!')}
+              >
                 <Code2 className='size-3' />
-                <span>复制 cURL 命令</span>
+                <span>{t('Copy cURL command')}</span>
               </CopyButton>
             </div>
 
             <div className='mt-3 space-y-2'>
-              <div className='rounded-xl border border-border/50 bg-muted/40 p-3 font-mono text-[11px] text-foreground overflow-x-auto'>
-                <p className='text-muted-foreground'># 环境变量配置 (兼容 Cursor / LangChain / LiteLLM)</p>
-                <p className='mt-1 text-emerald-600 dark:text-emerald-400'>export OPENAI_BASE_URL="{openAiBaseUrl}"</p>
-                <p className='text-emerald-600 dark:text-emerald-400'>export OPENAI_API_KEY="sk-your-token"</p>
+              <div className='border-border/50 bg-muted/40 text-foreground overflow-x-auto rounded-xl border p-3 font-mono text-[11px]'>
+                <p className='text-muted-foreground'>
+                  #{' '}
+                  {t(
+                    'Environment variables for Cursor, LangChain, and LiteLLM'
+                  )}
+                </p>
+                <p className='mt-1 text-emerald-600 dark:text-emerald-400'>
+                  export OPENAI_BASE_URL="{openAiBaseUrl}"
+                </p>
+                <p className='text-emerald-600 dark:text-emerald-400'>
+                  export OPENAI_API_KEY="sk-your-token"
+                </p>
               </div>
             </div>
           </div>
@@ -670,46 +1762,56 @@ export function ClientGuideCard() {
         <div
           role='dialog'
           aria-modal='true'
-          className='fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-200'
+          className='animate-in fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4 backdrop-blur-md duration-200'
           onClick={() => setZoomImage(null)}
         >
           <div
-            className='relative w-full max-w-4xl max-h-[90vh] overflow-y-auto rounded-2xl border border-border/50 bg-card p-4 sm:p-6 shadow-2xl animate-in zoom-in-95 duration-200'
+            className='border-border/50 bg-card animate-in zoom-in-95 relative max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-2xl border p-4 shadow-2xl duration-200 sm:p-6'
             onClick={(e) => e.stopPropagation()}
           >
-            <div className='mb-3 flex items-center justify-between border-b border-border/40 pb-2.5'>
+            <div className='border-border/40 mb-3 flex items-center justify-between border-b pb-2.5'>
               <div className='flex items-center gap-2'>
-                <Sparkles className='size-4 text-primary' />
-                <span className='font-bold text-sm text-foreground'>{zoomImage.title}</span>
+                <Sparkles className='text-primary size-4' />
+                <span className='text-foreground text-sm font-bold'>
+                  {zoomImage.title}
+                </span>
               </div>
               <button
                 type='button'
                 onClick={() => setZoomImage(null)}
-                className='rounded-lg p-1 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors'
+                className='text-muted-foreground hover:bg-muted hover:text-foreground rounded-lg p-1 transition-colors'
               >
                 <X className='size-5' />
               </button>
             </div>
 
             {/* 大图容器 */}
-            <div className='py-2 flex items-center justify-center'>
+            <div className='flex items-center justify-center py-2'>
               {zoomImage.src === 'mockup-dsh' ? (
                 <div className='w-full'>
-                  <DshMockupVisual openAiBaseUrl={openAiBaseUrl} />
+                  <DshMockupVisual
+                    openAiBaseUrl={openAiBaseUrl}
+                    providerName={providerName}
+                  />
                 </div>
               ) : (
                 <img
                   src={zoomImage.src}
                   alt={zoomImage.title}
-                  className='w-full h-auto max-h-[75vh] rounded-xl object-contain shadow-md'
+                  className='h-auto max-h-[75vh] w-full rounded-xl object-contain shadow-md'
                 />
               )}
             </div>
 
-            <div className='mt-3 flex items-center justify-between text-xs text-muted-foreground border-t border-border/40 pt-2.5'>
-              <span>点击遮罩层或右上角关闭</span>
-              <Button variant='outline' size='sm' className='h-7 text-xs' onClick={() => setZoomImage(null)}>
-                完成查看
+            <div className='text-muted-foreground border-border/40 mt-3 flex items-center justify-between border-t pt-2.5 text-xs'>
+              <span>{t('Click the backdrop or the close button')}</span>
+              <Button
+                variant='outline'
+                size='sm'
+                className='h-7 text-xs'
+                onClick={() => setZoomImage(null)}
+              >
+                {t('Done')}
               </Button>
             </div>
           </div>

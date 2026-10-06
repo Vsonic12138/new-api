@@ -55,7 +55,7 @@ export function Hero(props: HeroProps) {
     return (
       <Button
         variant='outline'
-        className='group border-amber-500/30 bg-amber-500/5 hover:border-amber-500/50 hover:bg-amber-500/10 text-amber-600 dark:text-amber-400 inline-flex h-11 items-center gap-1.5 rounded-lg px-4 text-sm font-medium transition-colors shadow-xs'
+        className='group inline-flex h-11 items-center gap-1.5 rounded-lg border-amber-500/30 bg-amber-500/5 px-4 text-sm font-medium text-amber-600 shadow-xs transition-colors hover:border-amber-500/50 hover:bg-amber-500/10 dark:text-amber-400'
         render={
           <a href={topupLink} target='_blank' rel='noopener noreferrer' />
         }
@@ -98,7 +98,7 @@ export function Hero(props: HeroProps) {
         className='absolute inset-0 -z-10 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_30%,black_20%,transparent_100%)] bg-[size:4rem_4rem] opacity-[0.08]'
       />
 
-      <div className='mx-auto grid max-w-6xl grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-8'>
+      <div className='mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-8 2xl:max-w-[1440px]'>
         {/* Left Column: Title, description, action buttons and application support */}
         <div className='flex flex-col items-start text-left lg:col-span-6'>
           {/* Top Pill Badge */}
@@ -115,7 +115,9 @@ export function Hero(props: HeroProps) {
                 <span className='relative inline-flex size-1.5 rounded-full bg-amber-500 dark:bg-amber-400' />
               </span>
               <span>{t('Instant Card Shop Available')}</span>
-              <span className='text-amber-500/40 dark:text-amber-400/40'>|</span>
+              <span className='text-amber-500/40 dark:text-amber-400/40'>
+                |
+              </span>
               <span className='inline-flex items-center gap-1 opacity-90 group-hover:opacity-100'>
                 <span>{t('Buy Credits')}</span>
                 <ExternalLink className='size-2.5 transition-transform duration-200 group-hover:translate-x-0.5' />
@@ -138,9 +140,11 @@ export function Hero(props: HeroProps) {
             className='landing-animate-fade-up text-[clamp(2.25rem,4.5vw,3.25rem)] leading-[1.15] font-bold tracking-tight'
             style={{ animationDelay: '60ms' }}
           >
-            <span>{status?.system_name || t('DaHuang API · Big Dog Bark')}</span>
+            <span>
+              {status?.system_name || t('DaHuang API · Big Dog Bark')}
+            </span>
             <br />
-            <span className='bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 dark:from-amber-400 dark:via-orange-400 dark:to-yellow-400 bg-clip-text text-transparent'>
+            <span className='bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 bg-clip-text text-transparent dark:from-amber-400 dark:via-orange-400 dark:to-yellow-400'>
               {t('A Dependable & Friendly AI Gateway')}
             </span>
           </h1>
@@ -217,7 +221,7 @@ export function Hero(props: HeroProps) {
                 <img
                   src='/icons/zcode-192.png'
                   alt='ZCode'
-                  className='size-5 shrink-0 rounded-md object-contain border border-border/40'
+                  className='border-border/40 size-5 shrink-0 rounded-md border object-contain'
                 />
                 <span>ZCode</span>
               </a>
@@ -241,23 +245,26 @@ export function Hero(props: HeroProps) {
                 className='group border-border/40 bg-muted/15 text-foreground/80 hover:border-border hover:bg-muted/30 hover:text-foreground flex items-center gap-3 rounded-full border px-5 py-2.5 text-sm font-medium shadow-[0_1px_2.5px_rgba(0,0,0,0.01)] backdrop-blur-xs transition-all duration-300 hover:scale-[1.02]'
               >
                 <img
-                  src='https://ccswitch.io/favicon.png'
+                  src='/icons/ccswitch.png'
                   alt='CC Switch'
                   className='size-6 shrink-0 rounded-md object-contain'
-                  onError={(e) => {
-                    // Fallback to a styled text avatar if the remote favicon fails to load in sandbox or local environments
-                    e.currentTarget.style.display = 'none'
-                    const fallback = e.currentTarget.nextSibling as HTMLElement
-                    if (fallback) fallback.style.display = 'flex'
-                  }}
                 />
-                <span
-                  style={{ display: 'none' }}
-                  className='size-6 shrink-0 items-center justify-center rounded-md bg-blue-500/10 text-[10px] font-bold text-blue-600 dark:bg-blue-400/10 dark:text-blue-400'
-                >
-                  CC
-                </span>
                 <span>CC Switch</span>
+              </a>
+
+              {/* magpie */}
+              <a
+                href='https://usemagpie.ai/zh/'
+                target='_blank'
+                rel='noopener noreferrer'
+                className='group border-border/40 bg-muted/15 text-foreground/80 hover:border-border hover:bg-muted/30 hover:text-foreground flex items-center gap-2.5 rounded-full border px-4 py-2 text-sm font-medium shadow-[0_1px_2.5px_rgba(0,0,0,0.01)] backdrop-blur-xs transition-all duration-300 hover:scale-[1.02]'
+              >
+                <img
+                  src='/icons/magpie.svg'
+                  alt='magpie'
+                  className='size-5 shrink-0 object-contain'
+                />
+                <span>magpie</span>
               </a>
 
               {/* "更多" */}

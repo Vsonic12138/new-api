@@ -119,10 +119,10 @@ export function FeaturedModelsWall() {
       icon: <Grok size={22} className='shrink-0' />,
     },
     {
-      id: 'deepseek-v4-flash',
-      name: 'DeepSeek V4 Flash',
+      id: 'deepseek-flash',
+      name: 'DeepSeek Flash',
       vendor: 'DeepSeek',
-      context: '1.27x · CoT Flash',
+      context: '1.27x · V4.1 Flash',
       tag: t('Open Weights Wonder'),
       tagTone: 'cyan',
       description: t(
@@ -150,8 +150,8 @@ export function FeaturedModelsWall() {
   }
 
   return (
-    <section className='relative z-10 px-6 py-12 md:py-16'>
-      <div className='mx-auto max-w-6xl'>
+    <section className='relative z-10 px-4 py-12 sm:px-6 md:py-16'>
+      <div className='mx-auto max-w-7xl 2xl:max-w-[1440px]'>
         {/* Section Header */}
         <div className='flex flex-col items-center justify-between gap-4 md:flex-row md:items-end'>
           <div>
@@ -181,7 +181,7 @@ export function FeaturedModelsWall() {
         </div>
 
         {/* Categories Tab Filter */}
-        <div className='mt-8 flex flex-wrap items-center gap-2 border-b border-border/50 pb-4'>
+        <div className='border-border/50 mt-8 flex flex-wrap items-center gap-2 border-b pb-4'>
           {categories.map((cat) => {
             const isActive = activeCategory === cat.key
             return (
@@ -207,16 +207,16 @@ export function FeaturedModelsWall() {
           {filteredModels.map((model) => (
             <div
               key={model.id}
-              className='group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/70 bg-card p-5 shadow-xs transition-all duration-300 hover:border-foreground/20 hover:shadow-md'
+              className='group border-border/70 bg-card hover:border-foreground/20 relative flex flex-col justify-between overflow-hidden rounded-2xl border p-5 shadow-xs transition-all duration-300 hover:shadow-md'
             >
               <div>
                 {/* Header with Icon and Context Window Badge */}
                 <div className='flex items-center justify-between'>
-                  <div className='flex size-9 items-center justify-center rounded-xl border border-border/60 bg-muted/20'>
+                  <div className='border-border/60 bg-muted/20 flex size-9 items-center justify-center rounded-xl border'>
                     {model.icon}
                   </div>
                   <div className='flex items-center gap-1.5'>
-                    <span className='rounded-md border border-border/50 bg-muted/40 px-1.5 py-0.5 font-mono text-[10px] font-medium text-muted-foreground'>
+                    <span className='border-border/50 bg-muted/40 text-muted-foreground rounded-md border px-1.5 py-0.5 font-mono text-[10px] font-medium'>
                       {model.context}
                     </span>
                   </div>
@@ -225,10 +225,10 @@ export function FeaturedModelsWall() {
                 {/* Model Title */}
                 <div className='mt-3.5'>
                   <div className='flex items-baseline justify-between'>
-                    <h3 className='text-sm font-bold tracking-tight text-foreground'>
+                    <h3 className='text-foreground text-sm font-bold tracking-tight'>
                       {model.name}
                     </h3>
-                    <span className='text-[10px] font-medium text-muted-foreground/70'>
+                    <span className='text-muted-foreground/70 text-[10px] font-medium'>
                       {model.vendor}
                     </span>
                   </div>
@@ -249,10 +249,10 @@ export function FeaturedModelsWall() {
               </div>
 
               {/* Model ID Snippet & Copy Action */}
-              <div className='mt-4 flex items-center justify-between rounded-xl border border-border/50 bg-muted/30 px-2.5 py-1.5'>
-                <div className='flex items-center gap-1.5 min-w-0'>
-                  <Layers className='size-3 text-muted-foreground/70 shrink-0' />
-                  <span className='truncate font-mono text-[11px] font-medium text-foreground select-all'>
+              <div className='border-border/50 bg-muted/30 mt-4 flex items-center justify-between rounded-xl border px-2.5 py-1.5'>
+                <div className='flex min-w-0 items-center gap-1.5'>
+                  <Layers className='text-muted-foreground/70 size-3 shrink-0' />
+                  <span className='text-foreground truncate font-mono text-[11px] font-medium select-all'>
                     {model.id}
                   </span>
                 </div>
@@ -261,7 +261,7 @@ export function FeaturedModelsWall() {
                   value={model.id}
                   variant='ghost'
                   size='icon'
-                  className='size-7 text-muted-foreground hover:text-foreground'
+                  className='text-muted-foreground hover:text-foreground size-7'
                   tooltip={t('Copy model ID')}
                   successTooltip={t('Copied!')}
                 />

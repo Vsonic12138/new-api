@@ -16,7 +16,14 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Gift, ExternalLink, Loader2, Receipt, ShoppingBag, WalletCards } from 'lucide-react'
+import {
+  Gift,
+  ExternalLink,
+  Loader2,
+  Receipt,
+  ShoppingBag,
+  WalletCards,
+} from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 
@@ -488,17 +495,19 @@ export function RechargeFormCard({
           )}
         </div>
       ) : topupLink ? (
-        <div className='flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-xl border border-primary/20 bg-primary/5 dark:bg-primary/10 p-4 sm:p-5 transition-colors'>
-          <div className='flex items-start sm:items-center gap-3'>
+        <div className='border-primary/20 bg-primary/5 dark:bg-primary/10 flex flex-col justify-between gap-4 rounded-xl border p-4 transition-colors sm:flex-row sm:items-center sm:p-5'>
+          <div className='flex items-start gap-3 sm:items-center'>
             <IconBadge tone='primary' size='title'>
               <ShoppingBag />
             </IconBadge>
             <div className='space-y-0.5'>
-              <h4 className='text-sm font-semibold tracking-tight text-foreground'>
+              <h4 className='text-foreground text-sm font-semibold tracking-tight'>
                 {t('Official Card Shop Available')}
               </h4>
-              <p className='text-xs text-muted-foreground leading-relaxed'>
-                {t('Purchase redemption codes online with automatic delivery, then redeem below.')}
+              <p className='text-muted-foreground text-xs leading-relaxed'>
+                {t(
+                  'Purchase redemption codes online with automatic delivery, then redeem below.'
+                )}
               </p>
             </div>
           </div>
@@ -572,16 +581,16 @@ export function RechargeFormCard({
             </Button>
           </div>
           {topupLink && (
-            <div className='flex flex-wrap items-center justify-between gap-2 rounded-lg border border-border/70 bg-muted/40 dark:bg-muted/20 px-3 py-2 text-xs'>
-              <span className='flex items-center gap-1.5 font-medium text-muted-foreground'>
-                <Gift className='size-3.5 text-warning' />
+            <div className='border-border/70 bg-muted/40 dark:bg-muted/20 flex flex-wrap items-center justify-between gap-2 rounded-lg border px-3 py-2 text-xs'>
+              <span className='text-muted-foreground flex items-center gap-1.5 font-medium'>
+                <Gift className='text-warning size-3.5' />
                 {t('Need a redemption code?')}
               </span>
               <a
                 href={topupLink}
                 target='_blank'
                 rel='noopener noreferrer'
-                className='inline-flex items-center gap-1 font-semibold text-primary underline underline-offset-4 hover:opacity-80'
+                className='text-primary inline-flex items-center gap-1 font-semibold underline underline-offset-4 hover:opacity-80'
               >
                 {t('Get one here')}
                 <ExternalLink className='size-3' />
