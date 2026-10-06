@@ -211,7 +211,15 @@
 
 ## 四、协作与提交
 
-- 提交信息清晰、符合项目约定，描述变更内容与原因，中英文统一即可。
+- **Git Commit 规范（强制）**：必须严格遵循 Conventional Commits 规范与 [`my_docs/20261003-git-commit-guidelines.md`](../../my_docs/20261003-git-commit-guidelines.md)。格式为 `<type>(<scope>): <subject>`：
+  - **Type**：`feat`（新功能）、`fix`（缺陷修复）、`perf`（性能优化）、`chore`（构建/维护）、`refactor`（代码重构）、`docs`（文档更新）。
+  - **Scope**：`home`、`relay`、`pricing`、`wallet`、`keys`、`mail`、`auth`、`i18n`、`system-update`、`changelog`、`theme` 等。
+  - **文案与风格（客观克制）**：Commit 摘要统一使用**简体中文**编写，坚持**客观克制**原则，严禁使用“顶尖、极致、超强、绝美、毫无水分、神器”等主观夸张或营销修饰词；字数控制在 15~35 汉字之间，直接表述动词+对象+目的。
+- **二开更新日志同步保障（“这里”必须展示提交日志）**：
+  - 前端【系统更新】弹窗的“二开更新日志”由 `scripts/sync-git-changelog.mjs` 自动从 Git 提交历史中提取并生成 `src/features/system-update/custom-changelog.ts`。
+  - **提交与构建时序**：必须在完成代码修改并执行 `git commit` **之后**，再执行打包构建或部署脚本；否则构建时 `git log` 中尚无本次提交，导致更新日志漏更。
+  - **同步命令**：提交后可运行 `bun run update:changelog` 或通过构建脚本自动执行同步；内部同步更新日志的提交统一命名为 `chore(changelog): ...`（该类型会被自动过滤，不挤占面向用户的业务日志展示槽位）。
+  - **核对验收**：部署或交付前，必须确认 `custom-changelog.ts` 中最新条目与真实提交记录匹配，确保用户在系统更新弹窗中能即时看到本次变更记录。
 - 变更需经过代码审查，符合本文档规范，并关注质量、性能与安全。
 - UI 变更完成前必须检查新增组件、基础组件导入及手写交互是否绕过已有业务封装；发现重复实现应在本次变更范围内改为复用。保留的新实现需在变更说明中说明能力缺口，typecheck、lint 和测试通过不能替代此项检查。
 - 重大功能或规范变更时更新相关文档与 `AGENTS.md`。

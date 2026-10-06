@@ -166,6 +166,24 @@ Tasks that touch none of these (for example unrelated frontend work, authenticat
 - **Number formatting and Intl locales (mandatory):** Reuse `@/lib/format` for ordinary number/compact-number display and `@/lib/currency` for monetary values; preserve each formatter's precision and unit semantics. Interface language codes such as `zhCN` / `zhTW` are NOT valid Intl locales. Any interface language passed to `Intl.*`, `toLocaleString` / `toLocaleDateString` / `toLocaleTimeString`, or a locale-aware formatting helper MUST first pass through `toIntlLocale` from `@/i18n/languages`. Do not duplicate language mappings or pass raw language codes through aliases. Follow `web/AGENTS.md` for the lint rule and regression requirements.
 - Follow `web/AGENTS.md` for detailed frontend conventions, including TypeScript, component structure, styling, accessibility, testing, and build checks.
 
+### Git Commit and Custom Changelog (Mandatory)
+
+All commits and custom changelog updates in this repository MUST strictly follow the specifications below and [`my_docs/20261003-git-commit-guidelines.md`](my_docs/20261003-git-commit-guidelines.md). The user-facing "System Update" (系统更新) dialog's 二开更新日志 is automatically parsed from Git commit history via `web/scripts/sync-git-changelog.mjs`. Any agent making changes MUST ensure commit messages are compliant and that the latest commit log is visible in the UI.
+
+- **Conventional Commits format:** All commit messages MUST strictly follow `<type>(<scope>): <subject>`.
+  - **Type:** Must be one of `feat` (new features), `fix` (bug fixes), `perf` (performance improvements), `chore` (build/maintenance/dependency updates), `refactor` (code refactoring), or `docs` (documentation updates).
+  - **Scope:** Must use a standardized module scope identifier matching the affected area: `home`, `relay`, `pricing`, `wallet`, `keys`, `mail`, `auth`, `i18n`, `system-update`, `changelog`, `theme`, `ci`, `merge`, etc.
+  - **Subject language (Mandatory):** MUST use Simplified Chinese (简体中文). Do NOT write English-only subjects for new commits.
+  - **Subject tone (Strictly Enforced):** MUST be calm, objective, restrained, and factual (客观克制原则). MUST NOT use exaggerated, emotional, or marketing words (e.g. 严禁使用“顶尖、极致、超强、绝美、重磅、毫无水分、神器”等主观词汇).
+  - **Subject length & structure:** Concise summary between 15 and 35 Chinese characters, directly stating the action, object, and purpose (e.g. `feat(mail): 增加大黄定制卡片式邮件模版与防拦截提示`).
+
+- **Changelog visibility assurance ("这里" 必须展示提交日志):**
+  - The frontend "系统更新" dialog reads from `web/src/features/system-update/custom-changelog.ts`, generated from Git history by `web/scripts/sync-git-changelog.mjs`.
+  - **Commit-before-build sequencing:** When completing code changes or preparing a deployment, git commits MUST be created BEFORE building the frontend (`bun run build`) or running deployment scripts (`./scripts/deploy-remote.sh`). If build is executed before commit, `git log` will not contain the new commit, causing the changelog in the deployed bundle to miss the update.
+  - **Changelog synchronization:** After committing functional or UI changes, ensure `cd web && bun run update:changelog` (or `bun run build` / `./scripts/deploy-remote.sh`) is run so the new commit is parsed and written to `custom-changelog.ts`.
+  - **Automated commit filtering:** Internal commits updating the changelog itself MUST be prefixed with `chore(changelog): ...`. The extraction script automatically filters these out to prevent crowding out user-facing feature commits.
+  - **Verification gate:** Before concluding a task or deployment, verify that `web/src/features/system-update/custom-changelog.ts` contains the latest commit hash and subject, ensuring users can see the new commit in the "系统更新" dialog.
+
 ### Project Governance
 
 **Protected project information:** The following project-related information is strictly protected and MUST NOT be modified, deleted, replaced, or removed under any circumstances:

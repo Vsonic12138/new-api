@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "rsbuild dev",
     "prebuild": "node scripts/sync-git-changelog.mjs",
+    "update:changelog": "node scripts/sync-git-changelog.mjs",
     "build": "rsbuild build",
     "build:check": "tsgo -b && rsbuild build",
     "typecheck": "tsgo -b",
