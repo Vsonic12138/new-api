@@ -43,6 +43,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-06',
     items: [
     {
+      "tag": "fix",
+      "titleEn": "[changelog] 扩充日志提取深度并过滤内部构建提交",
+      "titleZh": "[changelog] 扩充日志提取深度并过滤内部构建提交",
+      "descEn": "Commit: 71d7813de (2026-10-06)",
+      "descZh": "提交: 71d7813de · 2026-10-06",
+      "commitHash": "71d7813de"
+    },
+    {
       "tag": "feat",
       "titleEn": "[mail] 增加大黄定制卡片式邮件模版与防拦截提示",
       "titleZh": "[mail] 增加大黄定制卡片式邮件模版与防拦截提示",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 56719a753 (2026-09-30)",
       "descZh": "提交: 56719a753 · 2026-09-30",
       "commitHash": "56719a753"
-    },
-    {
-      "tag": "chore",
-      "titleEn": "update readme",
-      "titleZh": "update readme",
-      "descEn": "Commit: c71eefbcd (2026-09-30)",
-      "descZh": "提交: c71eefbcd · 2026-09-30",
-      "commitHash": "c71eefbcd"
     }
 ],
   },
