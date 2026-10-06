@@ -148,3 +148,41 @@ func TestImageModelBuiltinPricesAndOverrides(t *testing.T) {
 		})
 	}
 }
+
+func TestGLM53FlashBuiltinBilling(t *testing.T) {
+	settings := config.GlobalConfig.Get("billing_setting").(*billing_setting.BillingSetting)
+	saved := *settings
+	savedRatios, savedPrices := ratio_setting.ModelRatio2JSONString(), ratio_setting.ModelPrice2JSONString()
+	t.Cleanup(func() {
+		*settings = saved
+		require.NoError(t, ratio_setting.UpdateModelRatioByJSONString(savedRatios))
+		require.NoError(t, ratio_setting.UpdateModelPriceByJSONString(savedPrices))
+	})
+	*settings = billing_setting.BillingSetting{BillingMode: map[string]string{}, BillingExpr: map[string]string{}}
+	require.NoError(t, ratio_setting.UpdateModelRatioByJSONString(`{}`))
+	require.NoError(t, ratio_setting.UpdateModelPriceByJSONString(`{}`))
+
+	assert.Equal(t, billing_setting.BillingModeTieredExpr, billing_setting.GetBillingMode("glm-5.3-flash"))
+	expression, ok := billing_setting.GetBillingExpr("glm-5.3-flash")
+	require.True(t, ok)
+	assert.Equal(t, `tier("standard", p * 0.15 + c * 0.5 + cr * 0.03)`, expression)
+
+	usage := &dto.Usage{
+		PromptTokens:     1000,
+		CompletionTokens: 100,
+		PromptTokensDetails: dto.InputTokenDetails{
+			CachedTokens: 300,
+		},
+	}
+	result, err := billingexpr.ComputeTieredQuota(
+		&billingexpr.BillingSnapshot{
+			ExprString:   expression,
+			ExprHash:     billingexpr.ExprHashString(expression),
+			GroupRatio:   1,
+			QuotaPerUnit: 500000,
+		},
+		service.BuildTieredTokenParams(usage, false, billingexpr.UsedVars(expression)),
+	)
+	require.NoError(t, err)
+	assert.Equal(t, 82, result.ActualQuotaAfterGroup)
+}
