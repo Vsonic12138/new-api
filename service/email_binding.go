@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
-	"html"
 	"math/big"
 	"slices"
 	"strings"
@@ -178,14 +177,27 @@ func generateEmailBindingCodes(requireOld bool) (emailBindingCodes, error) {
 }
 
 func sendEmailBindingCodes(state model.EmailBindingState, codes emailBindingCodes) error {
-	subject := common.SystemName + " — Confirm your email address"
-	content := fmt.Sprintf("<p>Confirm linking this email address to your account.</p><p>Verification code: <strong>%s</strong></p><p>This code expires in 10 minutes. If you did not request this change, do not share this code.</p>", html.EscapeString(codes.New))
+	subject := common.SystemName + " — 邮箱绑定验证"
+	content := common.BuildEmailHTML(common.EmailCardOptions{
+		Title:          "确认绑定邮箱地址",
+		Subtitle:       fmt.Sprintf("您好！您正在申请将此邮箱绑定至 %s 账号，请在窗口输入下方验证码：", common.SystemName),
+		Code:           codes.New,
+		ValidMinutes:   10,
+		SecurityNotice: "如果您没有请求绑定此邮箱，请忽略此邮件，切勿将验证码泄露给任何人。",
+	})
 	if err := common.SendEmail(subject, state.Email, content); err != nil {
 		return err
 	}
 	if codes.Old != "" {
-		content = fmt.Sprintf("<p>A change to your account email address was requested. Confirm replacing your current address.</p><p>Verification code: <strong>%s</strong></p><p>This code expires in 10 minutes. If you did not request this change, do not share this code and contact your administrator.</p>", html.EscapeString(codes.Old))
-		return common.SendEmail(subject, state.CurrentEmail, content)
+		subjectOld := common.SystemName + " — 账号邮箱更换通知与验证"
+		contentOld := common.BuildEmailHTML(common.EmailCardOptions{
+			Title:          "账号换绑安全确认",
+			Subtitle:       fmt.Sprintf("您的 %s 账号正在申请更换安全邮箱，请使用下方验证码确认更换：", common.SystemName),
+			Code:           codes.Old,
+			ValidMinutes:   10,
+			SecurityNotice: "如果您没有请求更换邮箱，请立即检查您的账号安全状态并联系管理员。",
+		})
+		return common.SendEmail(subjectOld, state.CurrentEmail, contentOld)
 	}
 	return nil
 }
