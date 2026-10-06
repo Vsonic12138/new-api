@@ -78,7 +78,9 @@ export function SystemUpdateDialog(props: SystemUpdateDialogProps) {
     statusText = t('No releases found.')
   }
 
-  const isCustomBuild = Boolean(parseSystemVersion(update.currentVersion)?.build)
+  const isCustomBuild = Boolean(
+    update.currentVersion?.includes('+custom')
+  )
 
   return (
     <Dialog
@@ -193,7 +195,7 @@ export function SystemUpdateDialog(props: SystemUpdateDialogProps) {
             {CUSTOM_CHANGELOG_DATA.map((group) => (
               <div
                 key={group.version}
-                className='rounded-lg border bg-card/60 p-3.5 space-y-3 shadow-xs'
+                className='bg-card/60 space-y-3 rounded-lg border p-3.5 shadow-xs'
               >
                 <div className='flex flex-wrap items-center justify-between gap-2 border-b pb-2'>
                   <div className='flex flex-wrap items-center gap-1.5'>
@@ -206,7 +208,7 @@ export function SystemUpdateDialog(props: SystemUpdateDialogProps) {
                       })}
                     </Badge>
                   </div>
-                  <span className='text-xs text-muted-foreground'>
+                  <span className='text-muted-foreground text-xs'>
                     {group.date}
                   </span>
                 </div>
@@ -228,16 +230,16 @@ export function SystemUpdateDialog(props: SystemUpdateDialogProps) {
                       </Badge>
                       <div className='min-w-0 flex-1'>
                         <div className='flex items-center justify-between gap-2'>
-                          <p className='font-medium text-foreground leading-snug'>
+                          <p className='text-foreground leading-snug font-medium'>
                             {isZh ? item.titleZh : item.titleEn}
                           </p>
                           {item.commitHash && (
-                            <span className='font-mono text-[10px] text-muted-foreground/70 rounded border border-border/50 px-1 shrink-0'>
+                            <span className='text-muted-foreground/70 border-border/50 shrink-0 rounded border px-1 font-mono text-[10px]'>
                               {item.commitHash}
                             </span>
                           )}
                         </div>
-                        <p className='text-xs text-muted-foreground mt-0.5 leading-relaxed'>
+                        <p className='text-muted-foreground mt-0.5 text-xs leading-relaxed'>
                           {isZh ? item.descZh : item.descEn}
                         </p>
                       </div>
@@ -259,13 +261,14 @@ export function SystemUpdateDialog(props: SystemUpdateDialogProps) {
               </Suspense>
             </div>
           ) : (
-            <div className='rounded-lg border bg-muted/20 p-5 text-center space-y-3'>
-              <p className='text-sm text-muted-foreground'>
+            <div className='bg-muted/20 space-y-3 rounded-lg border p-5 text-center'>
+              <p className='text-muted-foreground text-sm'>
                 {t('No upstream release details loaded yet.')}
               </p>
-              <p className='text-xs text-muted-foreground'>
+              <p className='text-muted-foreground text-xs'>
                 {t('Official upstream baseline: {{version}}', {
-                  version: CUSTOM_CHANGELOG_DATA[0]?.upstreamBase || 'v1.0.0-rc.41',
+                  version:
+                    CUSTOM_CHANGELOG_DATA[0]?.upstreamBase || 'v1.0.0-rc.41',
                 })}
               </p>
               <div>

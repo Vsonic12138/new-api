@@ -40,8 +40,32 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
   {
     version: 'v1.0.0-rc.41+custom',
     upstreamBase: 'v1.0.0-rc.41',
-    date: '2026-10-03',
+    date: '2026-10-06',
     items: [
+    {
+      "tag": "feat",
+      "titleEn": "[mail] 增加大黄定制卡片式邮件模版与防拦截提示",
+      "titleZh": "[mail] 增加大黄定制卡片式邮件模版与防拦截提示",
+      "descEn": "Commit: 3b65989fb (2026-10-06)",
+      "descZh": "提交: 3b65989fb · 2026-10-06",
+      "commitHash": "3b65989fb"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[pricing] 配置 glm-5.3-flash 官方定价与阶梯费率",
+      "titleZh": "[pricing] 配置 glm-5.3-flash 官方定价与阶梯费率",
+      "descEn": "Commit: f879a9458 (2026-10-06)",
+      "descZh": "提交: f879a9458 · 2026-10-06",
+      "commitHash": "f879a9458"
+    },
+    {
+      "tag": "chore",
+      "titleEn": "[changelog] 同步中文提交记录至更新日志",
+      "titleZh": "[changelog] 同步中文提交记录至更新日志",
+      "descEn": "Commit: c9ce9b868 (2026-10-03)",
+      "descZh": "提交: c9ce9b868 · 2026-10-03",
+      "commitHash": "c9ce9b868"
+    },
     {
       "tag": "chore",
       "titleEn": "[guidelines] 补充中文提交示例与文案要求",
@@ -97,30 +121,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 57adf125d (2026-10-03)",
       "descZh": "提交: 57adf125d · 2026-10-03",
       "commitHash": "57adf125d"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 使用 ZCode 官方图标并添加到首页支持应用列表",
-      "titleZh": "[home] 使用 ZCode 官方图标并添加到首页支持应用列表",
-      "descEn": "Commit: 953f17e7d (2026-10-03)",
-      "descZh": "提交: 953f17e7d · 2026-10-03",
-      "commitHash": "953f17e7d"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 添加 ZCode、Cherry Studio 与 DSH 界面配置图解",
-      "titleZh": "[home] 添加 ZCode、Cherry Studio 与 DSH 界面配置图解",
-      "descEn": "Commit: e942cd6d3 (2026-10-03)",
-      "descZh": "提交: e942cd6d3 · 2026-10-03",
-      "commitHash": "e942cd6d3"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 调整热门模型展示列表为 6 款主力模型及 3x2 网格",
-      "titleZh": "[home] 调整热门模型展示列表为 6 款主力模型及 3x2 网格",
-      "descEn": "Commit: 9d5f78a62 (2026-10-03)",
-      "descZh": "提交: 9d5f78a62 · 2026-10-03",
-      "commitHash": "9d5f78a62"
     }
 ],
   },
