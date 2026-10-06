@@ -24,23 +24,38 @@ import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const rootDir = path.resolve(__dirname, '../../')
-const targetFile = path.resolve(__dirname, '../src/features/system-update/custom-changelog.ts')
+const targetFile = path.resolve(
+  __dirname,
+  '../src/features/system-update/custom-changelog.ts'
+)
 
 // 历史英文提交转为克制简明中文的平滑映射（新提交将直接编写规范中文）
 const legacyEnToZh = {
   'update auto-generated custom changelog': '自动同步 Git 提交记录至更新日志',
-  'automate changelog generation from git log and establish commit guidelines': '自动化提取 Git 提交记录生成更新日志并制定提交规范',
-  'update custom changelog to v1.0.0-rc.41+custom with latest deliverables': '更新二开更新日志数据',
-  'embed official ZCode & CherryStudio setup screenshots with mode switch and lightbox': '接入 ZCode 与 Cherry Studio 官方配置截图及全屏查看',
-  'use official ZCode icon from z.ai and add to hero supported apps': '使用 ZCode 官方图标并添加到首页支持应用列表',
-  'add visual mockup diagram with lightbox zoom for ZCode, CherryStudio, and DSH': '添加 ZCode、Cherry Studio 与 DSH 界面配置图解',
-  'remove Gemini 3.7 Flash and GLM 5.3 Flash from featured models, optimize 6-card grid': '调整热门模型展示列表为 6 款主力模型及 3x2 网格',
-  'fix tokens route to keys and perform extensive ablation of redundant sections': '修正令牌路由为 /keys 并精简首页冗余模块',
-  'remove external docs, align homepage with relay service, and enhance ZCode guide with accurate origin': '移除外部文档跳转，聚焦中转服务，自适应端点地址',
-  'fix Grok icon reference in featured models wall': '修复热门模型墙中 Grok 图标组件引用',
-  'fix locale namespace structure and align featured models with platform offerings': '修复多语言字典命名空间层级并对齐平台可用模型',
-  'customize branding, copy, and i18n for DaHuang API': '调整首页品牌文案与多语言配置',
-  'eliminate scroll lag, add card shop quick link, client guide, and featured models wall': '优化首页滚动流畅度，添加发卡网链接与客户端配置指南',
+  'automate changelog generation from git log and establish commit guidelines':
+    '自动化提取 Git 提交记录生成更新日志并制定提交规范',
+  'update custom changelog to v1.0.0-rc.41+custom with latest deliverables':
+    '更新二开更新日志数据',
+  'embed official ZCode & CherryStudio setup screenshots with mode switch and lightbox':
+    '接入 ZCode 与 Cherry Studio 官方配置截图及全屏查看',
+  'use official ZCode icon from z.ai and add to hero supported apps':
+    '使用 ZCode 官方图标并添加到首页支持应用列表',
+  'add visual mockup diagram with lightbox zoom for ZCode, CherryStudio, and DSH':
+    '添加 ZCode、Cherry Studio 与 DSH 界面配置图解',
+  'remove Gemini 3.7 Flash and GLM 5.3 Flash from featured models, optimize 6-card grid':
+    '调整热门模型展示列表为 6 款主力模型及 3x2 网格',
+  'fix tokens route to keys and perform extensive ablation of redundant sections':
+    '修正令牌路由为 /keys 并精简首页冗余模块',
+  'remove external docs, align homepage with relay service, and enhance ZCode guide with accurate origin':
+    '移除外部文档跳转，聚焦中转服务，自适应端点地址',
+  'fix Grok icon reference in featured models wall':
+    '修复热门模型墙中 Grok 图标组件引用',
+  'fix locale namespace structure and align featured models with platform offerings':
+    '修复多语言字典命名空间层级并对齐平台可用模型',
+  'customize branding, copy, and i18n for DaHuang API':
+    '调整首页品牌文案与多语言配置',
+  'eliminate scroll lag, add card shop quick link, client guide, and featured models wall':
+    '优化首页滚动流畅度，添加发卡网链接与客户端配置指南',
 }
 
 function getLatestTag() {
@@ -58,7 +73,7 @@ function getLatestTag() {
 function getRecentCommits() {
   try {
     const raw = execSync(
-      "git log -n 30 --pretty=format:'%h|%an|%ad|%s' --date=short",
+      "git log -n 100 --pretty=format:'%h|%an|%ad|%s' --date=short",
       {
         cwd: rootDir,
         encoding: 'utf-8',
@@ -78,14 +93,23 @@ function getRecentCommits() {
 }
 
 function parseCommitToItem(commit) {
-  const match = commit.subject.match(/^(feat|fix|perf|chore|docs|refactor)(?:\(([^)]+)\))?:\s*(.+)$/i)
+  const match = commit.subject.match(
+    /^(feat|fix|perf|chore|docs|refactor)(?:\(([^)]+)\))?:\s*(.+)$/i
+  )
   let tag = 'chore'
   let scope = ''
   let rawSubject = commit.subject
 
   if (match) {
     const rawTag = match[1].toLowerCase()
-    tag = rawTag === 'perf' ? 'perf' : rawTag === 'feat' ? 'feat' : rawTag === 'fix' ? 'fix' : 'chore'
+    tag =
+      rawTag === 'perf'
+        ? 'perf'
+        : rawTag === 'feat'
+          ? 'feat'
+          : rawTag === 'fix'
+            ? 'fix'
+            : 'chore'
     scope = match[2] ? match[2].trim() : ''
     rawSubject = match[3].trim()
   }
@@ -109,15 +133,18 @@ export function syncGitChangelog() {
   const customVersion = `${latestTag}+custom`
   const commits = getRecentCommits()
 
-  // 过滤排除自动化同步机器人的提交与官方合并提交，提取用户真实的二开提交
+  // 过滤排除自动化同步机器人的提交、官方合并提交以及更新日志自同步提交，保留所有对用户有价值的真实二开改动
   const customCommits = commits.filter(
     (c) =>
       c.author !== 'sync-bot' &&
       !c.subject.startsWith('Merge branch') &&
-      !c.subject.includes('merge official-main into custom-main')
+      !c.subject.includes('merge official-main into custom-main') &&
+      !c.subject.startsWith('chore: merge') &&
+      !c.subject.startsWith('chore(changelog)') &&
+      !c.subject.includes('update auto-generated custom changelog')
   )
 
-  const items = customCommits.slice(0, 10).map(parseCommitToItem)
+  const items = customCommits.slice(0, 30).map(parseCommitToItem)
   const today = new Date().toISOString().split('T')[0]
 
   const fileContent = `/*
@@ -200,7 +227,9 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
 `
 
   fs.writeFileSync(targetFile, fileContent, 'utf-8')
-  console.log(`[sync-git-changelog] Successfully synced ${items.length} custom commits into custom-changelog.ts`)
+  console.log(
+    `[sync-git-changelog] Successfully synced ${items.length} custom commits into custom-changelog.ts`
+  )
 }
 
 syncGitChangelog()

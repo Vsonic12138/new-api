@@ -60,14 +60,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     },
     {
       "tag": "chore",
-      "titleEn": "[changelog] 同步中文提交记录至更新日志",
-      "titleZh": "[changelog] 同步中文提交记录至更新日志",
-      "descEn": "Commit: c9ce9b868 (2026-10-03)",
-      "descZh": "提交: c9ce9b868 · 2026-10-03",
-      "commitHash": "c9ce9b868"
-    },
-    {
-      "tag": "chore",
       "titleEn": "[guidelines] 补充中文提交示例与文案要求",
       "titleZh": "[guidelines] 补充中文提交示例与文案要求",
       "descEn": "Commit: f50eecb70 (2026-10-03)",
@@ -76,27 +68,11 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     },
     {
       "tag": "chore",
-      "titleEn": "[changelog] 自动同步客观中文提交记录至更新日志",
-      "titleZh": "[changelog] 自动同步客观中文提交记录至更新日志",
-      "descEn": "Commit: 61721ace2 (2026-10-03)",
-      "descZh": "提交: 61721ace2 · 2026-10-03",
-      "commitHash": "61721ace2"
-    },
-    {
-      "tag": "chore",
       "titleEn": "[guidelines] 统一 Commit 规范为客观克制中文并更新日志脚本",
       "titleZh": "[guidelines] 统一 Commit 规范为客观克制中文并更新日志脚本",
       "descEn": "Commit: 2e903d88b (2026-10-03)",
       "descZh": "提交: 2e903d88b · 2026-10-03",
       "commitHash": "2e903d88b"
-    },
-    {
-      "tag": "chore",
-      "titleEn": "[changelog] 自动同步 Git 提交记录至更新日志",
-      "titleZh": "[changelog] 自动同步 Git 提交记录至更新日志",
-      "descEn": "Commit: 40767a932 (2026-10-03)",
-      "descZh": "提交: 40767a932 · 2026-10-03",
-      "commitHash": "40767a932"
     },
     {
       "tag": "feat",
@@ -121,6 +97,190 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 57adf125d (2026-10-03)",
       "descZh": "提交: 57adf125d · 2026-10-03",
       "commitHash": "57adf125d"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[home] 使用 ZCode 官方图标并添加到首页支持应用列表",
+      "titleZh": "[home] 使用 ZCode 官方图标并添加到首页支持应用列表",
+      "descEn": "Commit: 953f17e7d (2026-10-03)",
+      "descZh": "提交: 953f17e7d · 2026-10-03",
+      "commitHash": "953f17e7d"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[home] 添加 ZCode、Cherry Studio 与 DSH 界面配置图解",
+      "titleZh": "[home] 添加 ZCode、Cherry Studio 与 DSH 界面配置图解",
+      "descEn": "Commit: e942cd6d3 (2026-10-03)",
+      "descZh": "提交: e942cd6d3 · 2026-10-03",
+      "commitHash": "e942cd6d3"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[home] 调整热门模型展示列表为 6 款主力模型及 3x2 网格",
+      "titleZh": "[home] 调整热门模型展示列表为 6 款主力模型及 3x2 网格",
+      "descEn": "Commit: 9d5f78a62 (2026-10-03)",
+      "descZh": "提交: 9d5f78a62 · 2026-10-03",
+      "commitHash": "9d5f78a62"
+    },
+    {
+      "tag": "fix",
+      "titleEn": "[home] 修正令牌路由为 /keys 并精简首页冗余模块",
+      "titleZh": "[home] 修正令牌路由为 /keys 并精简首页冗余模块",
+      "descEn": "Commit: d34c47f04 (2026-10-03)",
+      "descZh": "提交: d34c47f04 · 2026-10-03",
+      "commitHash": "d34c47f04"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[home] 移除外部文档跳转，聚焦中转服务，自适应端点地址",
+      "titleZh": "[home] 移除外部文档跳转，聚焦中转服务，自适应端点地址",
+      "descEn": "Commit: cc28fbacb (2026-10-03)",
+      "descZh": "提交: cc28fbacb · 2026-10-03",
+      "commitHash": "cc28fbacb"
+    },
+    {
+      "tag": "fix",
+      "titleEn": "[home] 修复热门模型墙中 Grok 图标组件引用",
+      "titleZh": "[home] 修复热门模型墙中 Grok 图标组件引用",
+      "descEn": "Commit: d9775b769 (2026-10-03)",
+      "descZh": "提交: d9775b769 · 2026-10-03",
+      "commitHash": "d9775b769"
+    },
+    {
+      "tag": "fix",
+      "titleEn": "[i18n] 修复多语言字典命名空间层级并对齐平台可用模型",
+      "titleZh": "[i18n] 修复多语言字典命名空间层级并对齐平台可用模型",
+      "descEn": "Commit: 9f68e6549 (2026-10-03)",
+      "descZh": "提交: 9f68e6549 · 2026-10-03",
+      "commitHash": "9f68e6549"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[home] 调整首页品牌文案与多语言配置",
+      "titleZh": "[home] 调整首页品牌文案与多语言配置",
+      "descEn": "Commit: f834d4577 (2026-10-03)",
+      "descZh": "提交: f834d4577 · 2026-10-03",
+      "commitHash": "f834d4577"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[home] 优化首页滚动流畅度，添加发卡网链接与客户端配置指南",
+      "titleZh": "[home] 优化首页滚动流畅度，添加发卡网链接与客户端配置指南",
+      "descEn": "Commit: 32a510784 (2026-10-03)",
+      "descZh": "提交: 32a510784 · 2026-10-03",
+      "commitHash": "32a510784"
+    },
+    {
+      "tag": "fix",
+      "titleEn": "[relayconvert] keep Responses custom tools on Claude and Gemini upstreams (#7636)",
+      "titleZh": "[relayconvert] keep Responses custom tools on Claude and Gemini upstreams (#7636)",
+      "descEn": "Commit: 1a4166d8e (2026-10-01)",
+      "descZh": "提交: 1a4166d8e · 2026-10-01",
+      "commitHash": "1a4166d8e"
+    },
+    {
+      "tag": "fix",
+      "titleEn": "[web] correct translations, chart ordering, and font loading (#7628)",
+      "titleZh": "[web] correct translations, chart ordering, and font loading (#7628)",
+      "descEn": "Commit: 56758edf9 (2026-09-30)",
+      "descZh": "提交: 56758edf9 · 2026-09-30",
+      "commitHash": "56758edf9"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[system-update] provide tabbed view for custom changelog and official upstream releases",
+      "titleZh": "[system-update] provide tabbed view for custom changelog and official upstream releases",
+      "descEn": "Commit: 08431501d (2026-09-30)",
+      "descZh": "提交: 08431501d · 2026-09-30",
+      "commitHash": "08431501d"
+    },
+    {
+      "tag": "fix",
+      "titleEn": "[i18n] keep cached zhTW/zhCN interface codes stable across page loads (#7139)",
+      "titleZh": "[i18n] keep cached zhTW/zhCN interface codes stable across page loads (#7139)",
+      "descEn": "Commit: 5fe8917be (2026-09-30)",
+      "descZh": "提交: 5fe8917be · 2026-09-30",
+      "commitHash": "5fe8917be"
+    },
+    {
+      "tag": "fix",
+      "titleEn": "[web] hide system settings from non-root admins (#7513)",
+      "titleZh": "[web] hide system settings from non-root admins (#7513)",
+      "descEn": "Commit: dfd3cd893 (2026-09-30)",
+      "descZh": "提交: dfd3cd893 · 2026-09-30",
+      "commitHash": "dfd3cd893"
+    },
+    {
+      "tag": "fix",
+      "titleEn": "[web] Add class to wrap the long strings at auto-disable status tooltip content in channel manage page (#7604)",
+      "titleZh": "[web] Add class to wrap the long strings at auto-disable status tooltip content in channel manage page (#7604)",
+      "descEn": "Commit: 811212067 (2026-09-30)",
+      "descZh": "提交: 811212067 · 2026-09-30",
+      "commitHash": "811212067"
+    },
+    {
+      "tag": "fix",
+      "titleEn": "use max_completion_tokens for gpt-6-sol and gpt-6-luna (#7559)",
+      "titleZh": "use max_completion_tokens for gpt-6-sol and gpt-6-luna (#7559)",
+      "descEn": "Commit: d0cb7347c (2026-09-30)",
+      "descZh": "提交: d0cb7347c · 2026-09-30",
+      "commitHash": "d0cb7347c"
+    },
+    {
+      "tag": "fix",
+      "titleEn": "isolate TLS configs across HTTP transports (#7627)",
+      "titleZh": "isolate TLS configs across HTTP transports (#7627)",
+      "descEn": "Commit: feefe09f2 (2026-09-30)",
+      "descZh": "提交: feefe09f2 · 2026-09-30",
+      "commitHash": "feefe09f2"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[web] add a refresh button to the channels table",
+      "titleZh": "[web] add a refresh button to the channels table",
+      "descEn": "Commit: 2035a82ae (2026-09-30)",
+      "descZh": "提交: 2035a82ae · 2026-09-30",
+      "commitHash": "2035a82ae"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[plugins] add Seedream 5.0 flash and price each Seedream model by its own tiers",
+      "titleZh": "[plugins] add Seedream 5.0 flash and price each Seedream model by its own tiers",
+      "descEn": "Commit: ae73ef8e2 (2026-09-30)",
+      "descZh": "提交: ae73ef8e2 · 2026-09-30",
+      "commitHash": "ae73ef8e2"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[auth] edit the name and permissions of an access token",
+      "titleZh": "[auth] edit the name and permissions of an access token",
+      "descEn": "Commit: 4924361ae (2026-09-30)",
+      "descZh": "提交: 4924361ae · 2026-09-30",
+      "commitHash": "4924361ae"
+    },
+    {
+      "tag": "fix",
+      "titleEn": "[auth] reject non-standard roles when creating a user",
+      "titleZh": "[auth] reject non-standard roles when creating a user",
+      "descEn": "Commit: 2506e1b98 (2026-09-30)",
+      "descZh": "提交: 2506e1b98 · 2026-09-30",
+      "commitHash": "2506e1b98"
+    },
+    {
+      "tag": "chore",
+      "titleEn": "build: derive custom versions from official tags",
+      "titleZh": "build: derive custom versions from official tags",
+      "descEn": "Commit: 56719a753 (2026-09-30)",
+      "descZh": "提交: 56719a753 · 2026-09-30",
+      "commitHash": "56719a753"
+    },
+    {
+      "tag": "chore",
+      "titleEn": "update readme",
+      "titleZh": "update readme",
+      "descEn": "Commit: c71eefbcd (2026-09-30)",
+      "descZh": "提交: c71eefbcd · 2026-09-30",
+      "commitHash": "c71eefbcd"
     }
 ],
   },
