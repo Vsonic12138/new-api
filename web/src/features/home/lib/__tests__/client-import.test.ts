@@ -151,6 +151,10 @@ describe('homepage client import links', () => {
       preferProtocol: 'app',
     })
     expect(appUrl.startsWith('magpie://import?')).toBe(true)
+    const appParams = new URLSearchParams(appUrl.split('?')[1])
+    expect(appParams.get('models')).toBe(
+      'claude-sonnet-5,gpt-6.1-sol,deepseek-v4-flash,gemini-3.8-flash,glm-5.3-flash'
+    )
   })
 })
 

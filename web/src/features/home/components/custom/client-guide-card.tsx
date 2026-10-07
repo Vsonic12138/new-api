@@ -295,10 +295,10 @@ export function ClientGuideCard() {
   const anthropicBaseUrl = effectiveOrigin
 
   const zcodeRecommendedModels = [
+    'glm-5.3-flash',
     'claude-sonnet-5',
-    'claude-opus-5-5',
     'gpt-6.1-sol',
-    'deepseek-flash',
+    'deepseek-v4-flash',
   ]
 
   const providerName =
@@ -308,25 +308,26 @@ export function ClientGuideCard() {
     'claude-sonnet-5',
     'claude-opus-5-5',
     'gpt-6.1-sol',
-    'deepseek-flash',
+    'deepseek-v4-flash',
+    'glm-5.3-flash',
   ]
   const ccSwitchModelMap: Record<CCSwitchTab, Record<string, string>> = {
     claude: {
-      model: 'claude-opus-5-5',
+      model: 'claude-sonnet-5',
       opusModel: 'claude-opus-5-5',
       opus_model: 'claude-opus-5-5',
       sonnetModel: 'claude-sonnet-5',
       sonnet_model: 'claude-sonnet-5',
     },
     codex: { model: 'gpt-6.1-sol' },
-    gemini: { model: 'gpt-6.1-sol' },
+    gemini: { model: 'gemini-3.8-flash' },
     opencode: { model: 'gpt-6.1-sol' },
   }
   const ccSwitchAltModels: Record<CCSwitchTab, string[]> = {
-    claude: ['claude-opus-5-5', 'claude-sonnet-5'],
+    claude: ['claude-sonnet-5', 'claude-opus-5-5'],
     codex: ['gpt-6.1-sol', 'gpt-5.6-luna'],
-    gemini: ['gpt-6.1-sol', 'deepseek-flash'],
-    opencode: ['gpt-6.1-sol', 'claude-sonnet-5', 'deepseek-flash'],
+    gemini: ['gemini-3.8-flash', 'deepseek-v4-flash'],
+    opencode: ['gpt-6.1-sol', 'claude-sonnet-5', 'deepseek-v4-flash'],
   }
   const ccSwitchModel = ccSwitchModelMap[ccSwitchApp].model ?? ''
 
@@ -1045,6 +1046,7 @@ export function ClientGuideCard() {
                     [
                       ['claude', 'Claude Code'],
                       ['codex', 'Codex'],
+                      ['gemini', 'Gemini CLI'],
                       ['opencode', 'OpenCode'],
                     ] as const
                   ).map(([app, label]) => (

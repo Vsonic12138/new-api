@@ -124,7 +124,7 @@ export function buildMagpieImportUrl(input: {
   const models =
     input.models && input.models.length > 0
       ? input.models.join(',')
-      : 'claude-sonnet-5,gpt-6.1-sol,deepseek-flash,glm-5.3-flash'
+      : 'claude-sonnet-5,gpt-6.1-sol,deepseek-v4-flash,gemini-3.8-flash,glm-5.3-flash'
   params.set('models', models)
   params.set('website', origin)
   params.set('keys', `${origin}/keys`)

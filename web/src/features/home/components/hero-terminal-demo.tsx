@@ -17,7 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { Claude, DeepSeek, Gemini, OpenAI } from '@lobehub/icons'
-import { Activity, CheckCircle2 } from 'lucide-react'
+import { Activity, ArrowRight, CheckCircle2, Cpu } from 'lucide-react'
 import { useState, useEffect, useRef, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -111,8 +111,8 @@ export function HeroTerminalDemo(props: { className?: string }) {
 }`,
     },
     {
-      id: 'deepseek-flash',
-      name: 'DeepSeek Flash',
+      id: 'deepseek-v4-flash',
+      name: 'DeepSeek V4 Flash',
       vendor: 'DeepSeek',
       context: t('1M Context'),
       ratio: t('Tiered 1.27x'),
@@ -150,6 +150,38 @@ export function HeroTerminalDemo(props: { className?: string }) {
   reportId: string
   criticalIssues: Array<{ severity: 'high' | 'med'; rule: string }>
   summary: string
+}`,
+    },
+    {
+      id: 'glm-5.3-flash',
+      name: 'GLM-5.3 Flash',
+      vendor: 'Zhipu AI',
+      context: t('128K Context'),
+      ratio: '0.075x ($0.15/M)',
+      protocol: 'OpenAI',
+      agentSource: 'ZCode / Cursor',
+      endpoint: '/v1/chat/completions',
+      icon: (s = 16) => (
+        <img
+          src='/icons/zcode-192.png'
+          alt='GLM'
+          width={s}
+          height={s}
+          className='size-3.5 shrink-0 rounded-xs object-contain'
+        />
+      ),
+      tone: 'cyan',
+      prompt: t('Implement an async task scheduler with debounce and cancellation support.'),
+      thinkingSeconds: '0.3s',
+      thinkingSummary: t('Designed timer-based debounce with explicit AbortController signal propagation.'),
+      responseSummary: t('Created type-safe debounced scheduler with automatic cancellation:'),
+      codeLang: 'ts',
+      codeSnippet: `export function createDebouncedTask<T>(fn: () => Promise<T>, ms: number) {
+  let timer: ReturnType<typeof setTimeout>
+  return () => new Promise<T>((res) => {
+    clearTimeout(timer)
+    timer = setTimeout(() => res(fn()), ms)
+  })
 }`,
     },
     {
@@ -330,28 +362,57 @@ export function HeroTerminalDemo(props: { className?: string }) {
           transitioning ? 'opacity-30' : 'opacity-100'
         )}
       >
-        {/* Model Meta Strip */}
-        <div className='border-border/40 bg-muted/20 mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border p-2.5 text-xs'>
-          <div className='flex items-center gap-2'>
-            <div className='flex items-center gap-1.5 rounded-lg border border-border/50 bg-background/80 px-2 py-0.5 text-[11px] font-mono'>
-              <span className='text-muted-foreground/75'>{activeDemo.agentSource}</span>
-              <span className='text-muted-foreground/40'>→</span>
-              <span className='font-bold text-foreground select-all'>{activeDemo.id}</span>
-            </div>
-            <CopyButton
-              value={activeDemo.id}
-              variant='ghost'
-              size='sm'
-              className='size-6 p-0 text-muted-foreground hover:text-foreground'
-              tooltip={t('Copy model ID')}
-              successTooltip={t('Copied!')}
-            />
+        {/* Magpie-Style Routing Flow Visualizer */}
+        <div className='border-border/50 bg-muted/20 mb-3.5 flex flex-wrap items-center justify-between gap-2 rounded-xl border p-2.5 text-xs shadow-2xs'>
+          {/* Source Agent */}
+          <div className='flex items-center gap-1.5 min-w-0'>
+            <span className='text-muted-foreground/60 text-[10px] font-bold tracking-wider uppercase shrink-0'>
+              {t('Agent')}
+            </span>
+            <span className='bg-background text-foreground border-border/50 rounded-md border px-2 py-0.5 text-[11px] font-semibold truncate shadow-2xs'>
+              {activeDemo.agentSource}
+            </span>
           </div>
 
-          <div className='flex items-center gap-2 text-[11px]'>
+          {/* Central Relay Bridge */}
+          <div className='flex items-center gap-1 text-[10px] font-mono text-muted-foreground/70 shrink-0'>
+            <span className='hidden sm:inline'>{activeDemo.protocol === 'Claude' ? 'Anthropic' : 'OpenAI'}</span>
+            <ArrowRight className='size-3 text-primary/70 animate-pulse' />
+            <span className='rounded bg-primary/10 px-1.5 py-0.5 font-semibold text-primary'>
+              New API
+            </span>
+            <ArrowRight className='size-3 text-primary/70 animate-pulse' />
+          </div>
+
+          {/* Destination Model */}
+          <div className='flex items-center gap-1.5 min-w-0 justify-end'>
+            <span className='text-muted-foreground/60 text-[10px] font-bold tracking-wider uppercase shrink-0 hidden sm:inline'>
+              {t('Target')}
+            </span>
+            <div className='flex items-center gap-1 bg-background text-foreground border-border/50 rounded-md border px-2 py-0.5 text-[11px] font-mono font-semibold shadow-2xs'>
+              <span className='truncate'>{activeDemo.id}</span>
+              <CopyButton
+                value={activeDemo.id}
+                variant='ghost'
+                size='sm'
+                className='size-4 p-0 text-muted-foreground hover:text-foreground'
+                tooltip={t('Copy model ID')}
+                successTooltip={t('Copied!')}
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Model Spec Pills */}
+        <div className='mb-3.5 flex flex-wrap items-center justify-between gap-2 text-[11px]'>
+          <div className='flex items-center gap-2'>
+            <span className='text-muted-foreground/80 font-medium'>{activeDemo.vendor}</span>
+            <span className='text-muted-foreground/30'>·</span>
             <span className='border-border/50 bg-background/80 text-muted-foreground rounded border px-1.5 py-0.5 font-mono'>
               {activeDemo.context}
             </span>
+          </div>
+          <div className='flex items-center gap-2'>
             <span className='border-border/50 bg-background/80 text-muted-foreground rounded border px-1.5 py-0.5 font-mono'>
               {activeDemo.ratio}
             </span>
@@ -379,7 +440,7 @@ export function HeroTerminalDemo(props: { className?: string }) {
             <div className='rounded-xl border border-border/40 bg-muted/15 p-2.5'>
               <div className='text-muted-foreground/80 mb-1 flex items-center justify-between text-[10px] font-medium'>
                 <div className='flex items-center gap-1.5'>
-                  <span className='size-1.5 rounded-full bg-blue-500/70' />
+                  <Cpu className='size-3 text-primary/80' />
                   <span>
                     {t('Thinking Process')} ({activeDemo.thinkingSeconds})
                   </span>
