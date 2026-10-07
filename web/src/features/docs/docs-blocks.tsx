@@ -46,6 +46,64 @@ export function DocsList(props: { children: ReactNode }) {
   return <ol className='list-decimal space-y-2 pl-5'>{props.children}</ol>
 }
 
+export function DocsStep(props: {
+  n: number
+  title: string
+  children?: ReactNode
+}) {
+  return (
+    <li className='flex gap-3'>
+      <span className='bg-muted text-foreground flex size-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold'>
+        {props.n}
+      </span>
+      <div className='min-w-0 space-y-2 pt-0.5'>
+        <p className='text-foreground font-medium'>{props.title}</p>
+        {props.children ? (
+          <div className='text-muted-foreground space-y-2'>
+            {props.children}
+          </div>
+        ) : null}
+      </div>
+    </li>
+  )
+}
+
+export function DocsSteps(props: { children: ReactNode }) {
+  return <ol className='space-y-4'>{props.children}</ol>
+}
+
+export function DocsImage(props: {
+  src: string
+  alt: string
+  caption: string
+}) {
+  return (
+    <figure className='space-y-2'>
+      <img
+        src={props.src}
+        alt={props.alt}
+        className='border-border bg-muted/20 w-full rounded-xl border'
+      />
+      <figcaption className='text-muted-foreground text-xs leading-5'>
+        {props.caption}
+      </figcaption>
+    </figure>
+  )
+}
+
+export function DocsFigure(props: { caption: string; children: ReactNode }) {
+  return (
+    <figure className='space-y-2'>
+      <div className='border-border bg-card overflow-hidden rounded-xl border shadow-xs'>
+        {props.children}
+      </div>
+      <figcaption className='text-muted-foreground text-xs leading-5'>
+        {props.caption}
+      </figcaption>
+    </figure>
+  )
+}
+
 export function DocsCode(props: { label: string; code: string }) {
   return (
     <div className='border-border bg-muted/40 overflow-hidden rounded-lg border'>

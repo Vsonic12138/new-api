@@ -20,12 +20,15 @@ import { useTranslation } from 'react-i18next'
 
 import {
   DocsCode,
-  DocsList,
+  DocsImage,
   DocsNote,
   DocsSection,
+  DocsStep,
+  DocsSteps,
   DocsTextLink,
   DocsTitle,
 } from '../docs-blocks'
+import { CcSwitchFigure } from '../docs-figures'
 import {
   CC_SWITCH_RELEASES_URL,
   CC_SWITCH_SITE_URL,
@@ -49,16 +52,41 @@ export function DocsEndpointPage() {
         )}
       />
       <DocsSection title={t('Claude Code')}>
+        <DocsSteps>
+          <DocsStep
+            n={1}
+            title={t('Copy the address below into ANTHROPIC_BASE_URL.')}
+          />
+          <DocsStep
+            n={2}
+            title={t(
+              'Do not append /v1. Claude Code calls the Anthropic API from the site root.'
+            )}
+          />
+        </DocsSteps>
         <DocsCode label={t('Anthropic base URL')} code={DOCS_ORIGIN} />
-        <p>{t('Do not append /v1 to this address.')}</p>
       </DocsSection>
       <DocsSection title={t('Codex and OpenAI-compatible clients')}>
+        <DocsSteps>
+          <DocsStep
+            n={1}
+            title={t(
+              'Copy the address below into the client base URL or Codex base_url.'
+            )}
+          />
+          <DocsStep
+            n={2}
+            title={t(
+              'The /v1 suffix is required. Without it, Codex and OpenAI SDKs request the wrong path.'
+            )}
+          />
+        </DocsSteps>
         <DocsCode label={t('OpenAI base URL')} code={DOCS_OPENAI_BASE_URL} />
-        <p>
+        <DocsNote>
           {t(
-            'Use this address for Codex, OpenAI SDKs, and other clients that expect an OpenAI-compatible API.'
+            'Swapping the two addresses is the usual reason a key works in one client and fails in the other.'
           )}
-        </p>
+        </DocsNote>
       </DocsSection>
     </>
   )
@@ -76,53 +104,95 @@ export function DocsCcSwitchPage() {
         )}
       />
       <DocsSection title={t('Install')}>
-        <p>
-          {t('Download CC Switch from')}{' '}
-          <DocsTextLink href={CC_SWITCH_RELEASES_URL} external>
-            {t('GitHub releases')}
-          </DocsTextLink>{' '}
-          {t('or from the project site')}{' '}
-          <DocsTextLink href={CC_SWITCH_SITE_URL} external>
-            ccswitch.io
-          </DocsTextLink>
-          .{' '}
-          {t(
-            'Install the package for your system, then open the app once so it can receive an import link.'
+        <DocsSteps>
+          <DocsStep n={1} title={t('Download the installer for your system.')}>
+            <p>
+              <DocsTextLink href={CC_SWITCH_RELEASES_URL} external>
+                {t('GitHub releases')}
+              </DocsTextLink>
+              {' · '}
+              <DocsTextLink href={CC_SWITCH_SITE_URL} external>
+                ccswitch.io
+              </DocsTextLink>
+            </p>
+          </DocsStep>
+          <DocsStep
+            n={2}
+            title={t(
+              'Install it, then open CC Switch once before you click an import link. A closed app cannot receive the link.'
+            )}
+          />
+        </DocsSteps>
+        <DocsImage
+          src='/guides/ccswitch/main-window.png'
+          alt={t('CC Switch main window screenshot')}
+          caption={t(
+            'CC Switch after it is open. The import from this site adds a provider card here.'
           )}
-        </p>
+        />
       </DocsSection>
       <DocsSection title={t('Import from this site')}>
-        <DocsList>
-          <li>
-            {t('Open')}{' '}
+        <DocsSteps>
+          <DocsStep
+            n={1}
+            title={t(
+              'Open API Keys, open the menu on the key row, and choose CC Switch.'
+            )}
+          >
             <DocsTextLink href='/keys'>{t('API Keys')}</DocsTextLink>
-            {t(', open the menu on the key row, and choose CC Switch.')}
-          </li>
-          <li>
-            {t(
-              'Choose Claude Code or Codex, select a primary model that belongs to this key group, then click Open CC Switch.'
+          </DocsStep>
+          <DocsStep
+            n={2}
+            title={t(
+              'Choose Claude Code or Codex. Select a primary model that belongs to this key group. Claude Code can also fill Haiku, Sonnet, and Opus model fields.'
             )}
-          </li>
-          <li>
-            {t(
-              'Confirm the provider in CC Switch and enable it. Claude Code can be used immediately. Quit and reopen the terminal before starting Codex.'
+          />
+          <DocsStep
+            n={3}
+            title={t(
+              'Click Open CC Switch and confirm the provider in the app.'
             )}
-          </li>
-        </DocsList>
+          />
+          <DocsStep
+            n={4}
+            title={t(
+              'Enable the provider. Claude Code can be used immediately. Quit and reopen the terminal before starting Codex.'
+            )}
+          />
+        </DocsSteps>
+        <CcSwitchFigure />
         <DocsNote>
           {t('The import fills the address for you:')} {DOCS_ORIGIN}{' '}
           {t('for Claude Code, and')} {DOCS_OPENAI_BASE_URL} {t('for Codex.')}
         </DocsNote>
       </DocsSection>
       <DocsSection title={t('Add the provider yourself')}>
-        <p>
-          {t(
-            'In CC Switch, add a custom provider. Paste the API key, and use the address from the API addresses page. Do not swap the two addresses.'
-          )}{' '}
-          <DocsTextLink href='/docs/endpoint'>
-            {t('API addresses')}
-          </DocsTextLink>
-        </p>
+        <DocsSteps>
+          <DocsStep
+            n={1}
+            title={t(
+              'In CC Switch, add a provider and choose the custom option.'
+            )}
+          />
+          <DocsStep
+            n={2}
+            title={t(
+              'Paste the API key. Use the Claude Code address with no /v1, or the Codex address with /v1. Do not swap them.'
+            )}
+          >
+            <DocsTextLink href='/docs/endpoint'>
+              {t('API addresses')}
+            </DocsTextLink>
+          </DocsStep>
+          <DocsStep n={3} title={t('Save the provider and enable it.')} />
+        </DocsSteps>
+        <DocsImage
+          src='/guides/ccswitch/add-provider.png'
+          alt={t('CC Switch add provider screenshot')}
+          caption={t(
+            'Where CC Switch asks for the provider, the API key, and the endpoint.'
+          )}
+        />
       </DocsSection>
     </>
   )
@@ -140,39 +210,88 @@ export function DocsClaudeCodePage() {
         )}
       />
       <DocsSection title={t('Check Node.js')}>
+        <DocsSteps>
+          <DocsStep
+            n={1}
+            title={t('Open a terminal and run the two commands below.')}
+          />
+          <DocsStep
+            n={2}
+            title={t(
+              'Each command should print a version number. If either command is not found, install Node.js 18 or newer from nodejs.org, close the terminal, and open a new one.'
+            )}
+          >
+            <DocsTextLink href='https://nodejs.org/' external>
+              nodejs.org
+            </DocsTextLink>
+          </DocsStep>
+          <DocsStep
+            n={3}
+            title={t('Install Claude Code with the third command.')}
+          />
+        </DocsSteps>
+        <DocsCode label='node -v' code='node -v' />
         <DocsCode label='npm -v' code='npm -v' />
-        <p>
-          {t(
-            'The command should print a version. If it is not found, install Node.js 18 or newer and open a new terminal.'
-          )}
-        </p>
         <DocsCode
           label={t('Install Claude Code')}
           code='npm install -g @anthropic-ai/claude-code'
         />
       </DocsSection>
       <DocsSection title={t('Write settings.json')}>
-        <p>{t('Create the file if it does not exist.')}</p>
-        <DocsList>
-          <li>{t('Windows: %USERPROFILE%\\.claude\\settings.json')}</li>
-          <li>{t('macOS and Linux: ~/.claude/settings.json')}</li>
-        </DocsList>
+        <DocsSteps>
+          <DocsStep
+            n={1}
+            title={t(
+              'Create the file if it does not exist. This is your user settings file, not a file inside the project.'
+            )}
+          />
+          <DocsStep
+            n={2}
+            title={t('Windows: %USERPROFILE%\\.claude\\settings.json')}
+          />
+          <DocsStep
+            n={3}
+            title={t('macOS and Linux: ~/.claude/settings.json')}
+          />
+          <DocsStep
+            n={4}
+            title={t(
+              'Paste the JSON below. Replace sk-your-api-token with a key from API Keys. ANTHROPIC_BASE_URL must not end in /v1. ANTHROPIC_AUTH_TOKEN is sent as the Bearer token.'
+            )}
+          >
+            <DocsTextLink href='/keys'>{t('API Keys')}</DocsTextLink>
+          </DocsStep>
+        </DocsSteps>
         <DocsCode label='settings.json' code={CLAUDE_CODE_SETTINGS} />
         <p>
-          {t('Replace sk-your-api-token with a key from')}{' '}
-          <DocsTextLink href='/keys'>{t('API Keys')}</DocsTextLink>.{' '}
           {t(
             'The model you select in Claude Code must be listed for that key group in Model Square.'
-          )}
+          )}{' '}
+          <DocsTextLink
+            href='https://code.claude.com/docs/en/env-vars'
+            external
+          >
+            {t('Claude Code environment variable reference')}
+          </DocsTextLink>
         </p>
       </DocsSection>
       <DocsSection title={t('Try it')}>
+        <DocsSteps>
+          <DocsStep n={1} title={t('In the project folder, run claude.')} />
+          <DocsStep
+            n={2}
+            title={t(
+              'Ask a short question. A reply means the address and key are accepted.'
+            )}
+          />
+          <DocsStep
+            n={3}
+            title={t(
+              'If Claude Code still asks you to sign in to Anthropic, check that ANTHROPIC_BASE_URL has no /v1 and that the key group includes the model.'
+            )}
+          />
+        </DocsSteps>
         <DocsCode label='claude' code='claude' />
-        <p>
-          {t(
-            'A reply means the address and key are accepted. If Claude Code still asks you to sign in to Anthropic, check that ANTHROPIC_BASE_URL has no /v1 and that the key belongs to a group that includes the model.'
-          )}
-        </p>
       </DocsSection>
     </>
   )
@@ -190,6 +309,20 @@ export function DocsCodexPage() {
         )}
       />
       <DocsSection title={t('Check Node.js')}>
+        <DocsSteps>
+          <DocsStep
+            n={1}
+            title={t(
+              'Use the same Node.js check as Claude Code. node -v and npm -v must both print a version.'
+            )}
+          >
+            <DocsTextLink href='https://nodejs.org/' external>
+              nodejs.org
+            </DocsTextLink>
+          </DocsStep>
+          <DocsStep n={2} title={t('Install Codex with the command below.')} />
+        </DocsSteps>
+        <DocsCode label='node -v' code='node -v' />
         <DocsCode label='npm -v' code='npm -v' />
         <DocsCode
           label={t('Install Codex')}
@@ -197,27 +330,60 @@ export function DocsCodexPage() {
         />
       </DocsSection>
       <DocsSection title={t('Write config.toml')}>
-        <DocsList>
-          <li>{t('Windows: %USERPROFILE%\\.codex\\config.toml')}</li>
-          <li>{t('macOS and Linux: ~/.codex/config.toml')}</li>
-        </DocsList>
+        <DocsSteps>
+          <DocsStep
+            n={1}
+            title={t('Windows: %USERPROFILE%\\.codex\\config.toml')}
+          />
+          <DocsStep n={2} title={t('macOS and Linux: ~/.codex/config.toml')} />
+          <DocsStep
+            n={3}
+            title={t(
+              'Paste the file below. model_provider points at the dahua table. base_url must end in /v1. wire_api stays responses, which is the API Codex uses. requires_openai_auth is false so Codex does not ask for an OpenAI login.'
+            )}
+          />
+          <DocsStep
+            n={4}
+            title={t(
+              'gpt-6.1-sol is only an example. Replace it with a model id from Model Square, and use a key whose group matches that card.'
+            )}
+          />
+        </DocsSteps>
         <DocsCode label='config.toml' code={CODEX_CONFIG} />
         <p>
-          {t(
-            'gpt-6.1-sol is an example. Replace it with a model id from Model Square that belongs to this key group. The group does not have to be named Codex.'
-          )}
+          <DocsTextLink
+            href='https://learn.chatgpt.com/docs/config-file/config-sample'
+            external
+          >
+            {t('Codex sample configuration')}
+          </DocsTextLink>
         </p>
       </DocsSection>
       <DocsSection title={t('Set the API key')}>
+        <DocsSteps>
+          <DocsStep
+            n={1}
+            title={t(
+              'Do not put the key in config.toml. Codex reads env_key, so the secret stays in DAHUA_API_KEY.'
+            )}
+          />
+          <DocsStep
+            n={2}
+            title={t(
+              'Replace sk-your-api-token with a key from API Keys, then open a new terminal.'
+            )}
+          >
+            <DocsTextLink href='/keys'>{t('API Keys')}</DocsTextLink>
+          </DocsStep>
+          <DocsStep
+            n={3}
+            title={t(
+              'Run codex in the project folder and send a short prompt.'
+            )}
+          />
+        </DocsSteps>
         <DocsCode label='macOS / Linux' code={CODEX_ENV_UNIX} />
         <DocsCode label='Windows PowerShell' code={CODEX_ENV_WINDOWS} />
-        <p>
-          {t('Replace sk-your-api-token with a key from')}{' '}
-          <DocsTextLink href='/keys'>{t('API Keys')}</DocsTextLink>.{' '}
-          {t(
-            'Open a new terminal after setting the variable, then run codex. requires_openai_auth = false keeps Codex from asking for an OpenAI login.'
-          )}
-        </p>
         <DocsCode label='codex' code='codex' />
       </DocsSection>
     </>

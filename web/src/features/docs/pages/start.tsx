@@ -18,7 +18,13 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { useTranslation } from 'react-i18next'
 
-import { DocsList, DocsSection, DocsTextLink, DocsTitle } from '../docs-blocks'
+import {
+  DocsSection,
+  DocsStep,
+  DocsSteps,
+  DocsTextLink,
+  DocsTitle,
+} from '../docs-blocks'
 
 export function DocsStartPage() {
   const { t } = useTranslation()
@@ -28,42 +34,61 @@ export function DocsStartPage() {
       <DocsTitle
         title={t('Start here')}
         summary={t(
-          'Create an account, add quota, create an API key, then connect Claude Code or Codex.'
+          'Follow the six steps in order. When you finish, Claude Code or Codex can call this site with your own API key.'
         )}
       />
       <DocsSection title={t('Order of steps')}>
-        <DocsList>
-          <li>
-            <DocsTextLink href='/docs/register'>
-              {t('Create an account')}
-            </DocsTextLink>
-          </li>
-          <li>
-            <DocsTextLink href='/docs/topup'>
-              {t('Add quota with a redemption code')}
-            </DocsTextLink>
-          </li>
-          <li>
-            <DocsTextLink href='/docs/token'>
-              {t('Create an API key')}
-            </DocsTextLink>
-          </li>
-          <li>
-            <DocsTextLink href='/docs/endpoint'>
-              {t('API addresses')}
-            </DocsTextLink>
-          </li>
-          <li>
-            <DocsTextLink href='/docs/cc-switch'>
-              {t('Set up CC Switch')}
-            </DocsTextLink>
-          </li>
-        </DocsList>
-        <p>
-          {t(
-            'CC Switch is the shorter path for Claude Code and Codex. Manual configuration is on the Claude Code and Codex pages.'
-          )}
-        </p>
+        <DocsSteps>
+          <DocsStep n={1} title={t('Create an account')}>
+            <p>
+              {t('Email or GitHub. There is no Google sign-in.')}{' '}
+              <DocsTextLink href='/docs/register'>
+                {t('Open this step')}
+              </DocsTextLink>
+            </p>
+          </DocsStep>
+          <DocsStep n={2} title={t('Sign in')}>
+            <p>{t('Use the same method you registered with.')}</p>
+          </DocsStep>
+          <DocsStep n={3} title={t('Add quota with a redemption code')}>
+            <p>
+              {t(
+                'Buy a code, then redeem it in Wallet. 1 yuan equals 1 USD of quota.'
+              )}{' '}
+              <DocsTextLink href='/docs/topup'>
+                {t('Open this step')}
+              </DocsTextLink>
+            </p>
+          </DocsStep>
+          <DocsStep n={4} title={t('Create an API key')}>
+            <p>
+              {t('Choose the group printed on the model card in Model Square.')}{' '}
+              <DocsTextLink href='/docs/token'>
+                {t('Open this step')}
+              </DocsTextLink>
+            </p>
+          </DocsStep>
+          <DocsStep n={5} title={t('Copy the API address')}>
+            <p>
+              {t(
+                'Claude Code uses the site root. Codex and other OpenAI-compatible clients add /v1.'
+              )}{' '}
+              <DocsTextLink href='/docs/endpoint'>
+                {t('Open this step')}
+              </DocsTextLink>
+            </p>
+          </DocsStep>
+          <DocsStep n={6} title={t('Connect a client')}>
+            <p>
+              {t(
+                'CC Switch is the shorter path. The Claude Code and Codex pages show the manual files.'
+              )}{' '}
+              <DocsTextLink href='/docs/cc-switch'>
+                {t('Set up CC Switch')}
+              </DocsTextLink>
+            </p>
+          </DocsStep>
+        </DocsSteps>
         <p>
           {t('Cherry Studio, DSH, and ZCode are documented on the')}{' '}
           <DocsTextLink href='/'>{t('Home')}</DocsTextLink>.

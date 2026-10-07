@@ -19,12 +19,19 @@ For commercial licensing, please contact support@quantumnous.com
 import { useTranslation } from 'react-i18next'
 
 import {
-  DocsList,
+  DocsImage,
   DocsNote,
   DocsSection,
+  DocsStep,
+  DocsSteps,
   DocsTextLink,
   DocsTitle,
 } from '../docs-blocks'
+import {
+  ApiKeyFormFigure,
+  ModelGroupFigure,
+  RedeemFormFigure,
+} from '../docs-figures'
 import { DOCS_CARD_SHOP_URL } from '../site'
 
 export function DocsRegisterPage() {
@@ -35,44 +42,115 @@ export function DocsRegisterPage() {
       <DocsTitle
         title={t('Create an account')}
         summary={t(
-          'Registration uses an email and password, or GitHub. This site does not use Google sign-in.'
+          'Use email or GitHub. This site does not offer Google sign-in. Finish this page before buying quota.'
         )}
       />
-      <DocsSection title={t('Email registration')}>
-        <DocsList>
-          <li>
-            {t('Open')}{' '}
-            <DocsTextLink href='/sign-up'>{t('Sign up')}</DocsTextLink>.
-          </li>
-          <li>
-            {t(
-              'Enter an email address, a username, and a password. If the page asks for an email code, use the code from that message before submitting.'
+
+      <DocsSection title={t('Open the sign-up page')}>
+        <DocsSteps>
+          <DocsStep
+            n={1}
+            title={t(
+              'Open Sign up in the browser, or use Get Started on the home page.'
             )}
-          </li>
-          <li>
-            {t(
-              'Complete the human check when it is shown, then submit the form.'
-            )}
-          </li>
-        </DocsList>
-      </DocsSection>
-      <DocsSection title={t('GitHub')}>
-        <p>
-          {t('On the same page, choose')}{' '}
-          <DocsTextLink href='/sign-up'>
-            {t('Continue with GitHub')}
-          </DocsTextLink>
-          . {t('Use the same GitHub account the next time you sign in.')}
-        </p>
-      </DocsSection>
-      <DocsSection title={t('Sign in')}>
-        <p>
-          {t('After the account exists, open')}{' '}
-          <DocsTextLink href='/sign-in'>{t('Sign in')}</DocsTextLink>.{' '}
-          {t(
-            'Use the email or username with the password, or choose GitHub again.'
+          >
+            <DocsTextLink href='/sign-up'>{t('Sign up')}</DocsTextLink>
+          </DocsStep>
+        </DocsSteps>
+        <DocsImage
+          src='/docs-images/sign-up.png'
+          alt={t('Sign-up page screenshot')}
+          caption={t(
+            'The sign-up page. The form is email registration. GitHub is the button under the form.'
           )}
-        </p>
+        />
+      </DocsSection>
+
+      <DocsSection title={t('Register with email')}>
+        <DocsSteps>
+          <DocsStep
+            n={1}
+            title={t(
+              'Fill in Username. You can also use this name later to sign in.'
+            )}
+          />
+          <DocsStep
+            n={2}
+            title={t(
+              'Fill in Password and Confirm password. The password must be 8 to 128 characters.'
+            )}
+          />
+          <DocsStep
+            n={3}
+            title={t(
+              'Fill in an email address you can open. Send code stays disabled until the address is valid. Open the email, copy the code, and paste it into Verification code.'
+            )}
+          />
+          <DocsStep
+            n={4}
+            title={t(
+              'Complete the Cloudflare check on the page. Create account stays disabled until that check finishes.'
+            )}
+          />
+          <DocsStep
+            n={5}
+            title={t(
+              'Click Create account. When it succeeds, the page asks you to sign in.'
+            )}
+          />
+        </DocsSteps>
+        <DocsNote>
+          {t(
+            'If the verification email does not arrive, check the spam folder and wait a minute before sending the code again.'
+          )}
+        </DocsNote>
+      </DocsSection>
+
+      <DocsSection title={t('Register with GitHub')}>
+        <DocsSteps>
+          <DocsStep
+            n={1}
+            title={t('On the same sign-up page, click Continue with GitHub.')}
+          />
+          <DocsStep
+            n={2}
+            title={t(
+              'Approve the request on GitHub. The site then creates the account and signs you in.'
+            )}
+          />
+          <DocsStep
+            n={3}
+            title={t(
+              'The next time, use that same GitHub account. You do not set a separate password for it.'
+            )}
+          />
+        </DocsSteps>
+      </DocsSection>
+
+      <DocsSection title={t('Sign in')}>
+        <DocsImage
+          src='/docs-images/sign-in.png'
+          alt={t('Sign-in page screenshot')}
+          caption={t(
+            'The sign-in page. Use the username or email with the password, or use GitHub again.'
+          )}
+        />
+        <DocsSteps>
+          <DocsStep n={1} title={t('Open Sign in.')}>
+            <DocsTextLink href='/sign-in'>{t('Sign in')}</DocsTextLink>
+          </DocsStep>
+          <DocsStep
+            n={2}
+            title={t(
+              'Type the username or email and the password, then continue. GitHub users click Continue with GitHub instead.'
+            )}
+          />
+        </DocsSteps>
+        <DocsNote>
+          {t(
+            'This browser keeps you signed in. A different computer, or a browser whose cookies were cleared, asks you to sign in again.'
+          )}
+        </DocsNote>
       </DocsSection>
     </>
   )
@@ -86,35 +164,83 @@ export function DocsTopupPage() {
       <DocsTitle
         title={t('Add quota with a redemption code')}
         summary={t(
-          'Quota is added by buying a redemption code, then redeeming it in Wallet. 1 yuan paid equals 1 USD of quota.'
+          'Buy a code at the card shop, then redeem it in Wallet. 1 yuan paid equals 1 USD of quota.'
         )}
       />
+
       <DocsSection title={t('Buy a code')}>
-        <p>
-          {t('Open the card shop')}{' '}
-          <DocsTextLink href={DOCS_CARD_SHOP_URL} external>
-            {DOCS_CARD_SHOP_URL}
-          </DocsTextLink>
-          .{' '}
-          {t(
-            'Pay there and copy the redemption code from the order. If the shop page does not load, turn off the system proxy and try again.'
+        <DocsSteps>
+          <DocsStep n={1} title={t('Open the card shop.')}>
+            <DocsTextLink href={DOCS_CARD_SHOP_URL} external>
+              {DOCS_CARD_SHOP_URL}
+            </DocsTextLink>
+          </DocsStep>
+          <DocsStep
+            n={2}
+            title={t(
+              'Under 中转卡密, choose one product. The shop lists 10 yuan, 20 yuan, and 100 yuan codes.'
+            )}
+          />
+          <DocsStep
+            n={3}
+            title={t(
+              'In the order window, fill in a phone number or an email address. The page recommends a phone number. An email address also receives the code.'
+            )}
+          />
+          <DocsStep
+            n={4}
+            title={t(
+              'Choose Alipay or WeChat, then click 去支付 and finish the payment.'
+            )}
+          />
+          <DocsStep
+            n={5}
+            title={t(
+              'The shop delivers the code automatically. Copy it from the order result. If you closed the page, use 订单查询 on the shop with the same contact.'
+            )}
+          />
+        </DocsSteps>
+        <DocsImage
+          src='/docs-images/card-shop.png'
+          alt={t('Card shop screenshot')}
+          caption={t('The card shop home. Choose a code under 中转卡密.')}
+        />
+        <DocsImage
+          src='/docs-images/card-buy.png'
+          alt={t('Card shop order screenshot')}
+          caption={t(
+            'The order window for the 10 yuan code. It states that 1 yuan equals 1 USD of quota. Pay with Alipay or WeChat.'
           )}
-        </p>
-      </DocsSection>
-      <DocsSection title={t('Redeem')}>
-        <DocsList>
-          <li>
-            {t('Sign in, then open')}{' '}
-            <DocsTextLink href='/wallet'>{t('Wallet')}</DocsTextLink>.
-          </li>
-          <li>{t('Paste the code into the redemption field.')}</li>
-          <li>{t('Click Redeem. The quota is added to this account.')}</li>
-        </DocsList>
+        />
         <DocsNote>
           {t(
-            'The price shown on this site is quota, not a second charge. A 10 yuan code adds 10 USD of quota.'
+            'A 10 yuan code adds 10 USD of quota. The price later shown in Model Square is this quota, not a second charge. If the shop page stays blank, turn off the system proxy and open it again.'
           )}
         </DocsNote>
+      </DocsSection>
+
+      <DocsSection title={t('Redeem the code')}>
+        <DocsSteps>
+          <DocsStep
+            n={1}
+            title={t('Sign in, then open Wallet from the console menu.')}
+          >
+            <DocsTextLink href='/wallet'>{t('Wallet')}</DocsTextLink>
+          </DocsStep>
+          <DocsStep n={2} title={t('Find the block titled Have a Code?')} />
+          <DocsStep
+            n={3}
+            title={t(
+              'Paste the code into Enter your redemption code, then click Redeem. The quota is added to this account immediately.'
+            )}
+          />
+        </DocsSteps>
+        <RedeemFormFigure />
+        <p className='text-muted-foreground text-xs'>
+          {t(
+            'The picture above matches the Wallet form: the label, the input, and the Redeem button.'
+          )}
+        </p>
       </DocsSection>
     </>
   )
@@ -128,45 +254,99 @@ export function DocsTokenPage() {
       <DocsTitle
         title={t('Create an API key')}
         summary={t(
-          'Clients call this site with an API key. The key group decides which models that key can use.'
+          'Claude Code, Codex, and CC Switch all use an API key from this site. The key group decides which models that key can call.'
         )}
       />
+
       <DocsSection title={t('Create the key')}>
-        <DocsList>
-          <li>
-            {t('Open')}{' '}
-            <DocsTextLink href='/keys'>{t('API Keys')}</DocsTextLink>{' '}
-            {t('and choose Create API Key.')}
-          </li>
-          <li>
-            {t(
-              'Name the key after the client, for example Claude Code or Codex.'
+        <DocsSteps>
+          <DocsStep n={1} title={t('Sign in, then open API Keys.')}>
+            <DocsTextLink href='/keys'>{t('API Keys')}</DocsTextLink>
+          </DocsStep>
+          <DocsStep
+            n={2}
+            title={t('Click Create API Key. A panel opens from the side.')}
+          />
+          <DocsStep
+            n={3}
+            title={t(
+              'Name: use the client name, such as Claude Code or Codex, so you can tell keys apart later.'
             )}
-          </li>
-          <li>
-            {t(
-              'Choose a token group. Open Model Square, select that group, and confirm the model you will call is listed there. There is no separate group name required for Claude Code or Codex.'
+          />
+          <DocsStep
+            n={4}
+            title={t(
+              'Group: you must select one. Open Model Square first and read the group printed on the model card. Select that same group here. There is no fixed group named CC or Codex.'
             )}
-          </li>
-          <li>
-            {t(
-              'Leave expiry, model restrictions, and IP allowlists at their defaults unless you already know you need them.'
+          />
+          <DocsStep
+            n={5}
+            title={t(
+              'Expiration Time: leave Never expires unless you want the key to stop on a date.'
             )}
-          </li>
-          <li>
-            {t(
-              'Submit, then copy the key. It looks like sk- followed by a long string. The key row can copy it again later.'
+          />
+          <DocsStep n={6} title={t('Quantity: leave 1.')} />
+          <DocsStep
+            n={7}
+            title={t(
+              'Unlimited Quota: you can turn this on. The key can still spend only the quota remaining on the account.'
             )}
-          </li>
-        </DocsList>
+          />
+          <DocsStep
+            n={8}
+            title={t(
+              'Leave Model Limits and the IP whitelist off until you already know you need them.'
+            )}
+          />
+          <DocsStep
+            n={9}
+            title={t(
+              'Click Save changes. Copy the key when it is shown. It starts with sk-. The row menu can copy it again later.'
+            )}
+          />
+        </DocsSteps>
+        <ApiKeyFormFigure />
+        <p className='text-muted-foreground text-xs'>
+          {t(
+            'The picture above matches the create-key panel. Your group list is loaded from the site and will not say “Select a group” after you pick one.'
+          )}
+        </p>
         <DocsNote>
           {t(
-            'An unlimited key is still limited by the quota on the account. A model missing from the selected group returns a model-not-found error.'
+            'A wrong group returns a model-not-found error even when the key and the address are correct.'
           )}
         </DocsNote>
-        <p>
-          <DocsTextLink href='/pricing'>{t('Model Square')}</DocsTextLink>
-        </p>
+      </DocsSection>
+
+      <DocsSection title={t('Check the group in Model Square')}>
+        <DocsSteps>
+          <DocsStep
+            n={1}
+            title={t('Open Model Square from the top of the site.')}
+          >
+            <DocsTextLink href='/pricing'>{t('Model Square')}</DocsTextLink>
+          </DocsStep>
+          <DocsStep
+            n={2}
+            title={t(
+              'Search for the model you want. Each card shows the price per 1M tokens and a Group line.'
+            )}
+          />
+          <DocsStep
+            n={3}
+            title={t(
+              'Use the name on that Group line when you create the key. For example, a card that says claude-kiro must be called with a key in the claude-kiro group. Another model can show a different group.'
+            )}
+          />
+        </DocsSteps>
+        <DocsImage
+          src='/docs-images/model-square.png'
+          alt={t('Model Square screenshot')}
+          caption={t(
+            'Model Square. Read the Group line on the card before you create the key. Prices here are the quota prices.'
+          )}
+        />
+        <ModelGroupFigure />
       </DocsSection>
     </>
   )
