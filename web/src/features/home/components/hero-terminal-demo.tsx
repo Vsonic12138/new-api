@@ -16,7 +16,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Claude, DeepSeek, OpenAI } from '@lobehub/icons'
+import { Claude, DeepSeek, Gemini, OpenAI } from '@lobehub/icons'
 import { Activity, CheckCircle2 } from 'lucide-react'
 import { useState, useEffect, useRef, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -37,6 +37,8 @@ interface ModelWorkflowDemo {
   icon: (size?: number) => ReactNode
   tone: 'purple' | 'emerald' | 'cyan' | 'blue'
   prompt: string
+  thinkingSeconds: string
+  thinkingSummary: string
   responseSummary: string
   codeSnippet: string
   codeLang: string
@@ -68,7 +70,7 @@ export function HeroTerminalDemo(props: { className?: string }) {
       id: 'claude-sonnet-5',
       name: 'Claude Sonnet 5',
       vendor: 'Anthropic',
-      context: '200K Context',
+      context: t('1M Context'),
       ratio: '1.0x',
       protocol: 'Claude',
       agentSource: 'Claude Code',
@@ -76,6 +78,8 @@ export function HeroTerminalDemo(props: { className?: string }) {
       icon: (s = 16) => <Claude.Color size={s} className='shrink-0' />,
       tone: 'purple',
       prompt: t('Refactor this high-concurrency worker pipeline with context timeout and graceful shutdown.'),
+      thinkingSeconds: '0.4s',
+      thinkingSummary: t('Analyzed worker pool concurrency, adding bounded channel drain and context cancellation.'),
       responseSummary: t('Refactored for thread-safety using bounded task channels and context.WithTimeout:'),
       codeLang: 'go',
       codeSnippet: `func RunPipeline(ctx context.Context, workers int) error {
@@ -88,7 +92,7 @@ export function HeroTerminalDemo(props: { className?: string }) {
       id: 'gpt-6.1-sol',
       name: 'GPT-6.1 Sol',
       vendor: 'OpenAI',
-      context: 'Sol High Compute',
+      context: t('1.05M Context'),
       ratio: '1.0x',
       protocol: 'OpenAI',
       agentSource: 'Codex / Cherry',
@@ -96,6 +100,8 @@ export function HeroTerminalDemo(props: { className?: string }) {
       icon: (s = 16) => <OpenAI size={s} className='shrink-0' />,
       tone: 'emerald',
       prompt: t('Analyze multi-tenant cache invalidation strategies under sudden hotkey traffic spikes.'),
+      thinkingSeconds: '0.5s',
+      thinkingSummary: t('Evaluated distributed lock overhead; selected stale-while-revalidate pattern to eliminate hotkey jitter.'),
       responseSummary: t('Implemented two-tier defense with distributed mutex and stale-while-revalidate policy:'),
       codeLang: 'ts',
       codeSnippet: `interface CachePolicy<T> {
@@ -108,14 +114,16 @@ export function HeroTerminalDemo(props: { className?: string }) {
       id: 'deepseek-flash',
       name: 'DeepSeek Flash',
       vendor: 'DeepSeek',
-      context: 'V4.1 Flash',
-      ratio: '1.27x',
+      context: t('1M Context'),
+      ratio: t('Tiered 1.27x'),
       protocol: 'OpenAI',
       agentSource: 'DSH / ZCode',
       endpoint: '/v1/chat/completions',
       icon: (s = 16) => <DeepSeek.Color size={s} className='shrink-0' />,
       tone: 'cyan',
       prompt: t('Design a high-throughput JSON streaming parser pipeline with minimal GC overhead.'),
+      thinkingSeconds: '0.3s',
+      thinkingSummary: t('Configured sync.Pool ring buffer to avoid heap allocations during high-frequency chunk streaming.'),
       responseSummary: t('Used pre-allocated ring buffer pool for zero-alloc chunk parsing:'),
       codeLang: 'go',
       codeSnippet: `var bufferPool = sync.Pool{
@@ -123,17 +131,41 @@ export function HeroTerminalDemo(props: { className?: string }) {
 }`,
     },
     {
+      id: 'gemini-3.8-flash',
+      name: 'Gemini 3.8 Flash',
+      vendor: 'Google',
+      context: t('1M Multimodal'),
+      ratio: t('Standard Promo'),
+      protocol: 'OpenAI',
+      agentSource: 'Magpie / CLI',
+      endpoint: '/v1/chat/completions',
+      icon: (s = 16) => <Gemini.Color size={s} className='shrink-0' />,
+      tone: 'blue',
+      prompt: t('Extract structured audit metrics and action items from long-context technical reports.'),
+      thinkingSeconds: '0.4s',
+      thinkingSummary: t('Parsed 1M token report tokens directly into strongly-typed JSON schema with validation guarantees.'),
+      responseSummary: t('Applied strict JSON schema definition for deterministic pipeline extraction:'),
+      codeLang: 'ts',
+      codeSnippet: `interface AuditResult {
+  reportId: string
+  criticalIssues: Array<{ severity: 'high' | 'med'; rule: string }>
+  summary: string
+}`,
+    },
+    {
       id: 'claude-opus-5-5',
       name: 'Claude Opus 5.5',
       vendor: 'Anthropic',
-      context: 'Extreme Reasoning',
+      context: t('1M Context'),
       ratio: '2.0x',
       protocol: 'Claude',
-      agentSource: 'Claude Code / Pi',
+      agentSource: 'Claude Code',
       endpoint: '/v1/messages',
       icon: (s = 16) => <Claude.Color size={s} className='shrink-0' />,
       tone: 'purple',
       prompt: t('Architect a cross-region consensus schedule targeting RPO=0 across three availability zones.'),
+      thinkingSeconds: '0.7s',
+      thinkingSummary: t('Derived quorum boundary conditions under cross-region partition; introduced adaptive lease heartbeats.'),
       responseSummary: t('Synchronous Raft barrier with lease-based cross-region election safety:'),
       codeLang: 'yaml',
       codeSnippet: `consensus:
@@ -266,27 +298,29 @@ export function HeroTerminalDemo(props: { className?: string }) {
         </div>
       </div>
 
-      {/* Model Selection Tabs (Curated from 模型广场) */}
-      <div className='border-border/40 bg-muted/20 flex flex-wrap items-center gap-1 border-b px-3 py-2'>
-        {demos.map((d, idx) => {
-          const isActive = idx === activeIndex
-          return (
-            <button
-              key={d.id}
-              type='button'
-              onClick={() => handleSelect(idx)}
-              className={cn(
-                'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all duration-200',
-                isActive
-                  ? 'bg-background text-foreground border-border/60 border shadow-2xs'
-                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground border border-transparent'
-              )}
-            >
-              {d.icon(14)}
-              <span>{d.name}</span>
-            </button>
-          )
-        })}
+      {/* Model Selection Tabs (Curated from 模型广场, styled after Magpie) */}
+      <div className='border-border/40 bg-muted/20 flex items-center gap-2 overflow-x-auto border-b px-3 py-2 scrollbar-none'>
+        <div className='bg-muted/50 border-border/50 inline-flex items-center gap-1 rounded-xl border p-0.5 shadow-2xs'>
+          {demos.map((d, idx) => {
+            const isActive = idx === activeIndex
+            return (
+              <button
+                key={d.id}
+                type='button'
+                onClick={() => handleSelect(idx)}
+                className={cn(
+                  'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium transition-all duration-150',
+                  isActive
+                    ? 'bg-background text-foreground border-border/70 border shadow-2xs font-semibold'
+                    : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground border border-transparent'
+                )}
+              >
+                {d.icon(14)}
+                <span className='whitespace-nowrap'>{d.name}</span>
+              </button>
+            )
+          })}
+        </div>
       </div>
 
       {/* Card Content Area */}
@@ -329,7 +363,7 @@ export function HeroTerminalDemo(props: { className?: string }) {
 
         {/* View Mode: Interactive Preview */}
         {viewMode === 'preview' ? (
-          <div className='space-y-3.5 text-xs'>
+          <div className='space-y-3 text-xs'>
             {/* User Prompt */}
             <div className='rounded-xl border border-border/50 bg-muted/15 p-3'>
               <div className='text-muted-foreground/70 mb-1 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider'>
@@ -338,6 +372,24 @@ export function HeroTerminalDemo(props: { className?: string }) {
               </div>
               <p className='text-foreground font-medium leading-relaxed'>
                 {activeDemo.prompt}
+              </p>
+            </div>
+
+            {/* Thinking / Reasoning Process */}
+            <div className='rounded-xl border border-border/40 bg-muted/15 p-2.5'>
+              <div className='text-muted-foreground/80 mb-1 flex items-center justify-between text-[10px] font-medium'>
+                <div className='flex items-center gap-1.5'>
+                  <span className='size-1.5 rounded-full bg-blue-500/70' />
+                  <span>
+                    {t('Thinking Process')} ({activeDemo.thinkingSeconds})
+                  </span>
+                </div>
+                <span className='text-muted-foreground/50 font-mono text-[10px]'>
+                  CoT
+                </span>
+              </div>
+              <p className='text-muted-foreground font-mono text-[11px] leading-relaxed'>
+                {activeDemo.thinkingSummary}
               </p>
             </div>
 
@@ -427,7 +479,7 @@ export function HeroTerminalDemo(props: { className?: string }) {
         </div>
 
         <div className='flex items-center gap-1 font-mono text-[10px] text-muted-foreground/70'>
-          <span>OpenAI & Anthropic Compatible</span>
+          <span>{t('Pricing based on live Model Square')}</span>
         </div>
       </div>
     </div>
