@@ -43,6 +43,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-07',
     items: [
     {
+      "tag": "fix",
+      "titleEn": "[home] 显示站内文档并去掉重复价格按钮",
+      "titleZh": "[home] 显示站内文档并去掉重复价格按钮",
+      "descEn": "Commit: 8dd3595dd (2026-10-07)",
+      "descZh": "提交: 8dd3595dd · 2026-10-07",
+      "commitHash": "8dd3595dd"
+    },
+    {
       "tag": "feat",
       "titleEn": "[docs] 增加站内使用文档并接入顶部文档入口",
       "titleZh": "[docs] 增加站内使用文档并接入顶部文档入口",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 32a510784 (2026-10-03)",
       "descZh": "提交: 32a510784 · 2026-10-03",
       "commitHash": "32a510784"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "[relayconvert] keep Responses custom tools on Claude and Gemini upstreams (#7636)",
-      "titleZh": "[relayconvert] keep Responses custom tools on Claude and Gemini upstreams (#7636)",
-      "descEn": "Commit: 1a4166d8e (2026-10-01)",
-      "descZh": "提交: 1a4166d8e · 2026-10-01",
-      "commitHash": "1a4166d8e"
     }
 ],
   },
