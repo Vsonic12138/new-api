@@ -2751,7 +2751,7 @@
     "footer.columns.related.links.oneApi": "One API",
     "footer.columns.related.title": "Projets liés",
     "footer.defaultCopyright": "Tous droits réservés.",
-    "footer.new\u0061pi.projectAttributionSuffix": "Tous droits réservés. Conçu et développé par les contributeurs du projet.",
+    "footer.newapi.projectAttributionSuffix": "Tous droits réservés. Conçu et développé par les contributeurs du projet.",
     "For advanced custom channels this applies only to /v1/responses routes without protocol conversion.": "Pour les canaux personnalisés avancés, ceci ne s’applique qu’aux routes /v1/responses sans conversion de protocole.",
     "For channels added after May 10, 2025, no need to remove \".\" from model names during deployment": "Pour les canaux ajoutés après le 10 mai 2025, pas besoin de supprimer \".\" des noms de modèles lors du déploiement",
     "For private deployments, format: https://fastgpt.run/api/openapi": "Pour les déploiements privés, format : https://fastgpt.run/api/openapi",
@@ -7125,5 +7125,23 @@
     "Claude Code uses the site root with the Anthropic protocol. Codex and OpenCode use the OpenAI-compatible /v1 address.": "Claude Code utilise la racine du site avec le protocole Anthropic. Codex et OpenCode utilisent l’adresse /v1 compatible OpenAI.",
     "Click Enable on the provider card. Claude Code applies immediately. For Codex and OpenCode, restart the terminal or CLI.": "Cliquez sur Activer sur la carte du fournisseur. Claude Code s’applique immédiatement. Pour Codex et OpenCode, redémarrez le terminal ou la CLI.",
     "Switch Claude Code, Codex, and OpenCode providers from one desktop app.": "Basculez entre les fournisseurs Claude Code, Codex et OpenCode depuis une seule application."
-  }
+  },
+  "One key, standard endpoints. Connect to CLI gateways and desktop clients in seconds.": "Une seule clé, des points de terminaison standard. Connectez-vous aux passerelles CLI et aux clients de bureau en quelques secondes.",
+  "CLI Gateways": "Passerelles CLI",
+  "Desktop & Harness": "Bureau & Harness",
+  "Gateway Live Preview": "Aperçu en direct de la passerelle",
+  "200 OK · Ready": "200 OK · Prêt",
+  "Standard Dual Protocols": "Conversion native double protocole",
+  "SSE Streaming": "Streaming SSE continu",
+  "Prompt": "Invite",
+  "Endpoint URL": "URL du point de terminaison",
+  "cURL Sample": "Exemple cURL",
+  "Refactor this high-concurrency worker pipeline with context timeout and graceful shutdown.": "Refactorisez ce pipeline de workers à haute concurrence avec délai d'expiration de contexte et arrêt progressif.",
+  "Refactored for thread-safety using bounded task channels and context.WithTimeout:": "Refactorisé pour la sécurité des threads à l'aide de canaux de tâches délimités et context.WithTimeout :",
+  "Analyze multi-tenant cache invalidation strategies under sudden hotkey traffic spikes.": "Analysez les stratégies d'invalidation du cache mutualisé lors de pics soudains de trafic sur des clés chaudes.",
+  "Implemented two-tier defense with distributed mutex and stale-while-revalidate policy:": "Défense à deux niveaux implémentée avec mutex distribué et politique stale-while-revalidate :",
+  "Design a high-throughput JSON streaming parser pipeline with minimal GC overhead.": "Concevez un pipeline d'analyseur de streaming JSON à haut débit avec une surcharge GC minimale.",
+  "Used pre-allocated ring buffer pool for zero-alloc chunk parsing:": "Pool de tampons circulaires préalloué utilisé pour l'analyse de blocs sans allocation mémoire :",
+  "Architect a cross-region consensus schedule targeting RPO=0 across three availability zones.": "Concevez une architecture de consensus interrégionale ciblant un RPO=0 sur trois zones de disponibilité.",
+  "Synchronous Raft barrier with lease-based cross-region election safety:": "Barrière Raft synchrone avec sécurité d'élection interrégionale basée sur des baux :"
 }

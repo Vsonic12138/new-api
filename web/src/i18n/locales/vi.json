@@ -2751,7 +2751,7 @@
     "footer.columns.related.links.oneApi": "One API",
     "footer.columns.related.title": "Các Dự Án Liên Quan",
     "footer.defaultCopyright": "Bản quyền được bảo lưu.",
-    "footer.new\u0061pi.projectAttributionSuffix": "Bản quyền được bảo lưu. Được thiết kế và phát triển bởi các cộng tác viên dự án.",
+    "footer.newapi.projectAttributionSuffix": "Bản quyền được bảo lưu. Được thiết kế và phát triển bởi các cộng tác viên dự án.",
     "For advanced custom channels this applies only to /v1/responses routes without protocol conversion.": "Với kênh tùy chỉnh nâng cao, thiết lập này chỉ áp dụng cho các route /v1/responses không chuyển đổi giao thức.",
     "For channels added after May 10, 2025, no need to remove \".\" from model names during deployment": "Đối với các kênh được thêm sau ngày 10 tháng 5 năm 2025, không cần loại bỏ \".\" khỏi tên mô hình trong quá trình triển khai",
     "For private deployments, format: https://fastgpt.run/api/openapi": "Đối với các triển khai riêng tư, định dạng: https://fastgpt.run/api/openapi",
@@ -7125,5 +7125,23 @@
     "Claude Code uses the site root with the Anthropic protocol. Codex and OpenCode use the OpenAI-compatible /v1 address.": "Claude Code sử dụng địa chỉ gốc với giao thức Anthropic. Codex và OpenCode sử dụng địa chỉ /v1 tương thích với OpenAI.",
     "Click Enable on the provider card. Claude Code applies immediately. For Codex and OpenCode, restart the terminal or CLI.": "Nhấp vào Bật trên thẻ nhà cung cấp. Claude Code có hiệu lực ngay lập tức. Đối với Codex và OpenCode, hãy khởi động lại terminal hoặc CLI.",
     "Switch Claude Code, Codex, and OpenCode providers from one desktop app.": "Chuyển đổi các nhà cung cấp Claude Code, Codex và OpenCode từ một ứng dụng máy tính duy nhất."
-  }
+  },
+  "One key, standard endpoints. Connect to CLI gateways and desktop clients in seconds.": "Một khóa duy nhất, điểm cuối chuẩn. Kết nối với cổng CLI và ứng dụng máy tính chỉ trong vài giây.",
+  "CLI Gateways": "Cổng CLI",
+  "Desktop & Harness": "Máy tính & Harness",
+  "Gateway Live Preview": "Xem trước cổng trực tiếp",
+  "200 OK · Ready": "200 OK · Sẵn sàng",
+  "Standard Dual Protocols": "Chuyển đổi giao thức kép tiêu chuẩn",
+  "SSE Streaming": "Truyền phát trực tuyến SSE",
+  "Prompt": "Lời nhắc",
+  "Endpoint URL": "URL điểm cuối",
+  "cURL Sample": "Ví dụ cURL",
+  "Refactor this high-concurrency worker pipeline with context timeout and graceful shutdown.": "Tái cấu trúc đường ống worker đồng thời cao này với thời gian chờ ngữ cảnh và dừng hoạt động linh hoạt.",
+  "Refactored for thread-safety using bounded task channels and context.WithTimeout:": "Đã tái cấu trúc để đảm bảo an toàn luồng bằng các kênh tác vụ có giới hạn và context.WithTimeout:",
+  "Analyze multi-tenant cache invalidation strategies under sudden hotkey traffic spikes.": "Phân tích các chiến lược vô hiệu hóa bộ đệm đa người thuê khi lưu lượng truy cập khóa nóng tăng đột biến.",
+  "Implemented two-tier defense with distributed mutex and stale-while-revalidate policy:": "Đã triển khai phòng thủ hai lớp với mutex phân tán và chính sách stale-while-revalidate:",
+  "Design a high-throughput JSON streaming parser pipeline with minimal GC overhead.": "Thiết kế đường ống phân tích cú pháp phát trực tuyến JSON thông lượng cao với chi phí GC tối thiểu.",
+  "Used pre-allocated ring buffer pool for zero-alloc chunk parsing:": "Đã sử dụng nhóm bộ đệm vòng được phân bổ trước để phân tích đoạn không phân bổ bộ nhớ:",
+  "Architect a cross-region consensus schedule targeting RPO=0 across three availability zones.": "Thiết kế kiến trúc đồng thuận giữa các vùng nhằm mục tiêu RPO=0 trên ba vùng khả dụng.",
+  "Synchronous Raft barrier with lease-based cross-region election safety:": "Rào cản Raft đồng bộ với tính an toàn bầu cử giữa các vùng dựa trên hợp đồng thuê:"
 }

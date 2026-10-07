@@ -2751,7 +2751,7 @@
     "footer.columns.related.links.oneApi": "1つのAPI",
     "footer.columns.related.title": "関連プロジェクト",
     "footer.defaultCopyright": "すべての権利を留保します。",
-    "footer.new\u0061pi.projectAttributionSuffix": "すべての権利を留保します。プロジェクトコントリビューターにより設計・開発されています。",
+    "footer.newapi.projectAttributionSuffix": "すべての権利を留保します。プロジェクトコントリビューターにより設計・開発されています。",
     "For advanced custom channels this applies only to /v1/responses routes without protocol conversion.": "高度なカスタムチャネルでは、プロトコル変換を行わない /v1/responses ルートにのみ適用されます。",
     "For channels added after May 10, 2025, no need to remove \".\" from model names during deployment": "2025 年 5 月 10 日以降に追加されたチャネルの場合、デプロイ時にモデル名から「.」を削除する必要はありません",
     "For private deployments, format: https://fastgpt.run/api/openapi": "プライベートデプロイメントの場合、形式: https://fastgpt.run/api/openapi",
@@ -7125,5 +7125,23 @@
     "Claude Code uses the site root with the Anthropic protocol. Codex and OpenCode use the OpenAI-compatible /v1 address.": "Claude Code は Anthropic プロトコルのルートアドレスを使用し、Codex と OpenCode は OpenAI 互換の /v1 アドレスを使用します。",
     "Click Enable on the provider card. Claude Code applies immediately. For Codex and OpenCode, restart the terminal or CLI.": "プロバイダーカードで有効化をクリックします。Claude Code は即座に適用され、Codex と OpenCode はターミナルまたは CLI の再起動が必要です。",
     "Switch Claude Code, Codex, and OpenCode providers from one desktop app.": "1つのデスクトップアプリで Claude Code、Codex、OpenCode のプロバイダーを切り替えます。"
-  }
+  },
+  "One key, standard endpoints. Connect to CLI gateways and desktop clients in seconds.": "1つのキー、標準エンドポイント。CLIゲートウェイやデスクトップクライアントへ数秒で接続。",
+  "CLI Gateways": "CLIゲートウェイ",
+  "Desktop & Harness": "デスクトップ＆Harness",
+  "Gateway Live Preview": "ゲートウェイのライブプレビュー",
+  "200 OK · Ready": "200 OK · 準備完了",
+  "Standard Dual Protocols": "標準デュアルプロトコル変換",
+  "SSE Streaming": "SSEストリーミング接続",
+  "Prompt": "プロンプト",
+  "Endpoint URL": "エンドポイントURL",
+  "cURL Sample": "cURLサンプル",
+  "Refactor this high-concurrency worker pipeline with context timeout and graceful shutdown.": "コンテキストタイムアウトとグレースフルシャットダウンを備えた高並行ワーカーパイプラインにリファクタリングしてください。",
+  "Refactored for thread-safety using bounded task channels and context.WithTimeout:": "有界タスクチャネルと context.WithTimeout を使用してスレッドセーフにリファクタリングしました：",
+  "Analyze multi-tenant cache invalidation strategies under sudden hotkey traffic spikes.": "急激なホットキーのトラフィック急増時におけるマルチテナントキャッシュ無効化戦略を分析してください。",
+  "Implemented two-tier defense with distributed mutex and stale-while-revalidate policy:": "分散ミューテックスと stale-while-revalidate ポリシーによる2層防御を実装しました：",
+  "Design a high-throughput JSON streaming parser pipeline with minimal GC overhead.": "GCオーバーヘッドを最小限に抑えた高スループットJSONストリーミングパーサーパイプラインを設計してください。",
+  "Used pre-allocated ring buffer pool for zero-alloc chunk parsing:": "ゼロアロケーションのチャンク解析用に事前割り当て済みリングバッファプールを使用しました：",
+  "Architect a cross-region consensus schedule targeting RPO=0 across three availability zones.": "3つのアベイラビリティゾーンにわたってRPO=0を達成するリージョン間合意形成アーキテクチャを設計してください。",
+  "Synchronous Raft barrier with lease-based cross-region election safety:": "同期Raftバリアとリースベースのリージョン間リーダー選出安全性を採用："
 }

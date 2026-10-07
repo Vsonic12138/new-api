@@ -2751,7 +2751,7 @@
     "footer.columns.related.links.oneApi": "One API",
     "footer.columns.related.title": "相關項目",
     "footer.defaultCopyright": "版權所有。",
-    "footer.new\u0061pi.projectAttributionSuffix": "版權所有，由項目貢獻者設計與開發。",
+    "footer.newapi.projectAttributionSuffix": "版權所有，由項目貢獻者設計與開發。",
     "For advanced custom channels this applies only to /v1/responses routes without protocol conversion.": "進階自訂渠道僅對 /v1/responses 且不做協定轉換的路由生效。",
     "For channels added after May 10, 2025, no need to remove \".\" from model names during deployment": "對於 2025 年 5 月 10 日之後新增的渠道，在部署時無需從模型名稱中移除 \".\"",
     "For private deployments, format: https://fastgpt.run/api/openapi": "對於私有部署，格式為：https://fastgpt.run/api/openapi",
@@ -7125,5 +7125,23 @@
     "Claude Code uses the site root with the Anthropic protocol. Codex and OpenCode use the OpenAI-compatible /v1 address.": "Claude Code 使用網站根位址（Anthropic 協議），Codex 與 OpenCode 使用相容的 /v1 位址。",
     "Click Enable on the provider card. Claude Code applies immediately. For Codex and OpenCode, restart the terminal or CLI.": "在供應商卡片上點擊啟用。Claude Code 會即刻生效；Codex 與 OpenCode 需要重啟終端或 CLI。",
     "Switch Claude Code, Codex, and OpenCode providers from one desktop app.": "在單個桌面應用中一鍵切換 Claude Code、Codex 與 OpenCode 的供應商。"
-  }
+  },
+  "One key, standard endpoints. Connect to CLI gateways and desktop clients in seconds.": "一把金鑰，標準介面。秒級接入終端閘道與桌面客戶端。",
+  "CLI Gateways": "終端閘道",
+  "Desktop & Harness": "桌面端與 Harness",
+  "Gateway Live Preview": "閘道即時預覽",
+  "200 OK · Ready": "200 OK · 已就緒",
+  "Standard Dual Protocols": "標準雙協定原生轉換",
+  "SSE Streaming": "SSE 串流長連接",
+  "Prompt": "輸入提示詞",
+  "Endpoint URL": "介面位址",
+  "cURL Sample": "cURL 調用範例",
+  "Refactor this high-concurrency worker pipeline with context timeout and graceful shutdown.": "請幫我重構這個高並發 Worker 管道，增加 context 逾時控制與平滑優雅退出。",
+  "Refactored for thread-safety using bounded task channels and context.WithTimeout:": "已最佳化執行緒安全，採用有界任務通道與 context.WithTimeout 逾時控制：",
+  "Analyze multi-tenant cache invalidation strategies under sudden hotkey traffic spikes.": "分析突發熱點高頻存取情境下的多租戶快取失效防禦策略。",
+  "Implemented two-tier defense with distributed mutex and stale-while-revalidate policy:": "採用分散式互斥鎖與 stale-while-revalidate 背景重新整理策略實現雙層防護：",
+  "Design a high-throughput JSON streaming parser pipeline with minimal GC overhead.": "設計一個極低 GC 記憶體開銷的高輸送量 JSON 串流解析處理管道。",
+  "Used pre-allocated ring buffer pool for zero-alloc chunk parsing:": "採用預分配環形緩衝池實現零記憶體分配分塊解析：",
+  "Architect a cross-region consensus schedule targeting RPO=0 across three availability zones.": "設計一個跨三個可用區且滿足 RPO=0 的跨區域一致性共識架構。",
+  "Synchronous Raft barrier with lease-based cross-region election safety:": "採用同步 Raft 屏障與基於租約的跨區選主安全防護："
 }

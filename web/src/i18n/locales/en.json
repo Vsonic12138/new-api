@@ -2751,7 +2751,7 @@
     "footer.columns.related.links.oneApi": "One API",
     "footer.columns.related.title": "Related Projects",
     "footer.defaultCopyright": "All rights reserved.",
-    "footer.new\u0061pi.projectAttributionSuffix": "All rights reserved. Designed and developed by the project contributors.",
+    "footer.newapi.projectAttributionSuffix": "All rights reserved. Designed and developed by the project contributors.",
     "For advanced custom channels this applies only to /v1/responses routes without protocol conversion.": "For advanced custom channels this applies only to /v1/responses routes without protocol conversion.",
     "For channels added after May 10, 2025, no need to remove \".\" from model names during deployment": "For channels added after May 10, 2025, no need to remove \".\" from model names during deployment",
     "For private deployments, format: https://fastgpt.run/api/openapi": "For private deployments, format: https://fastgpt.run/api/openapi",
@@ -7125,5 +7125,23 @@
     "Claude Code uses the site root with the Anthropic protocol. Codex and OpenCode use the OpenAI-compatible /v1 address.": "Claude Code uses the site root with the Anthropic protocol. Codex and OpenCode use the OpenAI-compatible /v1 address.",
     "Click Enable on the provider card. Claude Code applies immediately. For Codex and OpenCode, restart the terminal or CLI.": "Click Enable on the provider card. Claude Code applies immediately. For Codex and OpenCode, restart the terminal or CLI.",
     "Switch Claude Code, Codex, and OpenCode providers from one desktop app.": "Switch Claude Code, Codex, and OpenCode providers from one desktop app."
-  }
+  },
+  "One key, standard endpoints. Connect to CLI gateways and desktop clients in seconds.": "One key, standard endpoints. Connect to CLI gateways and desktop clients in seconds.",
+  "CLI Gateways": "CLI Gateways",
+  "Desktop & Harness": "Desktop & Harness",
+  "Gateway Live Preview": "Gateway Live Preview",
+  "200 OK · Ready": "200 OK · Ready",
+  "Standard Dual Protocols": "Standard Dual Protocols",
+  "SSE Streaming": "SSE Streaming",
+  "Prompt": "Prompt",
+  "Endpoint URL": "Endpoint URL",
+  "cURL Sample": "cURL Sample",
+  "Refactor this high-concurrency worker pipeline with context timeout and graceful shutdown.": "Refactor this high-concurrency worker pipeline with context timeout and graceful shutdown.",
+  "Refactored for thread-safety using bounded task channels and context.WithTimeout:": "Refactored for thread-safety using bounded task channels and context.WithTimeout:",
+  "Analyze multi-tenant cache invalidation strategies under sudden hotkey traffic spikes.": "Analyze multi-tenant cache invalidation strategies under sudden hotkey traffic spikes.",
+  "Implemented two-tier defense with distributed mutex and stale-while-revalidate policy:": "Implemented two-tier defense with distributed mutex and stale-while-revalidate policy:",
+  "Design a high-throughput JSON streaming parser pipeline with minimal GC overhead.": "Design a high-throughput JSON streaming parser pipeline with minimal GC overhead.",
+  "Used pre-allocated ring buffer pool for zero-alloc chunk parsing:": "Used pre-allocated ring buffer pool for zero-alloc chunk parsing:",
+  "Architect a cross-region consensus schedule targeting RPO=0 across three availability zones.": "Architect a cross-region consensus schedule targeting RPO=0 across three availability zones.",
+  "Synchronous Raft barrier with lease-based cross-region election safety:": "Synchronous Raft barrier with lease-based cross-region election safety:"
 }
