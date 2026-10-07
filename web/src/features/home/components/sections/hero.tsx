@@ -81,7 +81,7 @@ export function Hero(props: HeroProps) {
   )
 
   return (
-    <section className='relative z-10 overflow-hidden px-6 pt-24 pb-16 md:pt-32 md:pb-24 lg:pt-36 lg:pb-28'>
+    <section className='relative z-10 overflow-hidden px-4 pt-24 pb-16 sm:px-6 md:pt-32 md:pb-20 lg:pt-36 lg:pb-24'>
       {/* Radial gradient background */}
       <div
         aria-hidden
@@ -100,8 +100,8 @@ export function Hero(props: HeroProps) {
         className='absolute inset-0 -z-10 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_30%,black_20%,transparent_100%)] bg-[size:4rem_4rem] opacity-[0.08]'
       />
 
-      <div className='mx-auto max-w-3xl'>
-        <div className='flex flex-col items-start text-left'>
+      <div className='mx-auto grid max-w-7xl items-start gap-10 lg:grid-cols-12 lg:gap-12 2xl:max-w-[1440px]'>
+        <div className='flex flex-col items-start text-left lg:col-span-7'>
           {/* Top Pill Badge: Clean Technical Status */}
           <div
             className='landing-animate-fade-up mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1.5 text-xs font-medium text-foreground/90 opacity-0 shadow-xs dark:border-primary/30 dark:bg-primary/10'
@@ -131,7 +131,7 @@ export function Hero(props: HeroProps) {
             </span>
           </h1>
           <p
-            className='landing-animate-fade-up text-muted-foreground/85 mt-5 max-w-xl text-base leading-relaxed opacity-0 md:text-[15px]'
+            className='landing-animate-fade-up text-muted-foreground/85 mt-5 max-w-2xl text-base leading-relaxed opacity-0 md:text-[15px]'
             style={{ animationDelay: '120ms' }}
           >
             {t(
@@ -140,7 +140,7 @@ export function Hero(props: HeroProps) {
           </p>
 
           <div
-            className='landing-animate-fade-up mt-8 flex w-full max-w-xl flex-col gap-2.5 opacity-0'
+            className='landing-animate-fade-up mt-8 flex w-full max-w-3xl flex-col gap-2.5 opacity-0 lg:max-w-none'
             style={{ animationDelay: '180ms' }}
           >
             <div className='grid grid-cols-1 gap-2.5 sm:grid-cols-3'>
@@ -173,9 +173,10 @@ export function Hero(props: HeroProps) {
             {renderCardShopButton()}
           </div>
 
-          {/* Supported Apps (Categorized) */}
+          </div>
+
           <div
-            className='landing-animate-fade-up mt-10 w-full space-y-5 opacity-0'
+            className='landing-animate-fade-up w-full space-y-5 opacity-0 lg:col-span-5 lg:pt-8'
             style={{ animationDelay: '240ms' }}
           >
             {/* Category 1: CLI Gateways & Switchers */}
@@ -282,7 +283,6 @@ export function Hero(props: HeroProps) {
               </div>
             </div>
           </div>
-        </div>
       </div>
     </section>
   )
