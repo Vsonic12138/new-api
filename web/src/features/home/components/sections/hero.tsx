@@ -30,8 +30,6 @@ import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { useStatus } from '@/hooks/use-status'
 
-import { HeroTerminalDemo } from '../hero-terminal-demo'
-
 interface HeroProps {
   className?: string
   isAuthenticated?: boolean
@@ -102,9 +100,8 @@ export function Hero(props: HeroProps) {
         className='absolute inset-0 -z-10 bg-[linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_30%,black_20%,transparent_100%)] bg-[size:4rem_4rem] opacity-[0.08]'
       />
 
-      <div className='mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-8 2xl:max-w-[1440px]'>
-        {/* Left Column: Title, description, action buttons and application support */}
-        <div className='flex flex-col items-start text-left lg:col-span-6'>
+      <div className='mx-auto max-w-3xl'>
+        <div className='flex flex-col items-start text-left'>
           {/* Top Pill Badge: Clean Technical Status */}
           <div
             className='landing-animate-fade-up mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1.5 text-xs font-medium text-foreground/90 opacity-0 shadow-xs dark:border-primary/30 dark:bg-primary/10'
@@ -143,40 +140,42 @@ export function Hero(props: HeroProps) {
           </p>
 
           <div
-            className='landing-animate-fade-up mt-8 grid w-full max-w-lg grid-cols-1 gap-2.5 opacity-0 sm:grid-cols-2'
+            className='landing-animate-fade-up mt-8 flex w-full max-w-xl flex-col gap-2.5 opacity-0'
             style={{ animationDelay: '180ms' }}
           >
-            {props.isAuthenticated ? (
+            <div className='grid grid-cols-1 gap-2.5 sm:grid-cols-3'>
+              {props.isAuthenticated ? (
+                <Button
+                  className='group h-11 w-full rounded-lg px-4 text-sm font-medium shadow-xs'
+                  render={<Link to='/dashboard' />}
+                >
+                  {t('Go to Dashboard')}
+                  <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
+                </Button>
+              ) : (
+                <Button
+                  className='group h-11 w-full rounded-lg px-4 text-sm font-medium shadow-xs'
+                  render={<Link to='/sign-up' />}
+                >
+                  {t('Get Started')}
+                  <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
+                </Button>
+              )}
               <Button
-                className='group h-11 w-full rounded-lg px-4 text-sm font-medium shadow-xs'
-                render={<Link to='/dashboard' />}
+                variant='outline'
+                className='border-border/50 hover:border-border hover:bg-muted/50 h-11 w-full rounded-lg px-4 text-sm font-medium'
+                render={<Link to='/pricing' />}
               >
-                {t('Go to Dashboard')}
-                <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
+                {t('View Pricing')}
               </Button>
-            ) : (
-              <Button
-                className='group h-11 w-full rounded-lg px-4 text-sm font-medium shadow-xs'
-                render={<Link to='/sign-up' />}
-              >
-                {t('Get Started')}
-                <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
-              </Button>
-            )}
-            <Button
-              variant='outline'
-              className='border-border/50 hover:border-border hover:bg-muted/50 h-11 w-full rounded-lg px-4 text-sm font-medium'
-              render={<Link to='/pricing' />}
-            >
-              {t('View Pricing')}
-            </Button>
+              {renderClientGuideButton()}
+            </div>
             {renderCardShopButton()}
-            {renderClientGuideButton()}
           </div>
 
           {/* Supported Apps (Categorized) */}
           <div
-            className='landing-animate-fade-up mt-10 w-full max-w-xl space-y-5 opacity-0'
+            className='landing-animate-fade-up mt-10 w-full space-y-5 opacity-0'
             style={{ animationDelay: '240ms' }}
           >
             {/* Category 1: CLI Gateways & Switchers */}
@@ -283,14 +282,6 @@ export function Hero(props: HeroProps) {
               </div>
             </div>
           </div>
-        </div>
-
-        {/* Right Column: Hero Live Gateway Preview */}
-        <div
-          className='landing-animate-fade-up flex w-full justify-center opacity-0 lg:col-span-6'
-          style={{ animationDelay: '320ms' }}
-        >
-          <HeroTerminalDemo className='mt-8 lg:mt-0' />
         </div>
       </div>
     </section>
