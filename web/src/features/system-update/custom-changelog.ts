@@ -43,6 +43,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-07',
     items: [
     {
+      "tag": "feat",
+      "titleEn": "[docs] 补全使用文档步骤并加入页面截图",
+      "titleZh": "[docs] 补全使用文档步骤并加入页面截图",
+      "descEn": "Commit: 06c5dfbca (2026-10-07)",
+      "descZh": "提交: 06c5dfbca · 2026-10-07",
+      "commitHash": "06c5dfbca"
+    },
+    {
       "tag": "fix",
       "titleEn": "[home] 显示站内文档并去掉重复价格按钮",
       "titleZh": "[home] 显示站内文档并去掉重复价格按钮",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: f834d4577 (2026-10-03)",
       "descZh": "提交: f834d4577 · 2026-10-03",
       "commitHash": "f834d4577"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 优化首页滚动流畅度，添加发卡网链接与客户端配置指南",
-      "titleZh": "[home] 优化首页滚动流畅度，添加发卡网链接与客户端配置指南",
-      "descEn": "Commit: 32a510784 (2026-10-03)",
-      "descZh": "提交: 32a510784 · 2026-10-03",
-      "commitHash": "32a510784"
     }
 ],
   },
