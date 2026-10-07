@@ -44,6 +44,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     items: [
     {
       "tag": "feat",
+      "titleEn": "[home] 对齐模型广场真实模型并重构网关体验卡与多语言",
+      "titleZh": "[home] 对齐模型广场真实模型并重构网关体验卡与多语言",
+      "descEn": "Commit: f1bf220fd (2026-10-07)",
+      "descZh": "提交: f1bf220fd · 2026-10-07",
+      "commitHash": "f1bf220fd"
+    },
+    {
+      "tag": "feat",
       "titleEn": "[home] 补齐首页网关流式体验卡与分类导航国际化翻译",
       "titleZh": "[home] 补齐首页网关流式体验卡与分类导航国际化翻译",
       "descEn": "Commit: b0a023a6f (2026-10-07)",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: feefe09f2 (2026-09-30)",
       "descZh": "提交: feefe09f2 · 2026-09-30",
       "commitHash": "feefe09f2"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[web] add a refresh button to the channels table",
-      "titleZh": "[web] add a refresh button to the channels table",
-      "descEn": "Commit: 2035a82ae (2026-09-30)",
-      "descZh": "提交: 2035a82ae · 2026-09-30",
-      "commitHash": "2035a82ae"
     }
 ],
   },
