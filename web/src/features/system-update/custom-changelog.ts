@@ -40,8 +40,16 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
   {
     version: 'v1.0.0-rc.41+custom',
     upstreamBase: 'v1.0.0-rc.41',
-    date: '2026-10-06',
+    date: '2026-10-07',
     items: [
+    {
+      "tag": "feat",
+      "titleEn": "[home] 重构客户端生态分类与多模型网关预览并整合发卡入口",
+      "titleZh": "[home] 重构客户端生态分类与多模型网关预览并整合发卡入口",
+      "descEn": "Commit: 0a51871b9 (2026-10-07)",
+      "descZh": "提交: 0a51871b9 · 2026-10-07",
+      "commitHash": "0a51871b9"
+    },
     {
       "tag": "feat",
       "titleEn": "[home] 接入 magpie 本地网关客户端并修复首页多语言缺失",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: ae73ef8e2 (2026-09-30)",
       "descZh": "提交: ae73ef8e2 · 2026-09-30",
       "commitHash": "ae73ef8e2"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[auth] edit the name and permissions of an access token",
-      "titleZh": "[auth] edit the name and permissions of an access token",
-      "descEn": "Commit: 4924361ae (2026-09-30)",
-      "descZh": "提交: 4924361ae · 2026-09-30",
-      "commitHash": "4924361ae"
     }
 ],
   },
