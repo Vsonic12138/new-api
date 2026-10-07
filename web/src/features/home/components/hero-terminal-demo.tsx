@@ -331,8 +331,8 @@ export function HeroTerminalDemo(props: { className?: string }) {
       </div>
 
       {/* Model Selection Tabs (Curated from 模型广场, styled after Magpie) */}
-      <div className='border-border/40 bg-muted/20 flex items-center gap-2 overflow-x-auto border-b px-3 py-2 scrollbar-none'>
-        <div className='bg-muted/50 border-border/50 inline-flex items-center gap-1 rounded-xl border p-0.5 shadow-2xs'>
+      <div className='border-border/40 bg-muted/20 border-b px-3 py-2'>
+        <div className='flex flex-wrap gap-1'>
           {demos.map((d, idx) => {
             const isActive = idx === activeIndex
             return (
@@ -341,10 +341,10 @@ export function HeroTerminalDemo(props: { className?: string }) {
                 type='button'
                 onClick={() => handleSelect(idx)}
                 className={cn(
-                  'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs font-medium transition-all duration-150',
+                  'inline-flex items-center gap-1.5 rounded-lg border px-2 py-1 text-xs font-medium transition-all duration-150',
                   isActive
-                    ? 'bg-background text-foreground border-border/70 border shadow-2xs font-semibold'
-                    : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground border border-transparent'
+                    ? 'bg-background text-foreground border-border/70 shadow-2xs font-semibold'
+                    : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground border-transparent'
                 )}
               >
                 {d.icon(14)}
@@ -363,39 +363,38 @@ export function HeroTerminalDemo(props: { className?: string }) {
         )}
       >
         {/* Magpie-Style Routing Flow Visualizer */}
-        <div className='border-border/50 bg-muted/20 mb-3.5 flex flex-wrap items-center justify-between gap-2 rounded-xl border p-2.5 text-xs shadow-2xs'>
-          {/* Source Agent */}
-          <div className='flex items-center gap-1.5 min-w-0'>
-            <span className='text-muted-foreground/60 text-[10px] font-bold tracking-wider uppercase shrink-0'>
+        <div className='border-border/50 bg-muted/20 mb-3.5 grid grid-cols-1 items-center gap-2 rounded-xl border p-2.5 text-xs shadow-2xs sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]'>
+          <div className='flex min-w-0 items-center gap-1.5'>
+            <span className='text-muted-foreground/60 shrink-0 text-[10px] font-bold tracking-wider uppercase'>
               {t('Agent')}
             </span>
-            <span className='bg-background text-foreground border-border/50 rounded-md border px-2 py-0.5 text-[11px] font-semibold truncate shadow-2xs'>
+            <span className='bg-background text-foreground border-border/50 truncate rounded-md border px-2 py-0.5 text-[11px] font-semibold shadow-2xs'>
               {activeDemo.agentSource}
             </span>
           </div>
 
-          {/* Central Relay Bridge */}
-          <div className='flex items-center gap-1 text-[10px] font-mono text-muted-foreground/70 shrink-0'>
-            <span className='hidden sm:inline'>{activeDemo.protocol === 'Claude' ? 'Anthropic' : 'OpenAI'}</span>
-            <ArrowRight className='size-3 text-primary/70 animate-pulse' />
-            <span className='rounded bg-primary/10 px-1.5 py-0.5 font-semibold text-primary'>
+          <div className='text-muted-foreground/70 flex shrink-0 items-center justify-center gap-1 font-mono text-[10px]'>
+            <span className='hidden sm:inline'>
+              {activeDemo.protocol === 'Claude' ? 'Anthropic' : 'OpenAI'}
+            </span>
+            <ArrowRight className='text-primary/70 size-3' />
+            <span className='bg-primary/10 text-primary rounded px-1.5 py-0.5 font-semibold'>
               New API
             </span>
-            <ArrowRight className='size-3 text-primary/70 animate-pulse' />
+            <ArrowRight className='text-primary/70 size-3' />
           </div>
 
-          {/* Destination Model */}
-          <div className='flex items-center gap-1.5 min-w-0 justify-end'>
-            <span className='text-muted-foreground/60 text-[10px] font-bold tracking-wider uppercase shrink-0 hidden sm:inline'>
+          <div className='flex min-w-0 items-center gap-1.5 sm:justify-end'>
+            <span className='text-muted-foreground/60 hidden shrink-0 text-[10px] font-bold tracking-wider uppercase sm:inline'>
               {t('Target')}
             </span>
-            <div className='flex items-center gap-1 bg-background text-foreground border-border/50 rounded-md border px-2 py-0.5 text-[11px] font-mono font-semibold shadow-2xs'>
+            <div className='bg-background text-foreground border-border/50 flex min-w-0 items-center gap-1 rounded-md border px-2 py-0.5 font-mono text-[11px] font-semibold shadow-2xs'>
               <span className='truncate'>{activeDemo.id}</span>
               <CopyButton
                 value={activeDemo.id}
                 variant='ghost'
                 size='sm'
-                className='size-4 p-0 text-muted-foreground hover:text-foreground'
+                className='text-muted-foreground hover:text-foreground size-4 shrink-0 p-0'
                 tooltip={t('Copy model ID')}
                 successTooltip={t('Copied!')}
               />

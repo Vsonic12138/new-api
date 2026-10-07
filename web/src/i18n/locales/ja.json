@@ -7146,6 +7146,17 @@
     "Zhipu ADE developer settings": "Zhipu ADE 開発者設定仕様",
     "Zhipu GLM": "Zhipu GLM",
     "Zhipu V4": "Zhipu V 4",
-    "Zoom": "ズーム"
+    "Zoom": "ズーム",
+    "High-Compute Flagship": "高演算フラッグシップ",
+    "Multimodal & Fast Reasoning": "マルチモーダル高速推論",
+    "Reasoning & Open Weights": "推論とオープンウェイト",
+    "Complex Architecture & Logic": "複雑な設計と論理",
+    "Ultra Low Cost & Fast": "低コストで高速",
+    "Balanced flagship balancing speed and reasoning, ideal for daily coding, large document comprehension, and Agent workflows.": "速度と推論のバランス型。日常のコーディング、長文理解、エージェント作業向け。",
+    "Sol high-compute group for visual reasoning, complex coding, and multi-turn conversational stability.": "Sol 高演算グループ。視覚推論、複雑なコーディング、複数ターンの対話向け。",
+    "Google 1M multimodal context with audio, video, and text understanding at promotional pricing.": "Google の 100 万トークン文脈。音声・動画・テキストに対応し、現在はプロモーション倍率。",
+    "DeepSeek-V4.1-Flash with transparent chain-of-thought, peak/off-peak pricing, and high coding capability.": "DeepSeek-V4.1-Flash。思考過程を表示でき、時間帯別料金とコード処理に対応。",
+    "Zhipu lightweight fast model with deep thinking, strong Chinese language support, and ultra-low rates.": "智譜の軽量高速モデル。思考、中国語、低い倍率に対応。",
+    "Cherry · DSH · ZCode and more": "Cherry Studio、DSH、ZCode"
   }
 }

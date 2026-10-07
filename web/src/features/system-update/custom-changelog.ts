@@ -43,6 +43,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-07',
     items: [
     {
+      "tag": "feat",
+      "titleEn": "[home] 更新首页模型展示墙，展示模型广场真实可用模型",
+      "titleZh": "[home] 更新首页模型展示墙，展示模型广场真实可用模型",
+      "descEn": "Commit: c6a80e8ec (2026-10-07)",
+      "descZh": "提交: c6a80e8ec · 2026-10-07",
+      "commitHash": "c6a80e8ec"
+    },
+    {
       "tag": "fix",
       "titleEn": "[i18n] 修复首页网关预览及客户端卡片多语言丢失与结构错位",
       "titleZh": "[i18n] 修复首页网关预览及客户端卡片多语言丢失与结构错位",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: dfd3cd893 (2026-09-30)",
       "descZh": "提交: dfd3cd893 · 2026-09-30",
       "commitHash": "dfd3cd893"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "[web] Add class to wrap the long strings at auto-disable status tooltip content in channel manage page (#7604)",
-      "titleZh": "[web] Add class to wrap the long strings at auto-disable status tooltip content in channel manage page (#7604)",
-      "descEn": "Commit: 811212067 (2026-09-30)",
-      "descZh": "提交: 811212067 · 2026-09-30",
-      "commitHash": "811212067"
     }
 ],
   },

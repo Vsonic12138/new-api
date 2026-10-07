@@ -7146,6 +7146,17 @@
     "Zhipu ADE developer settings": "Настройки разработчика Zhipu ADE",
     "Zhipu GLM": "Zhipu GLM",
     "Zhipu V4": "Zhipu V4",
-    "Zoom": "Zoom"
+    "Zoom": "Zoom",
+    "High-Compute Flagship": "Высокая вычислительная мощность",
+    "Multimodal & Fast Reasoning": "Быстрый мультимодальный вывод",
+    "Reasoning & Open Weights": "Рассуждение и открытые веса",
+    "Complex Architecture & Logic": "Архитектура и логика",
+    "Ultra Low Cost & Fast": "Быстро и недорого",
+    "Balanced flagship balancing speed and reasoning, ideal for daily coding, large document comprehension, and Agent workflows.": "Сбалансированная модель для кода, длинных документов и агентных сценариев.",
+    "Sol high-compute group for visual reasoning, complex coding, and multi-turn conversational stability.": "Группа Sol для визуального вывода, сложного кода и длинных диалогов.",
+    "Google 1M multimodal context with audio, video, and text understanding at promotional pricing.": "Мультимодальный контекст Google на 1 млн токенов: аудио, видео и текст по акционной цене.",
+    "DeepSeek-V4.1-Flash with transparent chain-of-thought, peak/off-peak pricing, and high coding capability.": "DeepSeek-V4.1-Flash с видимым ходом рассуждения, тарифом по времени суток и хорошей работой с кодом.",
+    "Zhipu lightweight fast model with deep thinking, strong Chinese language support, and ultra-low rates.": "Лёгкая быстрая модель Zhipu с рассуждением, китайским языком и низкой ценой.",
+    "Cherry · DSH · ZCode and more": "Cherry Studio, DSH, ZCode"
   }
 }

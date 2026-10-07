@@ -7146,6 +7146,22 @@
     "Zhipu ADE developer settings": "智譜官方 ADE 開發者設定規範",
     "Zhipu GLM": "智譜GLM",
     "Zhipu V4": "智譜 V4",
-    "Zoom": "縮放"
+    "Zoom": "縮放",
+    "High-Compute Flagship": "高算力旗艦",
+    "Multimodal & Fast Reasoning": "多模態快速推理",
+    "Reasoning & Open Weights": "推理與開放權重",
+    "Complex Architecture & Logic": "複雜架構與邏輯",
+    "Ultra Low Cost & Fast": "超低成本快速",
+    "Balanced flagship balancing speed and reasoning, ideal for daily coding, large document comprehension, and Agent workflows.": "兼顧速度與推理的平衡型號，適合日常程式開發、長文件理解與智能體流程。",
+    "Sol high-compute group for visual reasoning, complex coding, and multi-turn conversational stability.": "Sol 高算力分組，用於視覺推理、複雜程式開發與多輪對話。",
+    "Google 1M multimodal context with audio, video, and text understanding at promotional pricing.": "Google 百萬 token 多模態上下文，支援音訊、影片與文字，目前為促銷倍率。",
+    "DeepSeek-V4.1-Flash with transparent chain-of-thought, peak/off-peak pricing, and high coding capability.": "DeepSeek-V4.1-Flash，思考過程可見，尖離峰分時計價，程式能力較好。",
+    "Zhipu lightweight fast model with deep thinking, strong Chinese language support, and ultra-low rates.": "智譜輕量快速模型，支援深度思考與中文，倍率較低。",
+    "Cherry · DSH · ZCode and more": "Cherry Studio、DSH、ZCode",
+    "DeepSeek open-source Agent Harness client": "DeepSeek 開源 Agent Harness 客戶端",
+    "ZCode OpenAI setup screenshot": "ZCode OpenAI 設定截圖",
+    "ZCode custom provider screenshot": "ZCode 自訂提供者截圖",
+    "ZCode setup screenshot": "ZCode 設定截圖",
+    "Source: Zhipu docs. The screenshot marks where to enter the API address and API key.": "來源：智譜文件。截圖標出 API 位址與 API Key 的填寫位置。"
   }
 }

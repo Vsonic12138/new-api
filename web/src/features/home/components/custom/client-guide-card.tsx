@@ -574,19 +574,6 @@ export function ClientGuideCard() {
             </div>
             <button
               type='button'
-              onClick={() => setActiveTab('zcode')}
-              className={cn(
-                'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
-                activeTab === 'zcode'
-                  ? 'bg-primary text-primary-foreground shadow-xs'
-                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-              )}
-            >
-              <ZCodeLogo size={16} />
-              <span>{t('ZCode (Zhipu)')}</span>
-            </button>
-            <button
-              type='button'
               onClick={() => setActiveTab('cherry')}
               className={cn(
                 'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
@@ -610,6 +597,19 @@ export function ClientGuideCard() {
             >
               <DeepSeek.Color size={16} />
               <span>DSH</span>
+            </button>
+            <button
+              type='button'
+              onClick={() => setActiveTab('zcode')}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
+                activeTab === 'zcode'
+                  ? 'bg-primary text-primary-foreground shadow-xs'
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+              )}
+            >
+              <ZCodeLogo size={16} />
+              <span>{t('ZCode (Zhipu)')}</span>
             </button>
           </div>
 

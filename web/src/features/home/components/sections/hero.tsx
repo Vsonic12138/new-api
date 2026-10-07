@@ -59,17 +59,14 @@ export function Hero(props: HeroProps) {
     return (
       <Button
         variant='outline'
-        className='group relative inline-flex h-11 items-center gap-2 overflow-hidden rounded-lg border-amber-500/50 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 px-4.5 text-sm font-semibold text-amber-700 shadow-xs transition-all duration-200 hover:border-amber-500/80 hover:bg-amber-500/25 hover:shadow-amber-500/20 hover:scale-[1.02] dark:border-amber-400/50 dark:bg-gradient-to-r dark:from-amber-400/15 dark:via-orange-400/10 dark:to-amber-400/15 dark:text-amber-300 dark:hover:border-amber-400/80'
+        className='border-border/70 bg-background hover:bg-muted/40 inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg px-4 text-sm font-medium text-amber-700 shadow-xs dark:text-amber-300'
         render={
           <a href={topupLink} target='_blank' rel='noopener noreferrer' />
         }
       >
-        <ShoppingBag className='size-4 text-amber-600 transition-transform duration-200 group-hover:scale-110 dark:text-amber-400' />
+        <ShoppingBag className='size-4 shrink-0 text-amber-600 dark:text-amber-400' />
         <span>{t('Buy Credits / Codes')}</span>
-        <span className='rounded-full border border-amber-500/30 bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:border-amber-400/30 dark:bg-amber-400/20 dark:text-amber-300'>
-          {t('24H Auto Delivery')}
-        </span>
-        <ExternalLink className='size-3.5 opacity-60 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
+        <ExternalLink className='size-3.5 shrink-0 opacity-60' />
       </Button>
     )
   }
@@ -77,7 +74,7 @@ export function Hero(props: HeroProps) {
   const renderClientGuideButton = () => (
     <Button
       variant='outline'
-      className='group border-border/50 hover:border-border hover:bg-muted/50 inline-flex h-11 items-center gap-1.5 rounded-lg px-5 text-sm font-medium'
+      className='group border-border/50 hover:border-border hover:bg-muted/50 inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-lg px-4 text-sm font-medium'
       render={<a href='#client-guide' />}
     >
       <BookOpen className='text-muted-foreground/80 group-hover:text-foreground size-4 transition-colors duration-200' />
@@ -146,41 +143,35 @@ export function Hero(props: HeroProps) {
           </p>
 
           <div
-            className='landing-animate-fade-up mt-8 flex flex-wrap items-center gap-3 opacity-0'
+            className='landing-animate-fade-up mt-8 grid w-full max-w-lg grid-cols-1 gap-2.5 opacity-0 sm:grid-cols-2'
             style={{ animationDelay: '180ms' }}
           >
             {props.isAuthenticated ? (
-              <>
-                <Button
-                  className='group h-11 rounded-lg px-5 text-sm font-medium shadow-xs'
-                  render={<Link to='/dashboard' />}
-                >
-                  {t('Go to Dashboard')}
-                  <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
-                </Button>
-                {renderCardShopButton()}
-                {renderClientGuideButton()}
-              </>
+              <Button
+                className='group h-11 w-full rounded-lg px-4 text-sm font-medium shadow-xs'
+                render={<Link to='/dashboard' />}
+              >
+                {t('Go to Dashboard')}
+                <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
+              </Button>
             ) : (
-              <>
-                <Button
-                  className='group h-11 rounded-lg px-5 text-sm font-medium shadow-xs'
-                  render={<Link to='/sign-up' />}
-                >
-                  {t('Get Started')}
-                  <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
-                </Button>
-                {renderCardShopButton()}
-                <Button
-                  variant='outline'
-                  className='border-border/50 hover:border-border hover:bg-muted/50 h-11 rounded-lg px-5 text-sm font-medium'
-                  render={<Link to='/pricing' />}
-                >
-                  {t('View Pricing')}
-                </Button>
-                {renderClientGuideButton()}
-              </>
+              <Button
+                className='group h-11 w-full rounded-lg px-4 text-sm font-medium shadow-xs'
+                render={<Link to='/sign-up' />}
+              >
+                {t('Get Started')}
+                <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
+              </Button>
             )}
+            <Button
+              variant='outline'
+              className='border-border/50 hover:border-border hover:bg-muted/50 h-11 w-full rounded-lg px-4 text-sm font-medium'
+              render={<Link to='/pricing' />}
+            >
+              {t('View Pricing')}
+            </Button>
+            {renderCardShopButton()}
+            {renderClientGuideButton()}
           </div>
 
           {/* Supported Apps (Categorized) */}
@@ -242,7 +233,7 @@ export function Hero(props: HeroProps) {
                   {t('Desktop Apps & Harnesses')}
                 </span>
                 <span className='text-muted-foreground/50 text-[10px] hidden sm:inline'>
-                  {t('GUI clients, agent harness & IDE helpers')}
+                  {t('Cherry · DSH · ZCode and more')}
                 </span>
               </div>
               <div className='flex flex-wrap items-center gap-2.5'>

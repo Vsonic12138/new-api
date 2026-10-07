@@ -7146,6 +7146,17 @@
     "Zhipu ADE developer settings": "Cài đặt nhà phát triển Zhipu ADE",
     "Zhipu GLM": "Zhipu GLM",
     "Zhipu V4": "Zhipu V4",
-    "Zoom": "Zoom"
+    "Zoom": "Zoom",
+    "High-Compute Flagship": "Tính toán cao",
+    "Multimodal & Fast Reasoning": "Đa phương thức, suy luận nhanh",
+    "Reasoning & Open Weights": "Suy luận và trọng số mở",
+    "Complex Architecture & Logic": "Kiến trúc và logic",
+    "Ultra Low Cost & Fast": "Nhanh, chi phí thấp",
+    "Balanced flagship balancing speed and reasoning, ideal for daily coding, large document comprehension, and Agent workflows.": "Mô hình cân bằng cho lập trình hằng ngày, tài liệu dài và quy trình agent.",
+    "Sol high-compute group for visual reasoning, complex coding, and multi-turn conversational stability.": "Nhóm Sol tính toán cao cho suy luận hình ảnh, mã phức tạp và hội thoại nhiều lượt.",
+    "Google 1M multimodal context with audio, video, and text understanding at promotional pricing.": "Ngữ cảnh đa phương thức 1 triệu token của Google, gồm âm thanh, video và chữ, đang có giá khuyến mãi.",
+    "DeepSeek-V4.1-Flash with transparent chain-of-thought, peak/off-peak pricing, and high coding capability.": "DeepSeek-V4.1-Flash, hiện quá trình suy luận, giá theo giờ cao điểm và phù hợp lập trình.",
+    "Zhipu lightweight fast model with deep thinking, strong Chinese language support, and ultra-low rates.": "Mô hình nhẹ của Zhipu, có suy luận, hỗ trợ tiếng Trung và giá thấp.",
+    "Cherry · DSH · ZCode and more": "Cherry Studio, DSH, ZCode"
   }
 }
