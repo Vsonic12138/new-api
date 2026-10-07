@@ -16,9 +16,9 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Claude, DeepSeek, Grok, OpenAI } from '@lobehub/icons'
+import { Claude, DeepSeek, Gemini, Grok, OpenAI, Zhipu } from '@lobehub/icons'
 import { Link } from '@tanstack/react-router'
-import { ArrowUpRight, Flame, Layers } from 'lucide-react'
+import { ArrowUpRight, Cpu, Layers } from 'lucide-react'
 import { useState, type ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -26,7 +26,14 @@ import { CopyButton } from '@/components/copy-button'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
-type ModelCategory = 'all' | 'claude' | 'gpt' | 'grok' | 'deepseek'
+type ModelCategory =
+  | 'all'
+  | 'claude'
+  | 'gpt'
+  | 'gemini'
+  | 'deepseek'
+  | 'glm'
+  | 'grok'
 
 interface ModelItem {
   id: string
@@ -46,10 +53,12 @@ export function FeaturedModelsWall() {
 
   const categories: { key: ModelCategory; label: string }[] = [
     { key: 'all', label: t('All Models') },
-    { key: 'claude', label: t('Claude Series') },
-    { key: 'gpt', label: t('GPT Series') },
-    { key: 'grok', label: 'Grok' },
+    { key: 'claude', label: 'Claude' },
+    { key: 'gpt', label: 'GPT' },
+    { key: 'gemini', label: 'Gemini' },
     { key: 'deepseek', label: 'DeepSeek' },
+    { key: 'glm', label: 'GLM' },
+    { key: 'grok', label: 'Grok' },
   ]
 
   const models: ModelItem[] = [
@@ -57,11 +66,11 @@ export function FeaturedModelsWall() {
       id: 'claude-sonnet-5',
       name: 'Claude Sonnet 5',
       vendor: 'Anthropic',
-      context: '1.0x · 200K',
-      tag: t('Coding & Deep Logic'),
+      context: '1.0x · 1M',
+      tag: t('Coding & Agent'),
       tagTone: 'purple',
       description: t(
-        'Top-tier software engineering, long-context code refactoring, and dependable logic synthesis.'
+        'Balanced flagship balancing speed and reasoning, ideal for daily coding, large document comprehension, and Agent workflows.'
       ),
       categories: ['claude'],
       icon: <Claude.Color size={22} className='shrink-0' />,
@@ -70,21 +79,47 @@ export function FeaturedModelsWall() {
       id: 'gpt-6.1-sol',
       name: 'GPT-6.1 Sol',
       vendor: 'OpenAI',
-      context: '1.0x · Sol High Compute',
-      tag: t('Uncapped Intelligence Flagship'),
+      context: '1.0x · 1.05M',
+      tag: t('High-Compute Flagship'),
       tagTone: 'emerald',
       description: t(
-        'Full-speed Sol flagship with unthrottled high intelligence, visual reasoning, and multi-turn stability.'
+        'Sol high-compute group for visual reasoning, complex coding, and multi-turn conversational stability.'
       ),
       categories: ['gpt'],
       icon: <OpenAI size={22} className='shrink-0' />,
     },
     {
+      id: 'gemini-3.8-flash',
+      name: 'Gemini 3.8 Flash',
+      vendor: 'Google',
+      context: '0.375x · 1M',
+      tag: t('Multimodal & Fast Reasoning'),
+      tagTone: 'blue',
+      description: t(
+        'Google 1M multimodal context with audio, video, and text understanding at promotional pricing.'
+      ),
+      categories: ['gemini'],
+      icon: <Gemini.Color size={22} className='shrink-0' />,
+    },
+    {
+      id: 'deepseek-flash',
+      name: 'DeepSeek Flash',
+      vendor: 'DeepSeek',
+      context: '1.27x · 1M',
+      tag: t('Reasoning & Open Weights'),
+      tagTone: 'cyan',
+      description: t(
+        'DeepSeek-V4.1-Flash with transparent chain-of-thought, peak/off-peak pricing, and high coding capability.'
+      ),
+      categories: ['deepseek'],
+      icon: <DeepSeek.Color size={22} className='shrink-0' />,
+    },
+    {
       id: 'claude-opus-5-5',
       name: 'Claude Opus 5.5',
       vendor: 'Anthropic',
-      context: '2.0x · Extreme Reasoning',
-      tag: t('Highest Complexity Benchmark'),
+      context: '2.0x · 1M',
+      tag: t('Complex Architecture & Logic'),
       tagTone: 'purple',
       description: t(
         'Deep architectural design, nuanced research analysis, and solving mission-critical edge cases.'
@@ -93,11 +128,24 @@ export function FeaturedModelsWall() {
       icon: <Claude.Color size={22} className='shrink-0' />,
     },
     {
+      id: 'glm-5.3-flash',
+      name: 'GLM-5.3 Flash',
+      vendor: 'Zhipu AI',
+      context: '0.075x · 128K',
+      tag: t('Ultra Low Cost & Fast'),
+      tagTone: 'cyan',
+      description: t(
+        'Zhipu lightweight fast model with deep thinking, strong Chinese language support, and ultra-low rates.'
+      ),
+      categories: ['glm'],
+      icon: <Zhipu.Color size={22} className='shrink-0' />,
+    },
+    {
       id: 'gpt-5.6-luna',
       name: 'GPT-5.6 Luna',
       vendor: 'OpenAI',
-      context: '0.1x · Super Low Cost',
-      tag: t('Ultra Cost-Effective Driver'),
+      context: '0.1x · 1.05M',
+      tag: t('High-Speed Low Cost'),
       tagTone: 'amber',
       description: t(
         'High-speed cost-effective group for daily chats, text summarization, and high-frequency code completions.'
@@ -109,7 +157,7 @@ export function FeaturedModelsWall() {
       id: 'grok-4.7',
       name: 'Grok 4.7',
       vendor: 'xAI',
-      context: '1.0x · Latest Gen',
+      context: '1.0x · 500K',
       tag: t('Real-time Agile Reasoning'),
       tagTone: 'blue',
       description: t(
@@ -117,19 +165,6 @@ export function FeaturedModelsWall() {
       ),
       categories: ['grok'],
       icon: <Grok size={22} className='shrink-0' />,
-    },
-    {
-      id: 'deepseek-flash',
-      name: 'DeepSeek Flash',
-      vendor: 'DeepSeek',
-      context: '1.27x · V4.1 Flash',
-      tag: t('Open Weights Wonder'),
-      tagTone: 'cyan',
-      description: t(
-        'Next-gen reasoning speed with transparent Chain-of-Thought, delivering deep thinking at great value.'
-      ),
-      categories: ['deepseek'],
-      icon: <DeepSeek.Color size={22} className='shrink-0' />,
     },
   ]
 
@@ -155,8 +190,8 @@ export function FeaturedModelsWall() {
         {/* Section Header */}
         <div className='flex flex-col items-center justify-between gap-4 md:flex-row md:items-end'>
           <div>
-            <div className='mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-amber-500/20 bg-amber-500/5 px-3 py-1 text-[11px] font-medium text-amber-600 dark:border-amber-400/20 dark:bg-amber-400/5 dark:text-amber-400'>
-              <Flame className='size-3' />
+            <div className='mb-2.5 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/5 px-3 py-1 text-[11px] font-medium text-foreground/90 shadow-2xs dark:border-primary/30 dark:bg-primary/10'>
+              <Cpu className='size-3 text-primary' />
               <span>{t('Curated AI Models')}</span>
             </div>
             <h2 className='text-2xl font-bold tracking-tight md:text-3xl'>

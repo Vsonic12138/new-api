@@ -641,7 +641,7 @@ export function ClientGuideCard() {
                   <ZCodeLogo size={24} />
                   <div>
                     <h3 className='text-foreground text-sm font-bold'>
-                      {t('Official ZCode setup steps')}
+                      {t('ZCode setup steps')}
                     </h3>
                     <p className='text-muted-foreground text-[11px]'>
                       {t('Zhipu ADE developer settings')}
@@ -824,8 +824,8 @@ export function ClientGuideCard() {
                           : '/guides/zcode/zcode-custom-provider.webp',
                       title:
                         zcodeImageMode === 'openai'
-                          ? t('ZCode official OpenAI setup screenshot')
-                          : t('ZCode official custom provider screenshot'),
+                          ? t('ZCode OpenAI setup screenshot')
+                          : t('ZCode custom provider screenshot'),
                     })
                   }
                 >
@@ -835,7 +835,7 @@ export function ClientGuideCard() {
                         ? '/guides/zcode/zcode-openai.webp'
                         : '/guides/zcode/zcode-custom-provider.webp'
                     }
-                    alt={t('ZCode official setup screenshot')}
+                    alt={t('ZCode setup screenshot')}
                     className='h-auto w-full object-cover transition-transform duration-300 group-hover:scale-[1.01]'
                   />
                   <div className='absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100'>
@@ -847,7 +847,7 @@ export function ClientGuideCard() {
                 </div>
                 <p className='text-muted-foreground mt-2 text-center text-[10px]'>
                   {t(
-                    'Source: Zhipu official docs. The screenshot marks where to enter the API address and API key.'
+                    'Source: Zhipu docs. The screenshot marks where to enter the API address and API key.'
                   )}
                 </p>
               </div>
@@ -1603,7 +1603,7 @@ export function ClientGuideCard() {
                       DeepSeek Harness (DSH)
                     </h3>
                     <p className='text-muted-foreground text-[11px]'>
-                      {t('DeepSeek official Agent Harness client')}
+                      {t('DeepSeek open-source Agent Harness client')}
                     </p>
                   </div>
                 </div>
