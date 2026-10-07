@@ -43,6 +43,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-07',
     items: [
     {
+      "tag": "fix",
+      "titleEn": "[i18n] 修复首页网关预览及客户端卡片多语言丢失与结构错位",
+      "titleZh": "[i18n] 修复首页网关预览及客户端卡片多语言丢失与结构错位",
+      "descEn": "Commit: bd0c2b96e (2026-10-07)",
+      "descZh": "提交: bd0c2b96e · 2026-10-07",
+      "commitHash": "bd0c2b96e"
+    },
+    {
       "tag": "feat",
       "titleEn": "[home] 对齐模型广场最新主力模型与 Magpie 风格网关路由预览",
       "titleZh": "[home] 对齐模型广场最新主力模型与 Magpie 风格网关路由预览",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 811212067 (2026-09-30)",
       "descZh": "提交: 811212067 · 2026-09-30",
       "commitHash": "811212067"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "use max_completion_tokens for gpt-6-sol and gpt-6-luna (#7559)",
-      "titleZh": "use max_completion_tokens for gpt-6-sol and gpt-6-luna (#7559)",
-      "descEn": "Commit: d0cb7347c (2026-09-30)",
-      "descZh": "提交: d0cb7347c · 2026-09-30",
-      "commitHash": "d0cb7347c"
     }
 ],
   },
