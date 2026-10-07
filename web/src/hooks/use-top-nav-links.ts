@@ -20,6 +20,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useStatus } from '@/hooks/use-status'
+import { resolveDocsNavTarget, shouldShowDocsNav } from '@/lib/docs-nav'
 import { parseHeaderNavModulesFromStatus } from '@/lib/nav-modules'
 import { useAuthStore } from '@/stores/auth-store'
 
@@ -86,13 +87,14 @@ export function useTopNavLinks(): TopNavLink[] {
     links.push({ title: t('Rankings'), href: '/rankings', requiresAuth })
   }
 
-  // Docs (supports external links)
-  if (modules?.docs !== false) {
-    if (docsLink) {
-      links.push({ title: t('Docs'), href: docsLink, external: true })
-    } else {
-      links.push({ title: t('Docs'), href: '/docs' })
-    }
+  // Docs. An empty link or the stock upstream manual opens the in-app guide.
+  if (shouldShowDocsNav(modules?.docs !== false, docsLink)) {
+    const docsTarget = resolveDocsNavTarget(docsLink)
+    links.push({
+      title: t('Docs'),
+      href: docsTarget.href,
+      external: docsTarget.external,
+    })
   }
 
   // About
