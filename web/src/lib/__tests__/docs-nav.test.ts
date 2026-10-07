@@ -53,9 +53,10 @@ describe('docs navigation target', () => {
     expect(isUpstreamDocsLink('https://example.com/guide')).toBe(false)
   })
 
-  it('shows the menu for the stock upstream link even when the module is off', () => {
+  it('shows the in-app guide when the module is off but no custom address is saved', () => {
     expect(shouldShowDocsNav(false, UPSTREAM_DOCS_LINK)).toBe(true)
-    expect(shouldShowDocsNav(false, '')).toBe(false)
+    expect(shouldShowDocsNav(false, '')).toBe(true)
+    expect(shouldShowDocsNav(false, undefined)).toBe(true)
     expect(shouldShowDocsNav(false, 'https://example.com/guide')).toBe(false)
     expect(shouldShowDocsNav(true, 'https://example.com/guide')).toBe(true)
   })

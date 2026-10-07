@@ -48,13 +48,15 @@ export function resolveDocsNavTarget(
 }
 
 /**
- * The live site stored the upstream manual and turned the menu off.
- * Treat that pair as "open the in-app guide" until an admin saves another URL.
+ * This site's guide lives at /docs. An empty address, or the old upstream
+ * manual, still opens that page even when the docs switch was left off.
+ * A custom external address stays hidden while the switch is off.
  */
 export function shouldShowDocsNav(
   enabled: boolean,
   docsLink: string | undefined
 ) {
   if (enabled) return true
-  return isUpstreamDocsLink(docsLink)
+  const trimmed = trimLink(docsLink)
+  return trimmed === '' || isUpstreamDocsLink(trimmed)
 }

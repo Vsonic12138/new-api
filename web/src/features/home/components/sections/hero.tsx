@@ -143,7 +143,7 @@ export function Hero(props: HeroProps) {
             className='landing-animate-fade-up mt-8 flex w-full max-w-3xl flex-col gap-2.5 opacity-0 lg:max-w-none'
             style={{ animationDelay: '180ms' }}
           >
-            <div className='grid grid-cols-1 gap-2.5 sm:grid-cols-3'>
+            <div className='grid grid-cols-1 gap-2.5 sm:grid-cols-2'>
               {props.isAuthenticated ? (
                 <Button
                   className='group h-11 w-full rounded-lg px-4 text-sm font-medium shadow-xs'
@@ -161,13 +161,6 @@ export function Hero(props: HeroProps) {
                   <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
                 </Button>
               )}
-              <Button
-                variant='outline'
-                className='border-border/50 hover:border-border hover:bg-muted/50 h-11 w-full rounded-lg px-4 text-sm font-medium'
-                render={<Link to='/pricing' />}
-              >
-                {t('View Pricing')}
-              </Button>
               {renderClientGuideButton()}
             </div>
             {renderCardShopButton()}
