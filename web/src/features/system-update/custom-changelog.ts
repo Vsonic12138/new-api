@@ -44,6 +44,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     items: [
     {
       "tag": "feat",
+      "titleEn": "[home] 补齐首页网关流式体验卡与分类导航国际化翻译",
+      "titleZh": "[home] 补齐首页网关流式体验卡与分类导航国际化翻译",
+      "descEn": "Commit: b0a023a6f (2026-10-07)",
+      "descZh": "提交: b0a023a6f · 2026-10-07",
+      "commitHash": "b0a023a6f"
+    },
+    {
+      "tag": "feat",
       "titleEn": "[home] 重构客户端生态分类与多模型网关预览并整合发卡入口",
       "titleZh": "[home] 重构客户端生态分类与多模型网关预览并整合发卡入口",
       "descEn": "Commit: 0a51871b9 (2026-10-07)",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 2035a82ae (2026-09-30)",
       "descZh": "提交: 2035a82ae · 2026-09-30",
       "commitHash": "2035a82ae"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[plugins] add Seedream 5.0 flash and price each Seedream model by its own tiers",
-      "titleZh": "[plugins] add Seedream 5.0 flash and price each Seedream model by its own tiers",
-      "descEn": "Commit: ae73ef8e2 (2026-09-30)",
-      "descZh": "提交: ae73ef8e2 · 2026-09-30",
-      "commitHash": "ae73ef8e2"
     }
 ],
   },
