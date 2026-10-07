@@ -25,7 +25,7 @@ export const CLIENT_IMPORT_PLACEHOLDER_KEY = 'sk-your-api-token'
  * ("Pi providers must be added from the Pi provider page"), so a Pi deep link
  * only ever surfaces an error in the client.
  */
-export type CCSwitchApp = 'claude' | 'codex' | 'opencode'
+export type CCSwitchApp = 'claude' | 'codex' | 'gemini' | 'opencode'
 
 function trimTrailingSlashes(value: string) {
   return value.replace(/\/+$/, '')

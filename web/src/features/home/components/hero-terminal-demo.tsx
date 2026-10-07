@@ -16,177 +16,140 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
+import { Claude, DeepSeek, OpenAI } from '@lobehub/icons'
+import { Activity, CheckCircle2 } from 'lucide-react'
 import { useState, useEffect, useRef, type ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 
+import { CopyButton } from '@/components/copy-button'
+import { useStatus } from '@/hooks/use-status'
 import { cn } from '@/lib/utils'
 
-type AccentTone = 'emerald' | 'amber' | 'blue' | 'violet'
-
-interface ApiDemoConfig {
+interface ModelWorkflowDemo {
   id: string
-  label: string
-  method: 'POST' | 'GET'
+  name: string
+  vendor: string
+  context: string
+  ratio: string
+  protocol: 'OpenAI' | 'Claude'
+  agentSource: string
   endpoint: string
-  headers: string[]
-  request: string[]
-  response: string[]
-  responseHighlights: string[]
-  tokens: number
-  latency: number
-  accent: AccentTone
+  icon: (size?: number) => ReactNode
+  tone: 'purple' | 'emerald' | 'cyan' | 'blue'
+  prompt: string
+  responseSummary: string
+  codeSnippet: string
+  codeLang: string
 }
 
-const ACCENT_CLASSES: Record<
-  AccentTone,
-  {
-    activeText: string
-    activeBorder: string
-    badge: string
-  }
-> = {
-  emerald: {
-    activeText: 'text-emerald-600 dark:text-emerald-400',
-    activeBorder: 'border-emerald-500 dark:border-emerald-400',
-    badge:
-      'bg-emerald-500/10 text-emerald-600 dark:bg-emerald-400/10 dark:text-emerald-400',
-  },
-  amber: {
-    activeText: 'text-amber-600 dark:text-amber-400',
-    activeBorder: 'border-amber-500 dark:border-amber-400',
-    badge:
-      'bg-amber-500/10 text-amber-600 dark:bg-amber-400/10 dark:text-amber-400',
-  },
-  blue: {
-    activeText: 'text-blue-600 dark:text-blue-400',
-    activeBorder: 'border-blue-500 dark:border-blue-400',
-    badge:
-      'bg-blue-500/10 text-blue-600 dark:bg-blue-400/10 dark:text-blue-400',
-  },
-  violet: {
-    activeText: 'text-violet-600 dark:text-violet-400',
-    activeBorder: 'border-violet-500 dark:border-violet-400',
-    badge:
-      'bg-violet-500/10 text-violet-600 dark:bg-violet-400/10 dark:text-violet-400',
-  },
-}
-
-const API_DEMOS: ApiDemoConfig[] = [
-  {
-    id: 'gpt-chat',
-    label: 'Chat',
-    method: 'POST',
-    endpoint: '/v1/chat/completions',
-    headers: ['"Authorization: Bearer sk-••••"'],
-    request: [
-      '"model": "your-model",',
-      '"messages": [',
-      '  { "role": "user", "content": "..." }',
-      ']',
-    ],
-    response: [
-      '{',
-      '  "choices": [{ "message": { "content": <text> } }],',
-      '  "usage": { "total_tokens": <tokens> }',
-      '}',
-    ],
-    responseHighlights: ['<text>', '<tokens>'],
-    tokens: 27,
-    latency: 142,
-    accent: 'emerald',
-  },
-  {
-    id: 'responses',
-    label: 'Responses',
-    method: 'POST',
-    endpoint: '/v1/responses',
-    headers: ['"Authorization: Bearer sk-••••"'],
-    request: ['"model": "your-model",', '"input": "..."'],
-    response: [
-      '{',
-      '  "output": [{ "type": "output_text", "text": <text> }],',
-      '  "usage": { "total_tokens": <tokens> }',
-      '}',
-    ],
-    responseHighlights: ['<text>', '<tokens>'],
-    tokens: 31,
-    latency: 168,
-    accent: 'amber',
-  },
-  {
-    id: 'claude',
-    label: 'Claude',
-    method: 'POST',
-    endpoint: '/v1/messages',
-    headers: ['"x-api-key: sk-••••"', '"anthropic-version: 2023-06-01"'],
-    request: [
-      '"model": "your-model",',
-      '"max_tokens": 1024,',
-      '"messages": [',
-      '  { "role": "user", "content": "..." }',
-      ']',
-    ],
-    response: [
-      '{',
-      '  "content": [{ "type": "text", "text": <text> }],',
-      '  "usage": { "input_tokens": <in>, "output_tokens": <out> }',
-      '}',
-    ],
-    responseHighlights: ['<text>', '<in>', '<out>'],
-    tokens: 29,
-    latency: 156,
-    accent: 'blue',
-  },
-  {
-    id: 'gemini',
-    label: 'Gemini',
-    method: 'POST',
-    endpoint: '/v1beta/models/{model}:generateContent',
-    headers: ['"x-goog-api-key: sk-••••"'],
-    request: [
-      '"contents": [',
-      '  { "role": "user",',
-      '    "parts": [{ "text": "..." }] }',
-      ']',
-    ],
-    response: [
-      '{',
-      '  "candidates": [{ "content": { "parts": [{ "text": <text> }] } }],',
-      '  "usageMetadata": { "totalTokenCount": <tokens> }',
-      '}',
-    ],
-    responseHighlights: ['<text>', '<tokens>'],
-    tokens: 25,
-    latency: 93,
-    accent: 'violet',
-  },
-]
-
-const CYCLE_INTERVAL = 4500
+const CYCLE_INTERVAL = 9000
 const TRANSITION_MS = 220
 
-interface HeroTerminalDemoProps {
-  className?: string
-}
-
-export function HeroTerminalDemo(props: HeroTerminalDemoProps) {
+export function HeroTerminalDemo(props: { className?: string }) {
+  const { t } = useTranslation()
+  const { status } = useStatus()
   const containerRef = useRef<HTMLDivElement>(null)
   const [isVisible, setIsVisible] = useState(true)
   const [activeIndex, setActiveIndex] = useState(0)
+  const [viewMode, setViewMode] = useState<'preview' | 'endpoint'>('preview')
   const [transitioning, setTransitioning] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval>>(undefined)
   const timeoutRef = useRef<ReturnType<typeof setTimeout>>(undefined)
 
+  const serverAddress =
+    (typeof status?.server_address === 'string' &&
+      status.server_address.replace(/\/+$/, '')) ||
+    (typeof window !== 'undefined'
+      ? window.location.origin
+      : 'https://newapi.vsonic12138.shop')
+
+  const demos: ModelWorkflowDemo[] = [
+    {
+      id: 'claude-sonnet-5',
+      name: 'Claude Sonnet 5',
+      vendor: 'Anthropic',
+      context: '200K Context',
+      ratio: '1.0x',
+      protocol: 'Claude',
+      agentSource: 'Claude Code',
+      endpoint: '/v1/messages',
+      icon: (s = 16) => <Claude.Color size={s} className='shrink-0' />,
+      tone: 'purple',
+      prompt: t('Refactor this high-concurrency worker pipeline with context timeout and graceful shutdown.'),
+      responseSummary: t('Refactored for thread-safety using bounded task channels and context.WithTimeout:'),
+      codeLang: 'go',
+      codeSnippet: `func RunPipeline(ctx context.Context, workers int) error {
+    ctx, cancel := context.WithTimeout(ctx, 30*time.Second)
+    defer cancel()
+    return workerpool.Serve(ctx, workers)
+}`,
+    },
+    {
+      id: 'gpt-6.1-sol',
+      name: 'GPT-6.1 Sol',
+      vendor: 'OpenAI',
+      context: 'Sol High Compute',
+      ratio: '1.0x',
+      protocol: 'OpenAI',
+      agentSource: 'Codex / Cherry',
+      endpoint: '/v1/chat/completions',
+      icon: (s = 16) => <OpenAI size={s} className='shrink-0' />,
+      tone: 'emerald',
+      prompt: t('Analyze multi-tenant cache invalidation strategies under sudden hotkey traffic spikes.'),
+      responseSummary: t('Implemented two-tier defense with distributed mutex and stale-while-revalidate policy:'),
+      codeLang: 'ts',
+      codeSnippet: `interface CachePolicy<T> {
+  staleTtlMs: number
+  lockTimeoutMs: number
+  revalidate: () => Promise<T>
+}`,
+    },
+    {
+      id: 'deepseek-flash',
+      name: 'DeepSeek Flash',
+      vendor: 'DeepSeek',
+      context: 'V4.1 Flash',
+      ratio: '1.27x',
+      protocol: 'OpenAI',
+      agentSource: 'DSH / ZCode',
+      endpoint: '/v1/chat/completions',
+      icon: (s = 16) => <DeepSeek.Color size={s} className='shrink-0' />,
+      tone: 'cyan',
+      prompt: t('Design a high-throughput JSON streaming parser pipeline with minimal GC overhead.'),
+      responseSummary: t('Used pre-allocated ring buffer pool for zero-alloc chunk parsing:'),
+      codeLang: 'go',
+      codeSnippet: `var bufferPool = sync.Pool{
+    New: func() any { return make([]byte, 64*1024) },
+}`,
+    },
+    {
+      id: 'claude-opus-5-5',
+      name: 'Claude Opus 5.5',
+      vendor: 'Anthropic',
+      context: 'Extreme Reasoning',
+      ratio: '2.0x',
+      protocol: 'Claude',
+      agentSource: 'Claude Code / Pi',
+      endpoint: '/v1/messages',
+      icon: (s = 16) => <Claude.Color size={s} className='shrink-0' />,
+      tone: 'purple',
+      prompt: t('Architect a cross-region consensus schedule targeting RPO=0 across three availability zones.'),
+      responseSummary: t('Synchronous Raft barrier with lease-based cross-region election safety:'),
+      codeLang: 'yaml',
+      codeSnippet: `consensus:
+  quorum: "2/3"
+  cross_region_lease: enabled
+  rpo_target: 0`,
+    },
+  ]
+
   useEffect(() => {
     const el = containerRef.current
     if (!el || typeof IntersectionObserver === 'undefined') return
-
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        setIsVisible(entry.isIntersecting)
-      },
+      ([entry]) => setIsVisible(entry.isIntersecting),
       { threshold: 0.05 }
     )
-
     observer.observe(el)
     return () => observer.disconnect()
   }, [])
@@ -202,7 +165,7 @@ export function HeroTerminalDemo(props: HeroTerminalDemoProps) {
     intervalRef.current = setInterval(() => {
       setTransitioning(true)
       timeoutRef.current = setTimeout(() => {
-        setActiveIndex((prev) => (prev + 1) % API_DEMOS.length)
+        setActiveIndex((prev) => (prev + 1) % demos.length)
         setTransitioning(false)
       }, TRANSITION_MS)
     }, CYCLE_INTERVAL)
@@ -211,362 +174,262 @@ export function HeroTerminalDemo(props: HeroTerminalDemoProps) {
       if (intervalRef.current) clearInterval(intervalRef.current)
       if (timeoutRef.current) clearTimeout(timeoutRef.current)
     }
-  }, [isVisible])
+  }, [isVisible, demos.length])
 
-  const handleSelect = (index: number) => {
-    if (index === activeIndex) return
+  const handleSelect = (idx: number) => {
+    if (idx === activeIndex) return
     if (intervalRef.current) clearInterval(intervalRef.current)
     if (timeoutRef.current) clearTimeout(timeoutRef.current)
     setTransitioning(true)
     timeoutRef.current = setTimeout(() => {
-      setActiveIndex(index)
+      setActiveIndex(idx)
       setTransitioning(false)
     }, TRANSITION_MS)
   }
 
-  const demo = API_DEMOS[activeIndex]
-  const accent = ACCENT_CLASSES[demo.accent]
+  const activeDemo = demos[activeIndex]
+  const fullEndpointUrl =
+    activeDemo.protocol === 'Claude'
+      ? `${serverAddress}${activeDemo.endpoint}`
+      : `${serverAddress}${activeDemo.endpoint}`
+
+  const curlCurlCommand =
+    activeDemo.protocol === 'Claude'
+      ? `curl -X POST "${serverAddress}/v1/messages" \\
+  -H "x-api-key: sk-••••" \\
+  -H "anthropic-version: 2023-06-01" \\
+  -H "Content-Type: application/json" \\
+  -d '{"model": "${activeDemo.id}", "max_tokens": 1024, "messages": [{"role": "user", "content": "Hello"}]}'`
+      : `curl -X POST "${serverAddress}/v1/chat/completions" \\
+  -H "Authorization: Bearer sk-••••" \\
+  -H "Content-Type: application/json" \\
+  -d '{"model": "${activeDemo.id}", "messages": [{"role": "user", "content": "Hello"}]}'`
 
   return (
     <div
       ref={containerRef}
-      className={cn('mx-auto w-full max-w-2xl', props.className)}
-    >
-      <div
-        className={cn(
-          'overflow-hidden rounded-2xl border backdrop-blur-sm',
-          'border-border/60 bg-white/95 shadow-[0_20px_50px_-25px_rgba(15,23,42,0.18)]',
-          'dark:border-white/[0.06] dark:bg-[#0b0f17]/95 dark:shadow-[0_20px_60px_-25px_rgba(0,0,0,0.7)]'
-        )}
-      >
-        {/* Tab strip */}
-        <div
-          className={cn(
-            'flex items-center gap-1 border-b px-2 sm:gap-1.5 sm:px-3',
-            'border-border/50 dark:border-white/[0.05]'
-          )}
-        >
-          {API_DEMOS.map((item, index) => {
-            const tone = ACCENT_CLASSES[item.accent]
-            const isActive = index === activeIndex
-            return (
-              <button
-                key={item.id}
-                onClick={() => handleSelect(index)}
-                className={cn(
-                  'relative -mb-px flex items-center gap-1.5 border-b-2 px-2.5 py-2.5 text-[11px] font-medium tracking-wide transition-colors sm:px-3 sm:text-xs',
-                  isActive
-                    ? `${tone.activeBorder} ${tone.activeText}`
-                    : 'text-foreground/40 hover:text-foreground/70 border-transparent'
-                )}
-              >
-                {item.label}
-              </button>
-            )
-          })}
-          <div className='ml-auto flex items-center gap-2 pr-2 sm:pr-3'>
-            <span className='inline-block size-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.45)]' />
-            <span className='text-foreground/40 font-mono text-[10px] tracking-wider uppercase'>
-              200 ok
-            </span>
-          </div>
-        </div>
-
-        {/* Endpoint row */}
-        <div
-          className={cn(
-            'flex items-center gap-2.5 border-b px-5 py-3',
-            'border-border/40 dark:border-white/[0.04]'
-          )}
-        >
-          <span
-            className={cn(
-              'rounded-md px-1.5 py-0.5 font-mono text-[10px] font-semibold tracking-wider',
-              accent.badge
-            )}
-          >
-            {demo.method}
-          </span>
-          <code
-            className={cn(
-              'text-foreground/75 truncate font-mono text-[12.5px] transition-opacity duration-200',
-              transitioning ? 'opacity-0' : 'opacity-100'
-            )}
-          >
-            {demo.endpoint}
-          </code>
-        </div>
-
-        {/* Body — fixed rows so neither block shifts when switching demos */}
-        <div className='grid h-[400px] grid-rows-[235px_minmax(0,1fr)] font-mono text-[12.5px] leading-[1.55]'>
-          {/* Request */}
-          <RequestBlock demo={demo} transitioning={transitioning} />
-
-          {/* Response */}
-          <ResponseBlock demo={demo} transitioning={transitioning} />
-        </div>
-
-        {/* Footer metrics */}
-        <div
-          className={cn(
-            'flex items-center justify-between border-t px-5 py-2.5',
-            'border-border/40 bg-muted/30 dark:border-white/[0.05] dark:bg-white/[0.02]'
-          )}
-        >
-          <div className='text-foreground/40 flex items-center gap-3 text-[10px] tabular-nums'>
-            <span className='flex items-center gap-1'>
-              <span className='font-mono'>{demo.latency}</span>
-              <span className='tracking-wider uppercase'>ms</span>
-            </span>
-            <span className='bg-foreground/15 size-1 rounded-full' />
-            <span className='flex items-center gap-1'>
-              <span className='font-mono'>{demo.tokens}</span>
-              <span className='tracking-wider uppercase'>tokens</span>
-            </span>
-            <span className='bg-foreground/15 size-1 rounded-full' />
-            <span className='flex items-center gap-1'>
-              <span className='tracking-wider uppercase'>cost</span>
-              <span className='font-mono'>
-                ${(demo.tokens * 0.00003).toFixed(5)}
-              </span>
-            </span>
-          </div>
-          <span className='text-foreground/30 font-mono text-[10px] tracking-wider uppercase'>
-            stream · sse
-          </span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function RequestBlock(props: { demo: ApiDemoConfig; transitioning: boolean }) {
-  const { demo, transitioning } = props
-
-  return (
-    <div className='relative px-5 py-4'>
-      <SectionLabel>Request</SectionLabel>
-      <div
-        className={cn(
-          'mt-2 transition-opacity duration-200',
-          transitioning ? 'opacity-0' : 'opacity-100'
-        )}
-      >
-        <CodeLine>
-          <Command>curl</Command> <Flag>-X</Flag> <Flag>POST</Flag>{' '}
-          <StringText>&quot;{demo.endpoint}&quot;</StringText>{' '}
-          <Muted>{'\\'}</Muted>
-        </CodeLine>
-        {demo.headers.map((header) => (
-          <CodeLine key={header} indent={2}>
-            <Flag>-H</Flag> <StringText>{header}</StringText>{' '}
-            <Muted>{'\\'}</Muted>
-          </CodeLine>
-        ))}
-        <CodeLine indent={2}>
-          <Flag>-d</Flag> <StringText>&apos;{'{'}</StringText>
-        </CodeLine>
-        {demo.request.map((line, i) => (
-          <CodeLine key={i} indent={4}>
-            {renderJsonLine(line)}
-          </CodeLine>
-        ))}
-        <CodeLine indent={2}>
-          <StringText>{'}'}&apos;</StringText>
-        </CodeLine>
-      </div>
-    </div>
-  )
-}
-
-function ResponseBlock(props: { demo: ApiDemoConfig; transitioning: boolean }) {
-  const { demo, transitioning } = props
-
-  return (
-    <div
       className={cn(
-        'relative border-t px-5 py-4',
-        'border-border/40 bg-muted/20 dark:border-white/[0.05] dark:bg-white/[0.015]'
+        'border-border/70 bg-card/90 dark:bg-card/45 relative w-full max-w-xl overflow-hidden rounded-2xl border shadow-xl backdrop-blur-md transition-all duration-300',
+        props.className
       )}
     >
-      <SectionLabel>Response</SectionLabel>
+      {/* Window Header */}
+      <div className='border-border/50 bg-muted/40 flex items-center justify-between border-b px-4 py-3'>
+        <div className='flex items-center gap-2'>
+          <div className='flex items-center gap-1.5'>
+            <span className='size-2.5 rounded-full bg-rose-500/80 dark:bg-rose-500/70' />
+            <span className='size-2.5 rounded-full bg-amber-500/80 dark:bg-amber-500/70' />
+            <span className='size-2.5 rounded-full bg-emerald-500/80 dark:bg-emerald-500/70' />
+          </div>
+          <span className='text-muted-foreground ml-1.5 font-mono text-[11px] font-medium'>
+            {t('Gateway Live Preview')}
+          </span>
+        </div>
+
+        {/* Status Indicator */}
+        <div className='flex items-center gap-2'>
+          <div className='flex items-center gap-1.5 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-medium text-emerald-600 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400'>
+            <span className='relative flex size-1.5'>
+              <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75' />
+              <span className='relative inline-flex size-1.5 rounded-full bg-emerald-500 dark:bg-emerald-400' />
+            </span>
+            <span>{t('200 OK · Ready')}</span>
+          </div>
+
+          {/* View Mode Toggle */}
+          <div className='bg-muted/60 border-border/40 flex items-center rounded-lg border p-0.5 text-[10px]'>
+            <button
+              type='button'
+              onClick={() => setViewMode('preview')}
+              className={cn(
+                'rounded px-1.5 py-0.5 font-medium transition-colors',
+                viewMode === 'preview'
+                  ? 'bg-background text-foreground shadow-2xs font-semibold'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              {t('Preview')}
+            </button>
+            <button
+              type='button'
+              onClick={() => setViewMode('endpoint')}
+              className={cn(
+                'rounded px-1.5 py-0.5 font-medium transition-colors',
+                viewMode === 'endpoint'
+                  ? 'bg-background text-foreground shadow-2xs font-semibold'
+                  : 'text-muted-foreground hover:text-foreground'
+              )}
+            >
+              {t('API Spec')}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Model Selection Tabs (Curated from 模型广场) */}
+      <div className='border-border/40 bg-muted/20 flex flex-wrap items-center gap-1 border-b px-3 py-2'>
+        {demos.map((d, idx) => {
+          const isActive = idx === activeIndex
+          return (
+            <button
+              key={d.id}
+              type='button'
+              onClick={() => handleSelect(idx)}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1.5 text-xs font-medium transition-all duration-200',
+                isActive
+                  ? 'bg-background text-foreground border-border/60 border shadow-2xs'
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground border border-transparent'
+              )}
+            >
+              {d.icon(14)}
+              <span>{d.name}</span>
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Card Content Area */}
       <div
         className={cn(
-          'mt-2 transition-opacity duration-200',
-          transitioning ? 'opacity-0' : 'opacity-100'
+          'p-5 transition-opacity duration-200',
+          transitioning ? 'opacity-30' : 'opacity-100'
         )}
       >
-        {demo.response.map((line, i) => (
-          <CodeLine key={i}>{renderResponseLine(line, demo)}</CodeLine>
-        ))}
+        {/* Model Meta Strip */}
+        <div className='border-border/40 bg-muted/20 mb-4 flex flex-wrap items-center justify-between gap-2 rounded-xl border p-2.5 text-xs'>
+          <div className='flex items-center gap-2'>
+            <div className='flex items-center gap-1.5 rounded-lg border border-border/50 bg-background/80 px-2 py-0.5 text-[11px] font-mono'>
+              <span className='text-muted-foreground/75'>{activeDemo.agentSource}</span>
+              <span className='text-muted-foreground/40'>→</span>
+              <span className='font-bold text-foreground select-all'>{activeDemo.id}</span>
+            </div>
+            <CopyButton
+              value={activeDemo.id}
+              variant='ghost'
+              size='sm'
+              className='size-6 p-0 text-muted-foreground hover:text-foreground'
+              tooltip={t('Copy model ID')}
+              successTooltip={t('Copied!')}
+            />
+          </div>
+
+          <div className='flex items-center gap-2 text-[11px]'>
+            <span className='border-border/50 bg-background/80 text-muted-foreground rounded border px-1.5 py-0.5 font-mono'>
+              {activeDemo.context}
+            </span>
+            <span className='border-border/50 bg-background/80 text-muted-foreground rounded border px-1.5 py-0.5 font-mono'>
+              {activeDemo.ratio}
+            </span>
+            <span className='rounded bg-primary/10 text-primary px-1.5 py-0.5 font-medium'>
+              {activeDemo.protocol}
+            </span>
+          </div>
+        </div>
+
+        {/* View Mode: Interactive Preview */}
+        {viewMode === 'preview' ? (
+          <div className='space-y-3.5 text-xs'>
+            {/* User Prompt */}
+            <div className='rounded-xl border border-border/50 bg-muted/15 p-3'>
+              <div className='text-muted-foreground/70 mb-1 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider'>
+                <span className='size-1.5 rounded-full bg-primary/60' />
+                <span>{t('Prompt')}</span>
+              </div>
+              <p className='text-foreground font-medium leading-relaxed'>
+                {activeDemo.prompt}
+              </p>
+            </div>
+
+            {/* AI Assistant Output */}
+            <div className='rounded-xl border border-border/60 bg-background p-3.5 shadow-2xs'>
+              <div className='mb-2 flex items-center justify-between text-[10px]'>
+                <div className='flex items-center gap-1.5 font-semibold text-foreground'>
+                  {activeDemo.icon(14)}
+                  <span>{activeDemo.name}</span>
+                </div>
+                <span className='text-muted-foreground/60 font-mono'>
+                  {activeDemo.codeLang.toUpperCase()}
+                </span>
+              </div>
+
+              <p className='text-muted-foreground mb-2.5 text-xs leading-relaxed'>
+                {activeDemo.responseSummary}
+              </p>
+
+              {/* Code Snippet */}
+              <div className='relative rounded-lg border border-border/40 bg-muted/30 p-3 font-mono text-[11px] leading-relaxed text-foreground select-all'>
+                <pre className='overflow-x-auto whitespace-pre'>
+                  {activeDemo.codeSnippet}
+                </pre>
+              </div>
+            </div>
+          </div>
+        ) : (
+          /* View Mode: API Spec */
+          <div className='space-y-3 text-xs'>
+            <div className='rounded-xl border border-border/50 bg-background p-3 space-y-2'>
+              <div className='flex items-center justify-between'>
+                <span className='text-muted-foreground text-[11px] font-medium'>
+                  {t('Endpoint URL')}
+                </span>
+                <CopyButton
+                  value={fullEndpointUrl}
+                  variant='ghost'
+                  size='sm'
+                  className='h-6 px-2 text-[11px]'
+                  tooltip={t('Copy')}
+                  successTooltip={t('Copied!')}
+                >
+                  <span>{t('Copy')}</span>
+                </CopyButton>
+              </div>
+              <div className='bg-muted/40 rounded-lg p-2 font-mono text-[11px] text-foreground break-all select-all'>
+                POST {fullEndpointUrl}
+              </div>
+            </div>
+
+            <div className='rounded-xl border border-border/50 bg-background p-3 space-y-2'>
+              <div className='flex items-center justify-between'>
+                <span className='text-muted-foreground text-[11px] font-medium'>
+                  {t('cURL Sample')}
+                </span>
+                <CopyButton
+                  value={curlCurlCommand}
+                  variant='ghost'
+                  size='sm'
+                  className='h-6 px-2 text-[11px]'
+                  tooltip={t('Copy')}
+                  successTooltip={t('Copied!')}
+                >
+                  <span>{t('Copy')}</span>
+                </CopyButton>
+              </div>
+              <div className='bg-muted/40 overflow-x-auto rounded-lg p-2.5 font-mono text-[11px] text-foreground select-all'>
+                <pre className='whitespace-pre'>{curlCurlCommand}</pre>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Card Footer Technical Status Bar (Clean, Objective, Truthful) */}
+      <div className='border-border/50 bg-muted/30 flex flex-wrap items-center justify-between gap-3 border-t px-4 py-2.5 text-[11px] text-muted-foreground'>
+        <div className='flex items-center gap-3'>
+          <div className='flex items-center gap-1.5'>
+            <CheckCircle2 className='size-3 text-emerald-500' />
+            <span>{t('Standard Dual Protocols')}</span>
+          </div>
+          <div className='flex items-center gap-1.5'>
+            <Activity className='size-3 text-blue-500' />
+            <span>{t('SSE Streaming')}</span>
+          </div>
+        </div>
+
+        <div className='flex items-center gap-1 font-mono text-[10px] text-muted-foreground/70'>
+          <span>OpenAI & Anthropic Compatible</span>
+        </div>
       </div>
     </div>
-  )
-}
-
-function SectionLabel(props: { children: ReactNode }) {
-  return (
-    <span className='text-foreground/30 font-sans text-[10px] font-semibold tracking-[0.18em] uppercase'>
-      {props.children}
-    </span>
-  )
-}
-
-const STRING_RE = /"[^"]*"/g
-const PLACEHOLDER_RE = /<[a-z]+>/gi
-
-function renderJsonLine(line: string): ReactNode {
-  if (!line.trim()) return <Muted> </Muted>
-  return tokenize(line)
-}
-
-function renderResponseLine(line: string, demo: ApiDemoConfig): ReactNode {
-  if (!line.trim()) return <Muted> </Muted>
-
-  const segments: ReactNode[] = []
-  let cursor = 0
-  const matches = [...line.matchAll(PLACEHOLDER_RE)]
-
-  if (matches.length === 0) return tokenize(line)
-
-  matches.forEach((match, idx) => {
-    const start = match.index ?? 0
-    if (start > cursor) {
-      segments.push(
-        <span key={`pre-${idx}`}>{tokenize(line.slice(cursor, start))}</span>
-      )
-    }
-    const placeholder = match[0]
-    if (placeholder === '<text>') {
-      segments.push(
-        <Accent key={`ph-${idx}`} accent={demo.accent}>
-          {`"${truncateResponse(demo)}"`}
-        </Accent>
-      )
-    } else if (placeholder === '<tokens>') {
-      segments.push(<NumberText key={`ph-${idx}`}>{demo.tokens}</NumberText>)
-    } else if (placeholder === '<in>') {
-      segments.push(
-        <NumberText key={`ph-${idx}`}>
-          {Math.floor(demo.tokens * 0.4)}
-        </NumberText>
-      )
-    } else if (placeholder === '<out>') {
-      segments.push(
-        <NumberText key={`ph-${idx}`}>
-          {Math.ceil(demo.tokens * 0.6)}
-        </NumberText>
-      )
-    } else {
-      segments.push(<Muted key={`ph-${idx}`}>{placeholder}</Muted>)
-    }
-    cursor = start + placeholder.length
-  })
-
-  if (cursor < line.length) {
-    segments.push(<span key='tail'>{tokenize(line.slice(cursor))}</span>)
-  }
-
-  return segments
-}
-
-function truncateResponse(demo: ApiDemoConfig): string {
-  const map: Record<string, string> = {
-    'gpt-chat': 'Chat request routed.',
-    responses: 'Response workflow ready.',
-    claude: 'Claude message routed.',
-    gemini: 'Gemini request served.',
-  }
-  return map[demo.id] ?? '...'
-}
-
-function tokenize(input: string): ReactNode {
-  // Split string into "..." string runs and the rest, then color keys/punct.
-  const segments: ReactNode[] = []
-  let cursor = 0
-  const matches = [...input.matchAll(STRING_RE)]
-
-  matches.forEach((match, idx) => {
-    const start = match.index ?? 0
-    if (start > cursor) {
-      segments.push(
-        <Muted key={`m-${idx}`}>{input.slice(cursor, start)}</Muted>
-      )
-    }
-    const text = match[0]
-    const after = input.slice(start + text.length).trimStart()
-    const isKey = after.startsWith(':')
-    if (isKey) {
-      segments.push(<Key key={`k-${idx}`}>{text}</Key>)
-    } else {
-      segments.push(<StringText key={`s-${idx}`}>{text}</StringText>)
-    }
-    cursor = start + text.length
-  })
-
-  if (cursor < input.length) {
-    segments.push(<Muted key='tail'>{input.slice(cursor)}</Muted>)
-  }
-
-  return segments
-}
-
-function CodeLine(props: { children: ReactNode; indent?: number }) {
-  return (
-    <div className='break-words whitespace-pre-wrap'>
-      {props.indent ? (
-        <span
-          aria-hidden
-          className='inline-block'
-          style={{ width: `${props.indent}ch` }}
-        />
-      ) : null}
-      {props.children}
-    </div>
-  )
-}
-
-function Command(props: { children: ReactNode }) {
-  return (
-    <span className='font-medium text-emerald-600 dark:text-emerald-400'>
-      {props.children}
-    </span>
-  )
-}
-
-function Flag(props: { children: ReactNode }) {
-  return (
-    <span className='text-blue-600 dark:text-blue-400'>{props.children}</span>
-  )
-}
-
-function Key(props: { children: ReactNode }) {
-  return (
-    <span className='text-sky-700 dark:text-sky-300'>{props.children}</span>
-  )
-}
-
-function StringText(props: { children: ReactNode }) {
-  return (
-    <span className='text-amber-700 dark:text-amber-300'>{props.children}</span>
-  )
-}
-
-function NumberText(props: { children: ReactNode }) {
-  return (
-    <span className='font-medium text-violet-600 dark:text-violet-300'>
-      {props.children}
-    </span>
-  )
-}
-
-function Muted(props: { children: ReactNode }) {
-  return <span className='text-foreground/55'>{props.children}</span>
-}
-
-function Accent(props: { children: ReactNode; accent: AccentTone }) {
-  const tone = ACCENT_CLASSES[props.accent]
-  return (
-    <span className={cn('font-medium', tone.activeText)}>{props.children}</span>
   )
 }

@@ -16,9 +16,15 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { CherryStudio } from '@lobehub/icons'
+import { CherryStudio, DeepSeek } from '@lobehub/icons'
 import { Link } from '@tanstack/react-router'
-import { ArrowRight, BookOpen, ExternalLink, ShoppingBag } from 'lucide-react'
+import {
+  ArrowRight,
+  BookOpen,
+  ExternalLink,
+  ShoppingBag,
+  Terminal,
+} from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 import { Button } from '@/components/ui/button'
@@ -31,38 +37,39 @@ interface HeroProps {
   isAuthenticated?: boolean
 }
 
-// Stylized three-dots indicator representing "More"
-const MoreIcon = () => (
-  <svg
-    className='text-muted-foreground/60 group-hover:text-foreground size-6 shrink-0 transition-colors'
-    viewBox='0 0 24 24'
-    fill='none'
-    xmlns='http://www.w3.org/2000/svg'
-  >
-    <circle cx='6' cy='12' r='2' fill='currentColor' />
-    <circle cx='12' cy='12' r='2' fill='currentColor' />
-    <circle cx='18' cy='12' r='2' fill='currentColor' />
-  </svg>
-)
-
 export function Hero(props: HeroProps) {
   const { t } = useTranslation()
   const { status } = useStatus()
   const topupLink = (status?.topup_link as string | undefined) || ''
+
+  const scrollToClient = (clientKey: string) => {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('select-client-guide', { detail: clientKey })
+      )
+      const el = document.getElementById('client-guide')
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      }
+    }
+  }
 
   const renderCardShopButton = () => {
     if (!topupLink) return null
     return (
       <Button
         variant='outline'
-        className='group inline-flex h-11 items-center gap-1.5 rounded-lg border-amber-500/30 bg-amber-500/5 px-4 text-sm font-medium text-amber-600 shadow-xs transition-colors hover:border-amber-500/50 hover:bg-amber-500/10 dark:text-amber-400'
+        className='group relative inline-flex h-11 items-center gap-2 overflow-hidden rounded-lg border-amber-500/50 bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-amber-500/15 px-4.5 text-sm font-semibold text-amber-700 shadow-xs transition-all duration-200 hover:border-amber-500/80 hover:bg-amber-500/25 hover:shadow-amber-500/20 hover:scale-[1.02] dark:border-amber-400/50 dark:bg-gradient-to-r dark:from-amber-400/15 dark:via-orange-400/10 dark:to-amber-400/15 dark:text-amber-300 dark:hover:border-amber-400/80'
         render={
           <a href={topupLink} target='_blank' rel='noopener noreferrer' />
         }
       >
-        <ShoppingBag className='size-4 transition-transform duration-200 group-hover:scale-110' />
+        <ShoppingBag className='size-4 text-amber-600 transition-transform duration-200 group-hover:scale-110 dark:text-amber-400' />
         <span>{t('Buy Credits / Codes')}</span>
-        <ExternalLink className='size-3 opacity-60' />
+        <span className='rounded-full border border-amber-500/30 bg-amber-500/20 px-2 py-0.5 text-[10px] font-bold text-amber-700 dark:border-amber-400/30 dark:bg-amber-400/20 dark:text-amber-300'>
+          {t('24H Auto Delivery')}
+        </span>
+        <ExternalLink className='size-3.5 opacity-60 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5' />
       </Button>
     )
   }
@@ -101,40 +108,21 @@ export function Hero(props: HeroProps) {
       <div className='mx-auto grid max-w-7xl grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-8 2xl:max-w-[1440px]'>
         {/* Left Column: Title, description, action buttons and application support */}
         <div className='flex flex-col items-start text-left lg:col-span-6'>
-          {/* Top Pill Badge */}
-          {topupLink ? (
-            <a
-              href={topupLink}
-              target='_blank'
-              rel='noopener noreferrer'
-              className='landing-animate-fade-up group mb-5 inline-flex items-center gap-2 rounded-full border border-amber-500/25 bg-amber-500/10 px-3.5 py-1.5 text-[11px] font-medium text-amber-700 opacity-0 shadow-xs transition-colors hover:border-amber-500/40 hover:bg-amber-500/15 dark:border-amber-400/25 dark:bg-amber-400/10 dark:text-amber-300'
-              style={{ animationDelay: '0ms' }}
-            >
-              <span className='relative flex size-1.5'>
-                <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75' />
-                <span className='relative inline-flex size-1.5 rounded-full bg-amber-500 dark:bg-amber-400' />
-              </span>
-              <span>{t('Instant Card Shop Available')}</span>
-              <span className='text-amber-500/40 dark:text-amber-400/40'>
-                |
-              </span>
-              <span className='inline-flex items-center gap-1 opacity-90 group-hover:opacity-100'>
-                <span>{t('Buy Credits')}</span>
-                <ExternalLink className='size-2.5 transition-transform duration-200 group-hover:translate-x-0.5' />
-              </span>
-            </a>
-          ) : (
-            <div
-              className='landing-animate-fade-up mb-5 inline-flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-3 py-1.5 text-[11px] font-medium text-amber-700 opacity-0 shadow-xs dark:border-amber-400/25 dark:bg-amber-400/10 dark:text-amber-300'
-              style={{ animationDelay: '0ms' }}
-            >
-              <span className='relative flex size-1.5'>
-                <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-amber-400 opacity-75' />
-                <span className='relative inline-flex size-1.5 rounded-full bg-amber-500 dark:bg-amber-400' />
-              </span>
-              <span>{t('DaHuang API is On Duty')}</span>
-            </div>
-          )}
+          {/* Top Pill Badge: Clean Technical Status */}
+          <div
+            className='landing-animate-fade-up mb-5 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1.5 text-xs font-medium text-foreground/90 opacity-0 shadow-xs dark:border-primary/30 dark:bg-primary/10'
+            style={{ animationDelay: '0ms' }}
+          >
+            <span className='relative flex size-2'>
+              <span className='absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75' />
+              <span className='relative inline-flex size-2 rounded-full bg-emerald-500' />
+            </span>
+            <span>{t('Gateway Service Online')}</span>
+            <span className='text-muted-foreground/30'>|</span>
+            <span className='text-muted-foreground text-[11px]'>
+              {t('Standard Dual Protocol Access')}
+            </span>
+          </div>
 
           <h1
             className='landing-animate-fade-up text-[clamp(2.25rem,4.5vw,3.25rem)] leading-[1.15] font-bold tracking-tight'
@@ -164,24 +152,25 @@ export function Hero(props: HeroProps) {
             {props.isAuthenticated ? (
               <>
                 <Button
-                  className='group h-11 rounded-lg px-5 text-sm font-medium'
+                  className='group h-11 rounded-lg px-5 text-sm font-medium shadow-xs'
                   render={<Link to='/dashboard' />}
                 >
                   {t('Go to Dashboard')}
                   <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
                 </Button>
-                {renderClientGuideButton()}
                 {renderCardShopButton()}
+                {renderClientGuideButton()}
               </>
             ) : (
               <>
                 <Button
-                  className='group h-11 rounded-lg px-5 text-sm font-medium'
+                  className='group h-11 rounded-lg px-5 text-sm font-medium shadow-xs'
                   render={<Link to='/sign-up' />}
                 >
                   {t('Get Started')}
                   <ArrowRight className='ml-1.5 size-4 transition-transform duration-200 group-hover:translate-x-0.5' />
                 </Button>
+                {renderCardShopButton()}
                 <Button
                   variant='outline'
                   className='border-border/50 hover:border-border hover:bg-muted/50 h-11 rounded-lg px-5 text-sm font-medium'
@@ -190,93 +179,122 @@ export function Hero(props: HeroProps) {
                   {t('View Pricing')}
                 </Button>
                 {renderClientGuideButton()}
-                {renderCardShopButton()}
               </>
             )}
           </div>
 
-          {/* Supported Apps */}
+          {/* Supported Apps (Categorized) */}
           <div
-            className='landing-animate-fade-up mt-10 w-full max-w-xl opacity-0'
+            className='landing-animate-fade-up mt-10 w-full max-w-xl space-y-5 opacity-0'
             style={{ animationDelay: '240ms' }}
           >
-            <div className='mb-4 flex flex-col gap-1'>
-              <span className='text-muted-foreground/50 text-[10px] font-bold tracking-[0.15em] uppercase'>
-                {t('Supported Applications')}
-              </span>
-              <p className='text-muted-foreground/60 text-xs leading-relaxed'>
-                {t(
-                  'Supports one-click configuration and perfectly adapts to standard OpenAI & Claude protocols.'
-                )}
-              </p>
+            {/* Category 1: CLI Gateways & Switchers */}
+            <div>
+              <div className='mb-2.5 flex items-center justify-between'>
+                <span className='text-muted-foreground/75 text-[11px] font-bold tracking-[0.1em] uppercase'>
+                  {t('CLI Gateways & Switchers')}
+                </span>
+                <span className='text-muted-foreground/50 text-[10px] hidden sm:inline'>
+                  {t('Local proxies for Claude Code, Codex, OpenCode')}
+                </span>
+              </div>
+              <div className='flex flex-wrap items-center gap-2.5'>
+                {/* CC Switch */}
+                <button
+                  type='button'
+                  onClick={() => scrollToClient('ccswitch')}
+                  className='group border-border/50 bg-muted/20 hover:border-border hover:bg-muted/40 text-foreground/85 hover:text-foreground flex items-center gap-2.5 rounded-xl border px-3.5 py-2 text-xs font-medium shadow-2xs backdrop-blur-xs transition-all duration-200 hover:scale-[1.02]'
+                >
+                  <img
+                    src='/icons/ccswitch.png'
+                    alt='CC Switch'
+                    className='size-5 shrink-0 rounded-md object-contain'
+                  />
+                  <span>CC Switch</span>
+                  <span className='text-muted-foreground/50 text-[10px] hidden sm:inline'>
+                    {t('Multi-provider')}
+                  </span>
+                </button>
+
+                {/* magpie */}
+                <button
+                  type='button'
+                  onClick={() => scrollToClient('magpie')}
+                  className='group border-border/50 bg-muted/20 hover:border-border hover:bg-muted/40 text-foreground/85 hover:text-foreground flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-medium shadow-2xs backdrop-blur-xs transition-all duration-200 hover:scale-[1.02]'
+                >
+                  <img
+                    src='/icons/magpie.svg'
+                    alt='magpie'
+                    className='size-4.5 shrink-0 object-contain'
+                  />
+                  <span>magpie</span>
+                  <span className='text-muted-foreground/50 text-[10px] hidden sm:inline'>
+                    {t('Local Gateway')}
+                  </span>
+                </button>
+              </div>
             </div>
-            <div className='flex flex-wrap items-center gap-3'>
-              {/* ZCode (智谱) */}
-              <a
-                href='https://zcode.z.ai'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='group border-border/40 bg-muted/15 text-foreground/80 hover:border-border hover:bg-muted/30 hover:text-foreground flex items-center gap-2.5 rounded-full border px-4 py-2 text-sm font-medium shadow-[0_1px_2.5px_rgba(0,0,0,0.01)] backdrop-blur-xs transition-all duration-300 hover:scale-[1.02]'
-              >
-                <img
-                  src='/icons/zcode-192.png'
-                  alt='ZCode'
-                  className='border-border/40 size-5 shrink-0 rounded-md border object-contain'
-                />
-                <span>ZCode</span>
-              </a>
 
-              {/* Cherry Studio */}
-              <a
-                href='https://cherry-ai.com'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='group border-border/40 bg-muted/15 text-foreground/80 hover:border-border hover:bg-muted/30 hover:text-foreground flex items-center gap-2.5 rounded-full border px-4 py-2 text-sm font-medium shadow-[0_1px_2.5px_rgba(0,0,0,0.01)] backdrop-blur-xs transition-all duration-300 hover:scale-[1.02]'
-              >
-                <CherryStudio.Color size={20} className='shrink-0' />
-                <span>Cherry Studio</span>
-              </a>
+            {/* Category 2: Desktop GUI & Harnesses */}
+            <div>
+              <div className='mb-2.5 flex items-center justify-between'>
+                <span className='text-muted-foreground/75 text-[11px] font-bold tracking-[0.1em] uppercase'>
+                  {t('Desktop Apps & Harnesses')}
+                </span>
+                <span className='text-muted-foreground/50 text-[10px] hidden sm:inline'>
+                  {t('GUI clients, agent harness & IDE helpers')}
+                </span>
+              </div>
+              <div className='flex flex-wrap items-center gap-2.5'>
+                {/* Cherry Studio */}
+                <button
+                  type='button'
+                  onClick={() => scrollToClient('cherry')}
+                  className='group border-border/50 bg-muted/20 hover:border-border hover:bg-muted/40 text-foreground/85 hover:text-foreground flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-medium shadow-2xs backdrop-blur-xs transition-all duration-200 hover:scale-[1.02]'
+                >
+                  <CherryStudio.Color size={18} className='shrink-0' />
+                  <span>Cherry Studio</span>
+                </button>
 
-              {/* CC Switch */}
-              <a
-                href='https://ccswitch.io'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='group border-border/40 bg-muted/15 text-foreground/80 hover:border-border hover:bg-muted/30 hover:text-foreground flex items-center gap-3 rounded-full border px-5 py-2.5 text-sm font-medium shadow-[0_1px_2.5px_rgba(0,0,0,0.01)] backdrop-blur-xs transition-all duration-300 hover:scale-[1.02]'
-              >
-                <img
-                  src='/icons/ccswitch.png'
-                  alt='CC Switch'
-                  className='size-6 shrink-0 rounded-md object-contain'
-                />
-                <span>CC Switch</span>
-              </a>
+                {/* DSH */}
+                <button
+                  type='button'
+                  onClick={() => scrollToClient('dsh')}
+                  className='group border-border/50 bg-muted/20 hover:border-border hover:bg-muted/40 text-foreground/85 hover:text-foreground flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-medium shadow-2xs backdrop-blur-xs transition-all duration-200 hover:scale-[1.02]'
+                >
+                  <DeepSeek.Color size={18} className='shrink-0' />
+                  <span>DSH (DeepSeek Harness)</span>
+                </button>
 
-              {/* magpie */}
-              <a
-                href='https://usemagpie.ai/zh/'
-                target='_blank'
-                rel='noopener noreferrer'
-                className='group border-border/40 bg-muted/15 text-foreground/80 hover:border-border hover:bg-muted/30 hover:text-foreground flex items-center gap-2.5 rounded-full border px-4 py-2 text-sm font-medium shadow-[0_1px_2.5px_rgba(0,0,0,0.01)] backdrop-blur-xs transition-all duration-300 hover:scale-[1.02]'
-              >
-                <img
-                  src='/icons/magpie.svg'
-                  alt='magpie'
-                  className='size-5 shrink-0 object-contain'
-                />
-                <span>magpie</span>
-              </a>
+                {/* ZCode */}
+                <button
+                  type='button'
+                  onClick={() => scrollToClient('zcode')}
+                  className='group border-border/50 bg-muted/20 hover:border-border hover:bg-muted/40 text-foreground/85 hover:text-foreground flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-medium shadow-2xs backdrop-blur-xs transition-all duration-200 hover:scale-[1.02]'
+                >
+                  <img
+                    src='/icons/zcode-192.png'
+                    alt='ZCode'
+                    className='size-4.5 shrink-0 rounded-md object-contain'
+                  />
+                  <span>ZCode</span>
+                </button>
 
-              {/* "更多" */}
-              <div className='group border-border/40 bg-muted/15 text-foreground/55 hover:border-border hover:bg-muted/30 hover:text-foreground flex cursor-default items-center gap-2.5 rounded-full border px-5 py-2.5 text-sm font-medium shadow-[0_1px_2.5px_rgba(0,0,0,0.01)] backdrop-blur-xs transition-all duration-300 hover:scale-[1.02]'>
-                <MoreIcon />
-                <span>{t('More Apps')}</span>
+                {/* Cursor / Code */}
+                <button
+                  type='button'
+                  onClick={() => scrollToClient('code')}
+                  className='group border-border/50 bg-muted/15 hover:border-border hover:bg-muted/30 text-muted-foreground hover:text-foreground flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-medium transition-all duration-200'
+                >
+                  <Terminal className='size-3.5' />
+                  <span>{t('Cursor / Code / API')}</span>
+                </button>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right Column: Hero Terminal API Demo */}
+        {/* Right Column: Hero Live Gateway Preview */}
         <div
           className='landing-animate-fade-up flex w-full justify-center opacity-0 lg:col-span-6'
           style={{ animationDelay: '320ms' }}

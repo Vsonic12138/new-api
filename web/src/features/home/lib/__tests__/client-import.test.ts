@@ -110,11 +110,20 @@ describe('homepage client import links', () => {
     expect(claude.searchParams.get('sonnetModel')).toBe('claude-sonnet-5')
     expect(claude.searchParams.get('opusModel')).toBe('claude-opus-5-5')
     expect(claude.searchParams.get('enabled')).toBe('true')
-    for (const client of [codex, opencode]) {
+    const gemini = new URL(
+      buildCCSwitchImportUrl({
+        app: 'gemini',
+        name: '大黄API',
+        origin,
+        model: 'gpt-6.1-sol',
+      })
+    )
+    for (const client of [codex, opencode, gemini]) {
       expect(client.searchParams.get('endpoint')).toBe(`${origin}/v1`)
       expect(client.searchParams.get('model')).toBe('gpt-6.1-sol')
     }
     expect(codex.searchParams.get('app')).toBe('codex')
+    expect(gemini.searchParams.get('app')).toBe('gemini')
     expect(opencode.searchParams.get('app')).toBe('opencode')
     expect(claude.href).not.toContain('127.0.0.1')
   })

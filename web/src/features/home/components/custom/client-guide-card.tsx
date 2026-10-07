@@ -226,9 +226,7 @@ function DshMockupVisual(props: {
   )
 }
 
-/** Tabs shown for CC Switch. Pi is guide-only because CC Switch cannot import
- * a Pi provider from a deep link, so it is not part of CCSwitchApp. */
-type CCSwitchTab = CCSwitchApp | 'pi'
+type CCSwitchTab = CCSwitchApp
 
 export function ClientGuideCard() {
   const { t } = useTranslation()
@@ -252,6 +250,31 @@ export function ClientGuideCard() {
   const [importingClient, setImportingClient] = useState<
     'cherry' | 'ccswitch' | 'magpie' | null
   >(null)
+
+  // 监听来自 Hero 客户端徽标的点击跳转与 Tab 切换事件
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<string>).detail
+      if (
+        detail &&
+        ['zcode', 'cherry', 'ccswitch', 'magpie', 'dsh', 'code'].includes(
+          detail
+        )
+      ) {
+        setActiveTab(
+          detail as
+            | 'zcode'
+            | 'cherry'
+            | 'ccswitch'
+            | 'magpie'
+            | 'dsh'
+            | 'code'
+        )
+      }
+    }
+    window.addEventListener('select-client-guide', handler)
+    return () => window.removeEventListener('select-client-guide', handler)
+  }, [])
 
   // 严格优先采用浏览器当前的真实访问地址，杜绝 localhost 与内网/公网错配
   useEffect(() => {
@@ -296,14 +319,14 @@ export function ClientGuideCard() {
       sonnet_model: 'claude-sonnet-5',
     },
     codex: { model: 'gpt-6.1-sol' },
+    gemini: { model: 'gpt-6.1-sol' },
     opencode: { model: 'gpt-6.1-sol' },
-    pi: { model: 'gpt-6.1-sol' },
   }
   const ccSwitchAltModels: Record<CCSwitchTab, string[]> = {
     claude: ['claude-opus-5-5', 'claude-sonnet-5'],
-    codex: ['gpt-6.1-sol', 'gpt-6-sol', 'gpt-5.6-luna'],
+    codex: ['gpt-6.1-sol', 'gpt-5.6-luna'],
+    gemini: ['gpt-6.1-sol', 'deepseek-flash'],
     opencode: ['gpt-6.1-sol', 'claude-sonnet-5', 'deepseek-flash'],
-    pi: ['gpt-6.1-sol', 'deepseek-flash'],
   }
   const ccSwitchModel = ccSwitchModelMap[ccSwitchApp].model ?? ''
 
@@ -330,9 +353,6 @@ export function ClientGuideCard() {
   }
 
   const handleCCSwitchImport = () => {
-    // Pi is documented here but has no deep-link import; the button is not
-    // rendered for it, so this guard is only a safety net.
-    if (ccSwitchApp === 'pi') return
     setImportingClient('ccswitch')
 
     const link = buildCCSwitchImportUrl({
@@ -359,14 +379,10 @@ export function ClientGuideCard() {
 
   const ccSwitchEndpoint =
     ccSwitchApp === 'claude' ? anthropicBaseUrl : openAiBaseUrl
-  const ccSwitchSupportsImport = ccSwitchApp !== 'pi'
-  const ccSwitchStepText = ccSwitchSupportsImport
-    ? t(
-        'One-click import opens CC Switch and shows a confirmation. Replace the placeholder API key with a key from this site before confirming.'
-      )
-    : t(
-        'Open CC Switch, switch to Pi, and add a provider with the address and model above.'
-      )
+  const ccSwitchSupportsImport = true
+  const ccSwitchStepText = t(
+    'One-click import opens CC Switch and shows a confirmation. Replace the placeholder API key with a key from this site before confirming.'
+  )
   const ccSwitchShot =
     ccSwitchImage === 'add'
       ? {
@@ -435,7 +451,7 @@ export function ClientGuideCard() {
           </h2>
           <p className='text-muted-foreground mt-1 text-xs sm:text-sm'>
             {t(
-              'One key, standard endpoints. Plug into ZCode, Cherry Studio, CC Switch, magpie, DSH, or code in seconds.'
+              'One key, standard endpoints. Connect to CLI gateways and desktop clients in seconds.'
             )}
           </p>
         </div>
@@ -513,91 +529,105 @@ export function ClientGuideCard() {
           </div>
         </div>
 
-        {/* Tab Switcher: ZCode, Cherry Studio, CC Switch, magpie, DSH, Cursor/Code */}
-        <div className='border-border/60 flex flex-wrap items-center justify-center gap-1.5 border-b pb-3'>
-          <button
-            type='button'
-            onClick={() => setActiveTab('zcode')}
-            className={cn(
-              'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all',
-              activeTab === 'zcode'
-                ? 'bg-primary text-primary-foreground shadow-xs'
-                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-            )}
-          >
-            <ZCodeLogo size={16} />
-            <span>{t('ZCode (Zhipu)')}</span>
-          </button>
+        {/* Categorized Client Navigation */}
+        <div className='border-border/60 flex flex-wrap items-center justify-center gap-3 border-b pb-4'>
+          {/* Group 1: 终端网关 / CLI 路由 */}
+          <div className='border-border/60 bg-muted/30 flex items-center gap-1 rounded-xl border p-1 shadow-2xs'>
+            <div className='border-border/40 text-muted-foreground/80 mr-0.5 flex items-center gap-1.5 border-r px-2.5 py-1 text-[11px] font-semibold tracking-wider uppercase'>
+              <Network className='size-3.5 text-blue-500' />
+              <span>{t('CLI Gateways')}</span>
+            </div>
+            <button
+              type='button'
+              onClick={() => setActiveTab('ccswitch')}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
+                activeTab === 'ccswitch'
+                  ? 'bg-primary text-primary-foreground shadow-xs'
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+              )}
+            >
+              <CCSwitchLogo size={16} />
+              <span>CC Switch</span>
+            </button>
+            <button
+              type='button'
+              onClick={() => setActiveTab('magpie')}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
+                activeTab === 'magpie'
+                  ? 'bg-primary text-primary-foreground shadow-xs'
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+              )}
+            >
+              <MagpieLogo size={16} />
+              <span>magpie</span>
+            </button>
+          </div>
 
-          <button
-            type='button'
-            onClick={() => setActiveTab('cherry')}
-            className={cn(
-              'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all',
-              activeTab === 'cherry'
-                ? 'bg-primary text-primary-foreground shadow-xs'
-                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-            )}
-          >
-            <CherryStudio.Color size={16} />
-            <span>Cherry Studio</span>
-          </button>
+          {/* Group 2: 桌面端 / 研发 Harness */}
+          <div className='border-border/60 bg-muted/30 flex items-center gap-1 rounded-xl border p-1 shadow-2xs'>
+            <div className='border-border/40 text-muted-foreground/80 mr-0.5 flex items-center gap-1.5 border-r px-2.5 py-1 text-[11px] font-semibold tracking-wider uppercase'>
+              <Code2 className='size-3.5 text-emerald-500' />
+              <span>{t('Desktop & Harness')}</span>
+            </div>
+            <button
+              type='button'
+              onClick={() => setActiveTab('zcode')}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
+                activeTab === 'zcode'
+                  ? 'bg-primary text-primary-foreground shadow-xs'
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+              )}
+            >
+              <ZCodeLogo size={16} />
+              <span>{t('ZCode (Zhipu)')}</span>
+            </button>
+            <button
+              type='button'
+              onClick={() => setActiveTab('cherry')}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
+                activeTab === 'cherry'
+                  ? 'bg-primary text-primary-foreground shadow-xs'
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+              )}
+            >
+              <CherryStudio.Color size={16} />
+              <span>Cherry Studio</span>
+            </button>
+            <button
+              type='button'
+              onClick={() => setActiveTab('dsh')}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
+                activeTab === 'dsh'
+                  ? 'bg-primary text-primary-foreground shadow-xs'
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+              )}
+            >
+              <DeepSeek.Color size={16} />
+              <span>DSH</span>
+            </button>
+          </div>
 
-          <button
-            type='button'
-            onClick={() => setActiveTab('ccswitch')}
-            className={cn(
-              'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all',
-              activeTab === 'ccswitch'
-                ? 'bg-primary text-primary-foreground shadow-xs'
-                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-            )}
-          >
-            <CCSwitchLogo size={16} />
-            <span>CC Switch</span>
-          </button>
-
-          <button
-            type='button'
-            onClick={() => setActiveTab('magpie')}
-            className={cn(
-              'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all',
-              activeTab === 'magpie'
-                ? 'bg-primary text-primary-foreground shadow-xs'
-                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-            )}
-          >
-            <MagpieLogo size={16} />
-            <span>magpie</span>
-          </button>
-
-          <button
-            type='button'
-            onClick={() => setActiveTab('dsh')}
-            className={cn(
-              'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all',
-              activeTab === 'dsh'
-                ? 'bg-primary text-primary-foreground shadow-xs'
-                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-            )}
-          >
-            <DeepSeek.Color size={16} />
-            <span>DSH (DeepSeek Harness)</span>
-          </button>
-
-          <button
-            type='button'
-            onClick={() => setActiveTab('code')}
-            className={cn(
-              'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-medium transition-all',
-              activeTab === 'code'
-                ? 'bg-primary text-primary-foreground shadow-xs'
-                : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
-            )}
-          >
-            <Terminal className='size-3.5' />
-            <span>{t('Cursor / cURL / Code')}</span>
-          </button>
+          {/* Group 3: 终端代码 */}
+          <div className='border-border/60 bg-muted/30 flex items-center gap-1 rounded-xl border p-1 shadow-2xs'>
+            <button
+              type='button'
+              onClick={() => setActiveTab('code')}
+              className={cn(
+                'inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-all',
+                activeTab === 'code'
+                  ? 'bg-primary text-primary-foreground shadow-xs'
+                  : 'text-muted-foreground hover:bg-muted/50 hover:text-foreground'
+              )}
+            >
+              <Terminal className='size-3.5' />
+              <span>{t('Cursor / Code')}</span>
+            </button>
+          </div>
         </div>
 
         {/* Tab 1: ZCode (官方原版截图 + 步骤图文看板) */}
@@ -723,6 +753,28 @@ export function ClientGuideCard() {
                     'OpenAI Base URL must include /v1. Anthropic Base URL must not end with /v1.'
                   )}
                 </span>
+              </div>
+
+              {/* Download */}
+              <div className='flex items-center justify-between pt-2 border-t border-border/40'>
+                <span className='text-muted-foreground text-[11px]'>
+                  {t('Need the ZCode IDE developer client?')}
+                </span>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  className='h-7 gap-1 text-xs'
+                  render={
+                    <a
+                      href='https://zcode.z.ai'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    />
+                  }
+                >
+                  <span>{t('Download ZCode')}</span>
+                  <ExternalLink className='size-3' />
+                </Button>
               </div>
             </div>
 
@@ -994,7 +1046,6 @@ export function ClientGuideCard() {
                       ['claude', 'Claude Code'],
                       ['codex', 'Codex'],
                       ['opencode', 'OpenCode'],
-                      ['pi', 'Pi'],
                     ] as const
                   ).map(([app, label]) => (
                     <button
@@ -1012,26 +1063,20 @@ export function ClientGuideCard() {
                     </button>
                   ))}
                 </div>
-                {ccSwitchSupportsImport ? (
-                  <Button
-                    variant='outline'
-                    size='sm'
-                    disabled={importingClient === 'ccswitch'}
-                    className='h-7 gap-1 border-blue-500/30 px-2.5 text-xs text-blue-600 hover:bg-blue-500/5'
-                    onClick={handleCCSwitchImport}
-                  >
-                    {importingClient === 'ccswitch' ? (
-                      <Loader2 className='size-3 animate-spin' />
-                    ) : (
-                      <CheckCircle2 className='size-3' />
-                    )}
-                    <span>{t('One-click import')}</span>
-                  </Button>
-                ) : (
-                  <span className='text-muted-foreground max-w-56 text-end text-[10px] leading-snug'>
-                    {t('Link import is unavailable for Pi.')}
-                  </span>
-                )}
+                <Button
+                  variant='outline'
+                  size='sm'
+                  disabled={importingClient === 'ccswitch'}
+                  className='h-7 gap-1 border-blue-500/30 px-2.5 text-xs text-blue-600 hover:bg-blue-500/5 dark:text-blue-400'
+                  onClick={handleCCSwitchImport}
+                >
+                  {importingClient === 'ccswitch' ? (
+                    <Loader2 className='size-3 animate-spin' />
+                  ) : (
+                    <CheckCircle2 className='size-3' />
+                  )}
+                  <span>{t('One-click import')}</span>
+                </Button>
               </div>
 
               <div className='space-y-2.5 text-xs'>
@@ -1167,7 +1212,7 @@ export function ClientGuideCard() {
                     </span>
                     <p className='text-muted-foreground mt-0.5 text-[11px]'>
                       {t(
-                        'Click Enable on the provider card. Claude Code applies immediately. For Codex and OpenCode, restart the terminal or CLI. Pi writes the provider config, then you choose the model inside Pi.'
+                        'Click Enable on the provider card. Claude Code applies immediately. For Codex and OpenCode, restart the terminal or CLI.'
                       )}
                     </p>
                   </div>
@@ -1179,9 +1224,31 @@ export function ClientGuideCard() {
                 <AlertCircle className='size-3.5 shrink-0 text-blue-600 dark:text-blue-400' />
                 <span>
                   {t(
-                    'Claude Code uses the site root with the Anthropic protocol. Codex, OpenCode, and Pi use the OpenAI-compatible /v1 address.'
+                    'Claude Code uses the site root with the Anthropic protocol. Codex and OpenCode use the OpenAI-compatible /v1 address.'
                   )}
                 </span>
+              </div>
+
+              {/* Download link */}
+              <div className='flex items-center justify-between pt-2 border-t border-border/40'>
+                <span className='text-muted-foreground text-[11px]'>
+                  {t('Need the CC Switch desktop client?')}
+                </span>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  className='h-7 gap-1 text-xs'
+                  render={
+                    <a
+                      href='https://ccswitch.io'
+                      target='_blank'
+                      rel='noopener noreferrer'
+                    />
+                  }
+                >
+                  <span>{t('Download CC Switch')}</span>
+                  <ExternalLink className='size-3' />
+                </Button>
               </div>
             </div>
 
