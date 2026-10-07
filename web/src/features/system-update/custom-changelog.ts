@@ -44,6 +44,38 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     items: [
     {
       "tag": "feat",
+      "titleEn": "[docs] 增加站内使用文档并接入顶部文档入口",
+      "titleZh": "[docs] 增加站内使用文档并接入顶部文档入口",
+      "descEn": "Commit: c24ff2c0c (2026-10-07)",
+      "descZh": "提交: c24ff2c0c · 2026-10-07",
+      "commitHash": "c24ff2c0c"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[home] 加宽首页首屏并与模型区对齐",
+      "titleZh": "[home] 加宽首页首屏并与模型区对齐",
+      "descEn": "Commit: cabd23e79 (2026-10-07)",
+      "descZh": "提交: cabd23e79 · 2026-10-07",
+      "commitHash": "cabd23e79"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[home] 选购按钮单独成行并移除网关预览",
+      "titleZh": "[home] 选购按钮单独成行并移除网关预览",
+      "descEn": "Commit: 3238dc5af (2026-10-07)",
+      "descZh": "提交: 3238dc5af · 2026-10-07",
+      "commitHash": "3238dc5af"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[home] 调整首页按钮排布并修正模型文案显示",
+      "titleZh": "[home] 调整首页按钮排布并修正模型文案显示",
+      "descEn": "Commit: ddddb90a0 (2026-10-07)",
+      "descZh": "提交: ddddb90a0 · 2026-10-07",
+      "commitHash": "ddddb90a0"
+    },
+    {
+      "tag": "feat",
       "titleEn": "[home] 更新首页模型展示墙，展示模型广场真实可用模型",
       "titleZh": "[home] 更新首页模型展示墙，展示模型广场真实可用模型",
       "descEn": "Commit: c6a80e8ec (2026-10-07)",
@@ -249,38 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 1a4166d8e (2026-10-01)",
       "descZh": "提交: 1a4166d8e · 2026-10-01",
       "commitHash": "1a4166d8e"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "[web] correct translations, chart ordering, and font loading (#7628)",
-      "titleZh": "[web] correct translations, chart ordering, and font loading (#7628)",
-      "descEn": "Commit: 56758edf9 (2026-09-30)",
-      "descZh": "提交: 56758edf9 · 2026-09-30",
-      "commitHash": "56758edf9"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[system-update] provide tabbed view for custom changelog and official upstream releases",
-      "titleZh": "[system-update] provide tabbed view for custom changelog and official upstream releases",
-      "descEn": "Commit: 08431501d (2026-09-30)",
-      "descZh": "提交: 08431501d · 2026-09-30",
-      "commitHash": "08431501d"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "[i18n] keep cached zhTW/zhCN interface codes stable across page loads (#7139)",
-      "titleZh": "[i18n] keep cached zhTW/zhCN interface codes stable across page loads (#7139)",
-      "descEn": "Commit: 5fe8917be (2026-09-30)",
-      "descZh": "提交: 5fe8917be · 2026-09-30",
-      "commitHash": "5fe8917be"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "[web] hide system settings from non-root admins (#7513)",
-      "titleZh": "[web] hide system settings from non-root admins (#7513)",
-      "descEn": "Commit: dfd3cd893 (2026-09-30)",
-      "descZh": "提交: dfd3cd893 · 2026-09-30",
-      "commitHash": "dfd3cd893"
     }
 ],
   },
