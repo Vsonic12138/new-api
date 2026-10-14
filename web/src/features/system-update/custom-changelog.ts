@@ -44,6 +44,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     items: [
     {
       "tag": "fix",
+      "titleEn": "[ci] 部署脚本改用 SSH 长连接并支持替换步骤可重入",
+      "titleZh": "[ci] 部署脚本改用 SSH 长连接并支持替换步骤可重入",
+      "descEn": "Commit: bf15be22d (2026-10-14)",
+      "descZh": "提交: bf15be22d · 2026-10-14",
+      "commitHash": "bf15be22d"
+    },
+    {
+      "tag": "fix",
       "titleEn": "[ci] 部署脚本防止中断上传污染二进制并加固回滚",
       "titleZh": "[ci] 部署脚本防止中断上传污染二进制并加固回滚",
       "descEn": "Commit: 482044d1f (2026-10-14)",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 9d5f78a62 (2026-10-03)",
       "descZh": "提交: 9d5f78a62 · 2026-10-03",
       "commitHash": "9d5f78a62"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "[home] 修正令牌路由为 /keys 并精简首页冗余模块",
-      "titleZh": "[home] 修正令牌路由为 /keys 并精简首页冗余模块",
-      "descEn": "Commit: d34c47f04 (2026-10-03)",
-      "descZh": "提交: d34c47f04 · 2026-10-03",
-      "commitHash": "d34c47f04"
     }
 ],
   },
