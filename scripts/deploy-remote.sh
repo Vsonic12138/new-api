@@ -3,6 +3,7 @@ set -euo pipefail
 
 TARGET_HOST="${TARGET_HOST:-dedirock}"
 REMOTE_BIN_DIR="${REMOTE_BIN_DIR:-/opt/new-api/bin}"
+REMOTE_APP_DIR="${REMOTE_APP_DIR:-/opt/new-api}"
 KEEP_BACKUPS="${KEEP_BACKUPS:-3}"
 SSH_OPTS=(-o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=15)
 
@@ -27,17 +28,19 @@ echo "==> 1. 构建前端静态资源..."
 echo "==> 2. 静态交叉编译 Linux amd64 二进制..."
 VERSION=$(./scripts/resolve-version.sh custom)
 BIN=new-api-custom
+STAMP="$(date +%Y%m%d-%H%M%S)-$$"
 trap 'rm -f "$PROJECT_ROOT/$BIN" "$PROJECT_ROOT/$BIN.gz"' EXIT
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOWORK=off go build \
   -trimpath \
   -ldflags "-s -w -X github.com/QuantumNous/new-api/common.Version=$VERSION" \
   -o "$BIN" .
 
-# 二进制可压缩至约三分之一，链路慢且可能中断，故压缩上传并重试
+# 每次使用独立的临时文件名：上传中断会在远端留下持有该文件写句柄的孤儿 scp 进程，
+# 若复用固定文件名，其 inode 会被后续 mv 提升为可执行文件，导致 exec 永久返回 ETXTBSY。
 echo "==> 3. 压缩并上传二进制文件至服务器..."
 gzip -6 -c "$BIN" > "$BIN.gz"
 for attempt in 1 2 3; do
-  scp -q "${SSH_OPTS[@]}" "$BIN.gz" "${TARGET_HOST}:${REMOTE_BIN_DIR}/${BIN}.new.gz" && break
+  scp -q "${SSH_OPTS[@]}" "$BIN.gz" "${TARGET_HOST}:${REMOTE_BIN_DIR}/${BIN}.new.${STAMP}.gz" && break
   if [[ "$attempt" -eq 3 ]]; then
     echo "错误：上传失败（已重试 3 次）。" >&2
     exit 1
@@ -47,19 +50,45 @@ for attempt in 1 2 3; do
 done
 rm -f "$BIN.gz"
 
-echo "==> 4. 远端解压、备份（重命名零拷贝）、原子替换并重启容器..."
+echo "==> 4. 远端解压校验、备份、原子替换并重启容器..."
 EXPECTED_SIZE=$(stat -c %s "$BIN")
 BAK=$(ssh "${SSH_OPTS[@]}" "$TARGET_HOST" \
-  "REMOTE_BIN_DIR='$REMOTE_BIN_DIR' KEEP_BACKUPS='$KEEP_BACKUPS' BIN='$BIN' EXPECTED_SIZE='$EXPECTED_SIZE' bash -s" <<'REMOTE'
+  "REMOTE_BIN_DIR='$REMOTE_BIN_DIR' KEEP_BACKUPS='$KEEP_BACKUPS' BIN='$BIN' STAMP='$STAMP' EXPECTED_SIZE='$EXPECTED_SIZE' bash -s" <<'REMOTE'
 set -euo pipefail
 
-[ -s "$REMOTE_BIN_DIR/$BIN.new.gz" ] || { echo "错误：上传的压缩包为空。" >&2; exit 1; }
-gunzip -c "$REMOTE_BIN_DIR/$BIN.new.gz" > "$REMOTE_BIN_DIR/$BIN.new"
-rm -f "$REMOTE_BIN_DIR/$BIN.new.gz"
+TMP="$REMOTE_BIN_DIR/$BIN.new.$STAMP"
+GZ="$TMP.gz"
 
-ACTUAL_SIZE=$(stat -c %s "$REMOTE_BIN_DIR/$BIN.new")
+# 清理历史中断上传残留的接收进程与过期临时文件
+if pkill -f "scp -t $REMOTE_BIN_DIR/" 2>/dev/null; then
+  echo "已清理残留的上传接收进程。" >&2
+fi
+find "$REMOTE_BIN_DIR" -maxdepth 1 -name "$BIN.new.*" -mtime +0 -delete 2>/dev/null || true
+
+[ -s "$GZ" ] || { echo "错误：上传的压缩包为空。" >&2; exit 1; }
+gunzip -c "$GZ" > "$TMP"
+rm -f "$GZ"
+
+ACTUAL_SIZE=$(stat -c %s "$TMP")
 [ "$ACTUAL_SIZE" = "$EXPECTED_SIZE" ] \
-  || { echo "错误：上传的二进制大小不符（远端 $ACTUAL_SIZE，本地 $EXPECTED_SIZE）。" >&2; exit 1; }
+  || { rm -f "$TMP"; echo "错误：上传的二进制大小不符（远端 $ACTUAL_SIZE，本地 $EXPECTED_SIZE）。" >&2; exit 1; }
+
+# 只要仍有进程以写方式持有该 inode，替换后容器 exec 就会永久 ETXTBSY，必须在替换前拦截
+TMP_INO=$(stat -c %i "$TMP")
+WRITERS=""
+for proc in /proc/[0-9]*; do
+  for fdinfo in "$proc"/fdinfo/*; do
+    [ -f "$fdinfo" ] || continue
+    [ "$(awk '/^ino:/{print $2}' "$fdinfo" 2>/dev/null)" = "$TMP_INO" ] || continue
+    [ $(( 0$(awk '/^flags:/{print $2}' "$fdinfo" 2>/dev/null) & 3 )) -ne 0 ] || continue
+    WRITERS="$WRITERS $(basename "$proc")"
+  done
+done
+if [ -n "$WRITERS" ]; then
+  rm -f "$TMP"
+  echo "错误：临时文件仍被进程以写方式持有（$WRITERS），已放弃替换，线上保持原状。" >&2
+  exit 1
+fi
 
 BAK=""
 if [ -f "$REMOTE_BIN_DIR/$BIN" ]; then
@@ -67,7 +96,7 @@ if [ -f "$REMOTE_BIN_DIR/$BIN" ]; then
   mv "$REMOTE_BIN_DIR/$BIN" "$BAK"
 fi
 
-mv "$REMOTE_BIN_DIR/$BIN.new" "$REMOTE_BIN_DIR/$BIN"
+mv "$TMP" "$REMOTE_BIN_DIR/$BIN"
 chmod +x "$REMOTE_BIN_DIR/$BIN"
 docker restart new-api >/dev/null
 
@@ -95,12 +124,33 @@ for _ in $(seq 1 15); do
 done
 
 if [[ "$healthy" -ne 1 ]]; then
-  echo "错误：健康检查失败，${VERSION} 未能正常启动。" >&2
+  echo "错误：健康检查失败，${VERSION} 未能正常启动。容器最近日志：" >&2
+  ssh "${SSH_OPTS[@]}" "$TARGET_HOST" "docker logs --tail 20 new-api" >&2 || true
   if [[ -n "$BAK" ]]; then
-    echo "==> 回滚至 $(basename "$BAK")..."
+    echo "==> 回滚至 $(basename "$BAK")..." >&2
     ssh "${SSH_OPTS[@]}" "$TARGET_HOST" \
-      "cp '$BAK' '$REMOTE_BIN_DIR/$BIN' && chmod +x '$REMOTE_BIN_DIR/$BIN' && docker restart new-api >/dev/null"
-    echo "已回滚，请检查容器日志。" >&2
+      "REMOTE_APP_DIR='$REMOTE_APP_DIR' REMOTE_BIN_DIR='$REMOTE_BIN_DIR' BAK='$BAK' BIN='$BIN' bash -s" <<'REMOTE'
+set -euo pipefail
+cp -f "$BAK" "$REMOTE_BIN_DIR/$BIN"
+chmod +x "$REMOTE_BIN_DIR/$BIN"
+docker restart new-api >/dev/null
+for _ in $(seq 1 10); do
+  sleep 2
+  if [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://127.0.0.1:3000/api/status)" = "200" ]; then
+    echo "回滚已生效。"
+    exit 0
+  fi
+done
+# 被污染的 inode 可能已被旧容器的挂载点固定，仅重启无效，需强制重建容器
+echo "重启未恢复，改为强制重建容器..." >&2
+cd "$REMOTE_APP_DIR" && docker compose up -d --no-deps --force-recreate new-api >/dev/null 2>&1 || true
+sleep 8
+echo "回滚后健康检查：$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://127.0.0.1:3000/api/status)"
+if [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://127.0.0.1:3000/api/status)" != "200" ]; then
+  echo "回滚失败，需人工介入。" >&2
+  exit 1
+fi
+REMOTE
   else
     echo "无可用备份，需人工介入。" >&2
   fi

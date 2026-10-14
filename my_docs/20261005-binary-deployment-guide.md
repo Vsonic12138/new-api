@@ -58,29 +58,37 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOWORK=off go build \
 > **注意**：必须显式指定 `CGO_ENABLED=0`，避免依赖宿主机动态 glibc 库，确保在各类 Linux 容器中均可稳定执行。
 
 ### 步骤 3：上传至服务器临时位置
+每次部署使用独立的临时文件名（`STAMP` 为时间戳加进程号）。**不要复用固定文件名**：上传中断会在服务器上留下持有该文件写句柄的孤儿 `scp` 进程，若复用文件名，其 inode 会被后续 `mv` 提升为可执行文件，导致容器 `exec /new-api: text file busy`（ETXTBSY）且反复重启。
 ```bash
+STAMP="$(date +%Y%m%d-%H%M%S)-$$"
 gzip -6 -c new-api-custom > new-api-custom.gz
-scp new-api-custom.gz dedirock:/opt/new-api/bin/new-api-custom.new.gz
+scp new-api-custom.gz "dedirock:/opt/new-api/bin/new-api-custom.new.${STAMP}.gz"
 ```
 
-### 步骤 4：远端解压、备份当前版本、原子替换并重启容器
-远端先解压上传的压缩包，再用**重命名**（同分区 rename，零拷贝且原子）完成备份与替换，避免每次部署都复制完整的 138 MB 二进制：
+### 步骤 4：远端解压、校验、备份、原子替换并重启容器
+远端先解压上传的压缩包并校验字节数，再用**重命名**（同分区 rename，零拷贝且原子）完成备份与替换，避免每次部署都复制完整的 138 MB 二进制：
 ```bash
-ssh dedirock '
+STAMP="$(date +%Y%m%d-%H%M%S)-$$"      # 与步骤 3 同一取值
+EXPECTED_SIZE=$(stat -c %s new-api-custom)
+
+ssh dedirock "
   set -euo pipefail
   BIN=new-api-custom
   DIR=/opt/new-api/bin
-  gunzip -c "$DIR/$BIN.new.gz" > "$DIR/$BIN.new"
-  rm -f "$DIR/$BIN.new.gz"
-  if [ -f "$DIR/$BIN" ]; then
-    BAK="$DIR/$BIN.bak-$(date +%Y%m%d-%H%M%S)"
-    mv "$DIR/$BIN" "$BAK"
+  TMP=\"\$DIR/\$BIN.new.$STAMP\"
+  gunzip -c \"\$TMP.gz\" > \"\$TMP\"
+  rm -f \"\$TMP.gz\"
+  [ \"\$(stat -c %s \"\$TMP\")\" = \"$EXPECTED_SIZE\" ] || { rm -f \"\$TMP\"; echo 大小校验失败; exit 1; }
+  if [ -f \"\$DIR/\$BIN\" ]; then
+    BAK=\"\$DIR/\$BIN.bak-\$(date +%Y%m%d-%H%M%S)\"
+    mv \"\$DIR/\$BIN\" \"\$BAK\"
   fi
-  mv "$DIR/$BIN.new" "$DIR/$BIN"
-  chmod +x "$DIR/$BIN"
+  mv \"\$TMP\" \"\$DIR/\$BIN\"
+  chmod +x \"\$DIR/\$BIN\"
   docker restart new-api
-'
+"
 ```
+> **替换前必须确认临时文件没有被其它进程以写方式打开。** 被写句柄污染的 inode 一旦成为 `/new-api` 的挂载源，容器每次启动都会 `ETXTBSY`；此时仅 `docker restart` / `docker start` 无法恢复，必须 `docker compose up -d --no-deps --force-recreate new-api` 重建容器才能解除旧挂载。
 
 ### 步骤 5：裁剪历史备份
 只保留最近 3 个备份，防止长期累积占满磁盘（路径来自通配符，不会误删其它文件）：
@@ -145,13 +153,16 @@ rm -f new-api-custom new-api-custom.gz
 
 ## 6. 一键部署自动化脚本
 
-日常部署直接执行项目脚本，其步骤与第 3 节一致，并在此基础上提供五项保障：
+日常部署直接执行项目脚本，其步骤与第 3 节一致，并在此基础上提供八项保障：
 
 1. **前置检查**：工作区存在未提交改动时直接中止（更新日志由 git log 生成，未提交的改动不会出现在“系统更新”里）；同时预检 SSH 连通性与远端目录可写性。
-2. **压缩上传与完整性校验**：二进制先 gzip 压缩（约 138 MB → 44 MB）再上传，链路中断自动重试 3 次，替换前比对解压后的字节数，避免被截断的文件上线。
-3. **零拷贝备份**：把当前二进制重命名为带时间戳的备份，不再复制整份文件。
-4. **备份裁剪**：仅保留最近 `KEEP_BACKUPS` 个备份，超出部分自动删除。
-5. **健康检查与回滚**：轮询 `/api/status`，失败时自动还原备份、重启容器并非 0 退出。
+2. **压缩上传与重试**：二进制先 gzip 压缩（约 138 MB → 44 MB）再上传，链路中断自动重试 3 次。
+3. **独立临时文件名**：每次部署使用带时间戳的临时名，避免中断上传遗留的孤儿 `scp` 进程污染将被提升的 inode。
+4. **清理残留**：替换前回收历史遗留的上传接收进程与过期临时文件。
+5. **完整性校验**：替换前比对解压后的字节数，避免被截断的文件上线。
+6. **写持有拦截**：替换前扫描临时文件 inode，只要有进程以写方式持有就放弃替换并保持线上原状——这正是 ETXTBSY 事故的防线。
+7. **零拷贝备份与裁剪**：把当前二进制重命名为带时间戳的备份（不复制整份文件），并仅保留最近 `KEEP_BACKUPS` 个。
+8. **健康检查与回滚**：轮询 `/api/status`，失败时先打印容器日志，再还原备份；若仅重启无效则强制重建容器。
 
 脚本 `scripts/deploy-remote.sh` 是唯一事实来源，此处不再重复其内容。可通过环境变量覆盖默认行为：
 
@@ -159,6 +170,7 @@ rm -f new-api-custom new-api-custom.gz
 | :--- | :--- | :--- |
 | `TARGET_HOST` | `dedirock` | `~/.ssh/config` 中的主机别名 |
 | `REMOTE_BIN_DIR` | `/opt/new-api/bin` | 服务器端二进制目录 |
+| `REMOTE_APP_DIR` | `/opt/new-api` | 服务器端 compose 目录，回滚时用于强制重建容器 |
 | `KEEP_BACKUPS` | `3` | 保留的历史备份数量，超出部分自动删除 |
 
 例如临时保留 5 个备份：
