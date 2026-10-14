@@ -40,8 +40,16 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
   {
     version: 'v1.0.0-rc.41+custom',
     upstreamBase: 'v1.0.0-rc.41',
-    date: '2026-10-07',
+    date: '2026-10-14',
     items: [
+    {
+      "tag": "chore",
+      "titleEn": "[ci] 部署脚本增加备份裁剪与健康检查回滚",
+      "titleZh": "[ci] 部署脚本增加备份裁剪与健康检查回滚",
+      "descEn": "Commit: bbc642d1b (2026-10-14)",
+      "descZh": "提交: bbc642d1b · 2026-10-14",
+      "commitHash": "bbc642d1b"
+    },
     {
       "tag": "feat",
       "titleEn": "[docs] 补全使用文档步骤并加入页面截图",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 9f68e6549 (2026-10-03)",
       "descZh": "提交: 9f68e6549 · 2026-10-03",
       "commitHash": "9f68e6549"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 调整首页品牌文案与多语言配置",
-      "titleZh": "[home] 调整首页品牌文案与多语言配置",
-      "descEn": "Commit: f834d4577 (2026-10-03)",
-      "descZh": "提交: f834d4577 · 2026-10-03",
-      "commitHash": "f834d4577"
     }
 ],
   },
