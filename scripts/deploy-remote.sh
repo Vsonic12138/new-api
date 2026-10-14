@@ -37,11 +37,15 @@ echo "==> 3. 上传二进制文件至服务器..."
 scp -q "${SSH_OPTS[@]}" "$BIN" "${TARGET_HOST}:${REMOTE_BIN_DIR}/${BIN}.new"
 
 echo "==> 4. 远端备份（重命名零拷贝）、原子替换并重启容器..."
-BAK=$(ssh "${SSH_OPTS[@]}" \
-  "REMOTE_BIN_DIR='$REMOTE_BIN_DIR' KEEP_BACKUPS='$KEEP_BACKUPS' BIN='$BIN' bash -s" <<'REMOTE'
+EXPECTED_SIZE=$(stat -c %s "$BIN")
+BAK=$(ssh "${SSH_OPTS[@]}" "$TARGET_HOST" \
+  "REMOTE_BIN_DIR='$REMOTE_BIN_DIR' KEEP_BACKUPS='$KEEP_BACKUPS' BIN='$BIN' EXPECTED_SIZE='$EXPECTED_SIZE' bash -s" <<'REMOTE'
 set -euo pipefail
 
 [ -s "$REMOTE_BIN_DIR/$BIN.new" ] || { echo "错误：上传的二进制为空。" >&2; exit 1; }
+ACTUAL_SIZE=$(stat -c %s "$REMOTE_BIN_DIR/$BIN.new")
+[ "$ACTUAL_SIZE" = "$EXPECTED_SIZE" ] \
+  || { echo "错误：上传的二进制大小不符（远端 $ACTUAL_SIZE，本地 $EXPECTED_SIZE）。" >&2; exit 1; }
 
 BAK=""
 if [ -f "$REMOTE_BIN_DIR/$BIN" ]; then
