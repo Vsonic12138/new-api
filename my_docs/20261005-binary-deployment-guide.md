@@ -29,6 +29,8 @@
 | **服务器工作目录** | `/opt/new-api/` |
 | **二进制存放路径** | `/opt/new-api/bin/new-api-custom` |
 | **历史备份格式** | `/opt/new-api/bin/new-api-custom.bak-YYYYMMDD-HHMMSS` |
+| **备份保留策略** | 每次部署自动裁剪，仅保留最近 `KEEP_BACKUPS`（默认 3）个 |
+| **健康检查** | 部署后轮询本机 `http://127.0.0.1:3000/api/status`，最长 30 秒，失败自动回滚 |
 | **公网接入入口** | Cloudflare Tunnel 映射本地 `3000` 端口 (`https://newapi.vsonic12138.shop`) |
 
 ---
@@ -60,23 +62,36 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOWORK=off go build \
 scp new-api-custom dedirock:/opt/new-api/bin/new-api-custom.new
 ```
 
-### 步骤 4：备份当前版本并原子替换
-通过 SSH 在远端完成旧版本带时间戳备份与原子移动：
+### 步骤 4：备份当前版本、原子替换并重启容器
+远端用**重命名**（同分区 rename，零拷贝且原子）完成备份与替换，避免每次部署都复制完整的 138 MB 二进制：
 ```bash
 ssh dedirock '
-  BAK="/opt/new-api/bin/new-api-custom.bak-$(date +%Y%m%d-%H%M%S)"
-  cp /opt/new-api/bin/new-api-custom "$BAK"
-  mv /opt/new-api/bin/new-api-custom.new /opt/new-api/bin/new-api-custom
-  chmod +x /opt/new-api/bin/new-api-custom
+  set -euo pipefail
+  BIN=new-api-custom
+  DIR=/opt/new-api/bin
+  if [ -f "$DIR/$BIN" ]; then
+    BAK="$DIR/$BIN.bak-$(date +%Y%m%d-%H%M%S)"
+    mv "$DIR/$BIN" "$BAK"
+  fi
+  mv "$DIR/$BIN.new" "$DIR/$BIN"
+  chmod +x "$DIR/$BIN"
+  docker restart new-api
 '
 ```
 
-### 步骤 5：重启容器生效
+### 步骤 5：裁剪历史备份
+只保留最近 3 个备份，防止长期累积占满磁盘（路径来自通配符，不会误删其它文件）：
 ```bash
-ssh dedirock "docker restart new-api"
+ssh dedirock 'ls -t /opt/new-api/bin/new-api-custom.bak-* | tail -n +4 | xargs -r rm -f --'
 ```
 
-### 步骤 6：清理本地编译产物
+### 步骤 6：健康检查
+轮询本机 `3000` 端口，最长等待 30 秒；未在时限内返回 `200` 即判定部署失败，应还原备份并重新执行步骤 4：
+```bash
+ssh dedirock "curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3000/api/status"
+```
+
+### 步骤 7：清理本地编译产物
 ```bash
 rm -f new-api-custom
 ```
@@ -85,7 +100,9 @@ rm -f new-api-custom
 
 ## 4. 验证检查
 
-部署完成后，依次执行以下命令确认服务正常：
+`scripts/deploy-remote.sh` 已内置健康检查：部署后轮询本机 `http://127.0.0.1:3000/api/status`，最长 30 秒；若未返回 `200`，脚本会自动还原备份、重启容器并以非 0 退出码结束。
+
+手动复核时，依次执行以下命令确认服务正常：
 
 1. **容器运行状态与日志**：
    ```bash
@@ -125,43 +142,23 @@ rm -f new-api-custom
 
 ## 6. 一键部署自动化脚本
 
-可将上述流程保存为项目脚本 `scripts/deploy-remote.sh` 快速调用：
+日常部署直接执行项目脚本，其步骤与第 3 节一致，并在此基础上提供四项保障：
+
+1. **前置检查**：工作区存在未提交改动时直接中止（更新日志由 git log 生成，未提交的改动不会出现在“系统更新”里）；同时预检 SSH 连通性与远端目录可写性。
+2. **零拷贝备份**：把当前二进制重命名为带时间戳的备份，不再复制整份文件。
+3. **备份裁剪**：仅保留最近 `KEEP_BACKUPS` 个备份，超出部分自动删除。
+4. **健康检查与回滚**：轮询 `/api/status`，失败时自动还原备份、重启容器并非 0 退出。
+
+脚本 `scripts/deploy-remote.sh` 是唯一事实来源，此处不再重复其内容。可通过环境变量覆盖默认行为：
+
+| 变量 | 默认值 | 说明 |
+| :--- | :--- | :--- |
+| `TARGET_HOST` | `dedirock` | `~/.ssh/config` 中的主机别名 |
+| `REMOTE_BIN_DIR` | `/opt/new-api/bin` | 服务器端二进制目录 |
+| `KEEP_BACKUPS` | `3` | 保留的历史备份数量，超出部分自动删除 |
+
+例如临时保留 5 个备份：
 
 ```bash
-#!/usr/bin/env bash
-set -euo pipefail
-
-TARGET_HOST="dedirock"
-REMOTE_BIN_DIR="/opt/new-api/bin"
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-
-cd "$PROJECT_ROOT"
-
-echo "==> 1. 构建前端..."
-cd web && bun run build && cd ..
-
-echo "==> 2. 编译 Linux 静态二进制..."
-VERSION=$(./scripts/resolve-version.sh custom)
-CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOWORK=off go build \
-  -ldflags "-s -w -X github.com/QuantumNous/new-api/common.Version=$VERSION" \
-  -o new-api-custom .
-
-echo "==> 3. 上传二进制到服务器..."
-scp new-api-custom "${TARGET_HOST}:${REMOTE_BIN_DIR}/new-api-custom.new"
-rm -f new-api-custom
-
-echo "==> 4. 备份并替换服务器文件..."
-ssh "$TARGET_HOST" "
-  BAK=\"${REMOTE_BIN_DIR}/new-api-custom.bak-\$(date +%Y%m%d-%H%M%S)\"
-  [ -f \"${REMOTE_BIN_DIR}/new-api-custom\" ] && cp \"${REMOTE_BIN_DIR}/new-api-custom\" \"\$BAK\"
-  mv \"${REMOTE_BIN_DIR}/new-api-custom.new\" \"${REMOTE_BIN_DIR}/new-api-custom\"
-  chmod +x \"${REMOTE_BIN_DIR}/new-api-custom\"
-  docker restart new-api
-"
-
-echo "==> 5. 检查启动日志..."
-sleep 4
-ssh "$TARGET_HOST" "docker logs --tail 15 new-api"
-
-echo "==> 部署完成。"
+KEEP_BACKUPS=5 ./scripts/deploy-remote.sh
 ```
