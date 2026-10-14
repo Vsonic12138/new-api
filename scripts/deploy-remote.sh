@@ -27,22 +27,36 @@ echo "==> 1. 构建前端静态资源..."
 echo "==> 2. 静态交叉编译 Linux amd64 二进制..."
 VERSION=$(./scripts/resolve-version.sh custom)
 BIN=new-api-custom
-trap 'rm -f "$PROJECT_ROOT/$BIN"' EXIT
+trap 'rm -f "$PROJECT_ROOT/$BIN" "$PROJECT_ROOT/$BIN.gz"' EXIT
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOWORK=off go build \
   -trimpath \
   -ldflags "-s -w -X github.com/QuantumNous/new-api/common.Version=$VERSION" \
   -o "$BIN" .
 
-echo "==> 3. 上传二进制文件至服务器..."
-scp -q "${SSH_OPTS[@]}" "$BIN" "${TARGET_HOST}:${REMOTE_BIN_DIR}/${BIN}.new"
+# 二进制可压缩至约三分之一，链路慢且可能中断，故压缩上传并重试
+echo "==> 3. 压缩并上传二进制文件至服务器..."
+gzip -6 -c "$BIN" > "$BIN.gz"
+for attempt in 1 2 3; do
+  scp -q "${SSH_OPTS[@]}" "$BIN.gz" "${TARGET_HOST}:${REMOTE_BIN_DIR}/${BIN}.new.gz" && break
+  if [[ "$attempt" -eq 3 ]]; then
+    echo "错误：上传失败（已重试 3 次）。" >&2
+    exit 1
+  fi
+  echo "  上传中断，重试（$attempt/3）..." >&2
+  sleep 5
+done
+rm -f "$BIN.gz"
 
-echo "==> 4. 远端备份（重命名零拷贝）、原子替换并重启容器..."
+echo "==> 4. 远端解压、备份（重命名零拷贝）、原子替换并重启容器..."
 EXPECTED_SIZE=$(stat -c %s "$BIN")
 BAK=$(ssh "${SSH_OPTS[@]}" "$TARGET_HOST" \
   "REMOTE_BIN_DIR='$REMOTE_BIN_DIR' KEEP_BACKUPS='$KEEP_BACKUPS' BIN='$BIN' EXPECTED_SIZE='$EXPECTED_SIZE' bash -s" <<'REMOTE'
 set -euo pipefail
 
-[ -s "$REMOTE_BIN_DIR/$BIN.new" ] || { echo "错误：上传的二进制为空。" >&2; exit 1; }
+[ -s "$REMOTE_BIN_DIR/$BIN.new.gz" ] || { echo "错误：上传的压缩包为空。" >&2; exit 1; }
+gunzip -c "$REMOTE_BIN_DIR/$BIN.new.gz" > "$REMOTE_BIN_DIR/$BIN.new"
+rm -f "$REMOTE_BIN_DIR/$BIN.new.gz"
+
 ACTUAL_SIZE=$(stat -c %s "$REMOTE_BIN_DIR/$BIN.new")
 [ "$ACTUAL_SIZE" = "$EXPECTED_SIZE" ] \
   || { echo "错误：上传的二进制大小不符（远端 $ACTUAL_SIZE，本地 $EXPECTED_SIZE）。" >&2; exit 1; }

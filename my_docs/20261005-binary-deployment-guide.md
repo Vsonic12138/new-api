@@ -59,16 +59,19 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOWORK=off go build \
 
 ### 步骤 3：上传至服务器临时位置
 ```bash
-scp new-api-custom dedirock:/opt/new-api/bin/new-api-custom.new
+gzip -6 -c new-api-custom > new-api-custom.gz
+scp new-api-custom.gz dedirock:/opt/new-api/bin/new-api-custom.new.gz
 ```
 
-### 步骤 4：备份当前版本、原子替换并重启容器
-远端用**重命名**（同分区 rename，零拷贝且原子）完成备份与替换，避免每次部署都复制完整的 138 MB 二进制：
+### 步骤 4：远端解压、备份当前版本、原子替换并重启容器
+远端先解压上传的压缩包，再用**重命名**（同分区 rename，零拷贝且原子）完成备份与替换，避免每次部署都复制完整的 138 MB 二进制：
 ```bash
 ssh dedirock '
   set -euo pipefail
   BIN=new-api-custom
   DIR=/opt/new-api/bin
+  gunzip -c "$DIR/$BIN.new.gz" > "$DIR/$BIN.new"
+  rm -f "$DIR/$BIN.new.gz"
   if [ -f "$DIR/$BIN" ]; then
     BAK="$DIR/$BIN.bak-$(date +%Y%m%d-%H%M%S)"
     mv "$DIR/$BIN" "$BAK"
@@ -93,7 +96,7 @@ ssh dedirock "curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:3000/api
 
 ### 步骤 7：清理本地编译产物
 ```bash
-rm -f new-api-custom
+rm -f new-api-custom new-api-custom.gz
 ```
 
 ---
@@ -145,7 +148,7 @@ rm -f new-api-custom
 日常部署直接执行项目脚本，其步骤与第 3 节一致，并在此基础上提供五项保障：
 
 1. **前置检查**：工作区存在未提交改动时直接中止（更新日志由 git log 生成，未提交的改动不会出现在“系统更新”里）；同时预检 SSH 连通性与远端目录可写性。
-2. **上传完整性校验**：替换前比对远端与本地二进制的字节数，避免被截断的文件替换上线。
+2. **压缩上传与完整性校验**：二进制先 gzip 压缩（约 138 MB → 44 MB）再上传，链路中断自动重试 3 次，替换前比对解压后的字节数，避免被截断的文件上线。
 3. **零拷贝备份**：把当前二进制重命名为带时间戳的备份，不再复制整份文件。
 4. **备份裁剪**：仅保留最近 `KEEP_BACKUPS` 个备份，超出部分自动删除。
 5. **健康检查与回滚**：轮询 `/api/status`，失败时自动还原备份、重启容器并非 0 退出。
