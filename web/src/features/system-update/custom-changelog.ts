@@ -43,6 +43,22 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-14',
     items: [
     {
+      "tag": "perf",
+      "titleEn": "[ci] 部署脚本改为压缩上传并增加断线重试",
+      "titleZh": "[ci] 部署脚本改为压缩上传并增加断线重试",
+      "descEn": "Commit: f32b2d4af (2026-10-14)",
+      "descZh": "提交: f32b2d4af · 2026-10-14",
+      "commitHash": "f32b2d4af"
+    },
+    {
+      "tag": "fix",
+      "titleEn": "[ci] 修正部署脚本远端调用缺少目标主机",
+      "titleZh": "[ci] 修正部署脚本远端调用缺少目标主机",
+      "descEn": "Commit: eaa5b22f0 (2026-10-14)",
+      "descZh": "提交: eaa5b22f0 · 2026-10-14",
+      "commitHash": "eaa5b22f0"
+    },
+    {
       "tag": "chore",
       "titleEn": "[ci] 部署脚本增加备份裁剪与健康检查回滚",
       "titleZh": "[ci] 部署脚本增加备份裁剪与健康检查回滚",
@@ -265,22 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: cc28fbacb (2026-10-03)",
       "descZh": "提交: cc28fbacb · 2026-10-03",
       "commitHash": "cc28fbacb"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "[home] 修复热门模型墙中 Grok 图标组件引用",
-      "titleZh": "[home] 修复热门模型墙中 Grok 图标组件引用",
-      "descEn": "Commit: d9775b769 (2026-10-03)",
-      "descZh": "提交: d9775b769 · 2026-10-03",
-      "commitHash": "d9775b769"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "[i18n] 修复多语言字典命名空间层级并对齐平台可用模型",
-      "titleZh": "[i18n] 修复多语言字典命名空间层级并对齐平台可用模型",
-      "descEn": "Commit: 9f68e6549 (2026-10-03)",
-      "descZh": "提交: 9f68e6549 · 2026-10-03",
-      "commitHash": "9f68e6549"
     }
 ],
   },
