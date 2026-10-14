@@ -43,6 +43,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-14',
     items: [
     {
+      "tag": "fix",
+      "titleEn": "[ci] 部署脚本防止中断上传污染二进制并加固回滚",
+      "titleZh": "[ci] 部署脚本防止中断上传污染二进制并加固回滚",
+      "descEn": "Commit: 482044d1f (2026-10-14)",
+      "descZh": "提交: 482044d1f · 2026-10-14",
+      "commitHash": "482044d1f"
+    },
+    {
       "tag": "perf",
       "titleEn": "[ci] 部署脚本改为压缩上传并增加断线重试",
       "titleZh": "[ci] 部署脚本改为压缩上传并增加断线重试",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: d34c47f04 (2026-10-03)",
       "descZh": "提交: d34c47f04 · 2026-10-03",
       "commitHash": "d34c47f04"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 移除外部文档跳转，聚焦中转服务，自适应端点地址",
-      "titleZh": "[home] 移除外部文档跳转，聚焦中转服务，自适应端点地址",
-      "descEn": "Commit: cc28fbacb (2026-10-03)",
-      "descZh": "提交: cc28fbacb · 2026-10-03",
-      "commitHash": "cc28fbacb"
     }
 ],
   },
