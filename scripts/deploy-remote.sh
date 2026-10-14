@@ -5,7 +5,10 @@ TARGET_HOST="${TARGET_HOST:-dedirock}"
 REMOTE_BIN_DIR="${REMOTE_BIN_DIR:-/opt/new-api/bin}"
 REMOTE_APP_DIR="${REMOTE_APP_DIR:-/opt/new-api}"
 KEEP_BACKUPS="${KEEP_BACKUPS:-3}"
-SSH_OPTS=(-o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=15)
+# 该主机对短时间内的多次新建连接不可靠（握手阶段偶发被拒），统一复用一条长连接
+SSH_CONTROL="${TMPDIR:-/tmp}/dsh-deploy-%r@%h-%p"
+SSH_OPTS=(-o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=15
+          -o ControlMaster=auto -o ControlPath="$SSH_CONTROL" -o ControlPersist=300)
 
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
@@ -13,14 +16,32 @@ export PATH="/home/vsonic12138/.bun/bin:/usr/local/go/bin:$PATH"
 
 cd "$PROJECT_ROOT"
 
+cleanup() {
+  ssh -O exit "${SSH_OPTS[@]}" "$TARGET_HOST" >/dev/null 2>&1 || true
+  rm -f "$PROJECT_ROOT/new-api-custom" "$PROJECT_ROOT/new-api-custom.gz"
+  rm -f "$SSH_CONTROL"
+}
+trap cleanup EXIT
+
 echo "==> 0. 前置检查..."
 if [[ -n "$(git status --porcelain)" ]]; then
   echo "错误：工作区存在未提交改动，更新日志不会包含这些变化，请先提交。" >&2
   exit 1
 fi
-ssh "${SSH_OPTS[@]}" "$TARGET_HOST" \
-  "mkdir -p '$REMOTE_BIN_DIR' && test -w '$REMOTE_BIN_DIR'" \
-  || { echo "错误：无法连接 ${TARGET_HOST}，或 ${REMOTE_BIN_DIR} 不可写。" >&2; exit 1; }
+connected=0
+for attempt in 1 2 3 4 5; do
+  if ssh "${SSH_OPTS[@]}" "$TARGET_HOST" \
+    "mkdir -p '$REMOTE_BIN_DIR' && test -w '$REMOTE_BIN_DIR'"; then
+    connected=1
+    break
+  fi
+  echo "  连接失败，重试（$attempt/5）..." >&2
+  sleep 3
+done
+if [[ "$connected" -ne 1 ]]; then
+  echo "错误：无法连接 ${TARGET_HOST}，或 ${REMOTE_BIN_DIR} 不可写。" >&2
+  exit 1
+fi
 
 echo "==> 1. 构建前端静态资源..."
 (cd web && bun run build)
@@ -29,7 +50,6 @@ echo "==> 2. 静态交叉编译 Linux amd64 二进制..."
 VERSION=$(./scripts/resolve-version.sh custom)
 BIN=new-api-custom
 STAMP="$(date +%Y%m%d-%H%M%S)-$$"
-trap 'rm -f "$PROJECT_ROOT/$BIN" "$PROJECT_ROOT/$BIN.gz"' EXIT
 CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOWORK=off go build \
   -trimpath \
   -ldflags "-s -w -X github.com/QuantumNous/new-api/common.Version=$VERSION" \
@@ -39,16 +59,20 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOWORK=off go build \
 # 若复用固定文件名，其 inode 会被后续 mv 提升为可执行文件，导致 exec 永久返回 ETXTBSY。
 echo "==> 3. 压缩并上传二进制文件至服务器..."
 gzip -6 -c "$BIN" > "$BIN.gz"
+uploaded=0
 for attempt in 1 2 3; do
-  scp -q "${SSH_OPTS[@]}" "$BIN.gz" "${TARGET_HOST}:${REMOTE_BIN_DIR}/${BIN}.new.${STAMP}.gz" && break
-  if [[ "$attempt" -eq 3 ]]; then
-    echo "错误：上传失败（已重试 3 次）。" >&2
-    exit 1
+  if scp -q "${SSH_OPTS[@]}" "$BIN.gz" "${TARGET_HOST}:${REMOTE_BIN_DIR}/${BIN}.new.${STAMP}.gz"; then
+    uploaded=1
+    break
   fi
   echo "  上传中断，重试（$attempt/3）..." >&2
   sleep 5
 done
 rm -f "$BIN.gz"
+if [[ "$uploaded" -ne 1 ]]; then
+  echo "错误：上传失败（已重试 3 次）。" >&2
+  exit 1
+fi
 
 echo "==> 4. 远端解压校验、备份、原子替换并重启容器..."
 EXPECTED_SIZE=$(stat -c %s "$BIN")
@@ -59,15 +83,26 @@ set -euo pipefail
 TMP="$REMOTE_BIN_DIR/$BIN.new.$STAMP"
 GZ="$TMP.gz"
 
-# 清理历史中断上传残留的接收进程与过期临时文件
+# 清理历史中断上传残留的接收进程与其它轮次遗留的临时文件
 if pkill -f "scp -t $REMOTE_BIN_DIR/" 2>/dev/null; then
   echo "已清理残留的上传接收进程。" >&2
 fi
-find "$REMOTE_BIN_DIR" -maxdepth 1 -name "$BIN.new.*" -mtime +0 -delete 2>/dev/null || true
+find "$REMOTE_BIN_DIR" -maxdepth 1 -name "$BIN.new.*" ! -name "$BIN.new.$STAMP*" -delete 2>/dev/null || true
 
-[ -s "$GZ" ] || { echo "错误：上传的压缩包为空。" >&2; exit 1; }
-gunzip -c "$GZ" > "$TMP"
-rm -f "$GZ"
+if [ -s "$GZ" ]; then
+  gunzip -c "$GZ" > "$TMP"
+  rm -f "$GZ"
+fi
+if [ ! -s "$TMP" ]; then
+  # 连接中断后重试至此：临时文件已被本轮替换消费，线上已是本次构建即视为成功
+  if [ "$(stat -c %s "$REMOTE_BIN_DIR/$BIN" 2>/dev/null)" = "$EXPECTED_SIZE" ]; then
+    echo "本次构建已在位，跳过替换。" >&2
+    echo ""
+    exit 0
+  fi
+  echo "错误：未找到上传的临时文件。" >&2
+  exit 1
+fi
 
 ACTUAL_SIZE=$(stat -c %s "$TMP")
 [ "$ACTUAL_SIZE" = "$EXPECTED_SIZE" ] \
