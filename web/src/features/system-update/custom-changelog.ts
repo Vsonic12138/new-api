@@ -40,7 +40,7 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
   {
     version: 'v1.0.0-rc.41+custom',
     upstreamBase: 'v1.0.0-rc.41',
-    date: '2026-10-14',
+    date: '2026-10-15',
     items: [
     {
       "tag": "fix",
