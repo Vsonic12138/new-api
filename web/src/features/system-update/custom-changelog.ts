@@ -44,6 +44,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     items: [
     {
       "tag": "fix",
+      "titleEn": "[theme] 对齐二开默认主题取值并修正主题偏好测试断言",
+      "titleZh": "[theme] 对齐二开默认主题取值并修正主题偏好测试断言",
+      "descEn": "Commit: bdb71652b (2026-10-17)",
+      "descZh": "提交: bdb71652b · 2026-10-17",
+      "commitHash": "bdb71652b"
+    },
+    {
+      "tag": "fix",
       "titleEn": "[merge] 修正合并后密码重置邮件函数遗留的未使用变量",
       "titleZh": "[merge] 修正合并后密码重置邮件函数遗留的未使用变量",
       "descEn": "Commit: f586d85a5 (2026-10-17)",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 57adf125d (2026-10-03)",
       "descZh": "提交: 57adf125d · 2026-10-03",
       "commitHash": "57adf125d"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 使用 ZCode 官方图标并添加到首页支持应用列表",
-      "titleZh": "[home] 使用 ZCode 官方图标并添加到首页支持应用列表",
-      "descEn": "Commit: 953f17e7d (2026-10-03)",
-      "descZh": "提交: 953f17e7d · 2026-10-03",
-      "commitHash": "953f17e7d"
     }
 ],
   },
