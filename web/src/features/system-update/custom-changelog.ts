@@ -38,10 +38,26 @@ export interface CustomReleaseGroup {
 
 export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
   {
-    version: 'v1.0.0-rc.41+custom',
-    upstreamBase: 'v1.0.0-rc.41',
-    date: '2026-10-15',
+    version: 'v1.0.0-rc.44+custom',
+    upstreamBase: 'v1.0.0-rc.44',
+    date: '2026-10-18',
     items: [
+    {
+      "tag": "fix",
+      "titleEn": "[merge] 修正合并后密码重置邮件函数遗留的未使用变量",
+      "titleZh": "[merge] 修正合并后密码重置邮件函数遗留的未使用变量",
+      "descEn": "Commit: f586d85a5 (2026-10-17)",
+      "descZh": "提交: f586d85a5 · 2026-10-17",
+      "commitHash": "f586d85a5"
+    },
+    {
+      "tag": "fix",
+      "titleEn": "[i18n] 修正合并后的多语言文件",
+      "titleZh": "[i18n] 修正合并后的多语言文件",
+      "descEn": "Commit: f35ab4dcb (2026-10-15)",
+      "descZh": "提交: f35ab4dcb · 2026-10-15",
+      "commitHash": "f35ab4dcb"
+    },
     {
       "tag": "fix",
       "titleEn": "[ci] 部署脚本改用 SSH 长连接并支持替换步骤可重入",
@@ -265,22 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 953f17e7d (2026-10-03)",
       "descZh": "提交: 953f17e7d · 2026-10-03",
       "commitHash": "953f17e7d"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 添加 ZCode、Cherry Studio 与 DSH 界面配置图解",
-      "titleZh": "[home] 添加 ZCode、Cherry Studio 与 DSH 界面配置图解",
-      "descEn": "Commit: e942cd6d3 (2026-10-03)",
-      "descZh": "提交: e942cd6d3 · 2026-10-03",
-      "commitHash": "e942cd6d3"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 调整热门模型展示列表为 6 款主力模型及 3x2 网格",
-      "titleZh": "[home] 调整热门模型展示列表为 6 款主力模型及 3x2 网格",
-      "descEn": "Commit: 9d5f78a62 (2026-10-03)",
-      "descZh": "提交: 9d5f78a62 · 2026-10-03",
-      "commitHash": "9d5f78a62"
     }
 ],
   },
