@@ -73,7 +73,7 @@ function getLatestTag() {
 function getRecentCommits() {
   try {
     const raw = execSync(
-      "git log -n 100 --pretty=format:'%h|%an|%ad|%s' --date=short",
+      "git log -n 100 --first-parent --pretty=format:'%h|%an|%ad|%s' --date=short",
       {
         cwd: rootDir,
         encoding: 'utf-8',
@@ -140,6 +140,7 @@ export function syncGitChangelog() {
       !c.subject.startsWith('Merge branch') &&
       !c.subject.includes('merge official-main into custom-main') &&
       !c.subject.startsWith('chore: merge') &&
+      !c.subject.startsWith('chore(merge)') &&
       !c.subject.startsWith('chore(changelog)') &&
       !c.subject.includes('update auto-generated custom changelog')
   )
