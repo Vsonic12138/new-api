@@ -125,9 +125,9 @@ describe('theme preference persistence', () => {
 
     expect(screen.getByLabelText('Theme mode')).toHaveTextContent('system')
     expect(document.documentElement).toHaveClass('light')
-    expect(document.body).not.toHaveAttribute('data-theme-preset')
-    expect(document.body).toHaveAttribute('data-theme-font', 'system')
-    expect(document.body).not.toHaveAttribute('data-theme-radius')
+    expect(document.body).toHaveAttribute('data-theme-preset', 'simple-large')
+    expect(document.body).toHaveAttribute('data-theme-font', 'sans')
+    expect(document.body).toHaveAttribute('data-theme-radius', 'md')
     expect(document.body).not.toHaveAttribute('data-theme-scale')
     expect(document.body).toHaveAttribute('data-theme-content-layout', 'full')
   })
@@ -171,9 +171,9 @@ describe('theme preference persistence', () => {
 
     expect(screen.getByLabelText('Theme mode')).toHaveTextContent('system')
     expect(document.documentElement).toHaveClass('light')
-    expect(document.body).not.toHaveAttribute('data-theme-preset')
-    expect(document.body).toHaveAttribute('data-theme-font', 'system')
-    expect(document.body).not.toHaveAttribute('data-theme-radius')
+    expect(document.body).toHaveAttribute('data-theme-preset', 'simple-large')
+    expect(document.body).toHaveAttribute('data-theme-font', 'sans')
+    expect(document.body).toHaveAttribute('data-theme-radius', 'md')
     expect(document.body).not.toHaveAttribute('data-theme-scale')
     expect(document.body).toHaveAttribute('data-theme-content-layout', 'full')
     for (const key of Object.keys(savedPreferences)) {
@@ -193,9 +193,9 @@ describe('theme preference persistence', () => {
       render(<ThemeFixture />)
 
       expect(screen.getByLabelText('Theme mode')).toHaveTextContent('system')
-      expect(document.body).not.toHaveAttribute('data-theme-preset')
-      expect(document.body).toHaveAttribute('data-theme-font', 'system')
-      expect(document.body).not.toHaveAttribute('data-theme-radius')
+      expect(document.body).toHaveAttribute('data-theme-preset', 'simple-large')
+      expect(document.body).toHaveAttribute('data-theme-font', 'sans')
+      expect(document.body).toHaveAttribute('data-theme-radius', 'md')
       expect(document.body).not.toHaveAttribute('data-theme-scale')
       expect(document.body).toHaveAttribute('data-theme-content-layout', 'full')
     }
@@ -209,7 +209,7 @@ describe('theme preference persistence', () => {
     render(<ThemeFixture />)
 
     expect(screen.getByLabelText('Theme mode')).toHaveTextContent('system')
-    expect(document.body).not.toHaveAttribute('data-theme-preset')
+    expect(document.body).toHaveAttribute('data-theme-preset', 'simple-large')
   })
 
   it('still applies and resets preferences when storage writes fail', async () => {
@@ -230,7 +230,7 @@ describe('theme preference persistence', () => {
     await user.click(screen.getByRole('button', { name: 'Reset' }))
 
     expect(screen.getByLabelText('Theme mode')).toHaveTextContent('system')
-    expect(document.body).not.toHaveAttribute('data-theme-preset')
+    expect(document.body).toHaveAttribute('data-theme-preset', 'simple-large')
   })
 
   it('preserves saved theme preferences during frontend cache initialization', () => {
@@ -253,7 +253,7 @@ describe('theme preference persistence', () => {
 })
 
 describe('theme font selection', () => {
-  it('keeps manually selected Sans after remounting and switching presets', async () => {
+  it('keeps Sans after remounting and switching presets while leaving the default font unpersisted', async () => {
     const user = userEvent.setup()
     const first = render(<ThemeFixture />)
 
@@ -262,7 +262,9 @@ describe('theme font selection', () => {
     render(<ThemeFixture />)
 
     expect(document.body).toHaveAttribute('data-theme-font', 'sans')
-    expect(localStorage.getItem('newapi:theme:v1:font')).toBe('sans')
+    // Sans is the default font, so selecting it clears the stored preference
+    // instead of persisting an explicit value.
+    expect(localStorage.getItem('newapi:theme:v1:font')).toBeNull()
 
     await user.click(screen.getByRole('button', { name: 'Anthropic preset' }))
 
@@ -277,7 +279,8 @@ describe('theme font selection', () => {
     await user.click(screen.getByRole('button', { name: 'Auto font' }))
 
     expect(document.body).toHaveAttribute('data-theme-font', 'system')
-    expect(localStorage.getItem('newapi:theme:v1:font')).toBeNull()
+    // Auto is a non-default choice now that Sans is the default font.
+    expect(localStorage.getItem('newapi:theme:v1:font')).toBe('default')
 
     first.unmount()
     render(<ThemeFixture />)
@@ -289,6 +292,11 @@ describe('theme font selection', () => {
     const user = userEvent.setup()
     render(<ThemeFixture />)
 
+    // Auto has to be selected explicitly because the default font is Sans.
+    await user.click(screen.getByRole('button', { name: 'Auto font' }))
+
+    expect(document.body).toHaveAttribute('data-theme-font', 'system')
+
     await user.click(screen.getByRole('button', { name: 'Anthropic preset' }))
 
     expect(document.body).toHaveAttribute('data-theme-font', 'serif')
@@ -296,6 +304,6 @@ describe('theme font selection', () => {
     await user.click(screen.getByRole('button', { name: 'Default preset' }))
 
     expect(document.body).toHaveAttribute('data-theme-font', 'system')
-    expect(localStorage.getItem('newapi:theme:v1:font')).toBeNull()
+    expect(localStorage.getItem('newapi:theme:v1:font')).toBe('default')
   })
 })
