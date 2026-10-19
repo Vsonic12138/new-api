@@ -23,7 +23,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { cleanup, render, screen } from '@testing-library/react'
+import { cleanup, render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { createInstance } from 'i18next'
 import { I18nextProvider, initReactI18next } from 'react-i18next'
@@ -35,6 +35,7 @@ import zh from '@/i18n/locales/zh.json'
 import { DocsImage } from '../docs-blocks'
 import { DocsNav } from '../docs-nav'
 import { DocsAgentPage } from '../pages/agent'
+import { DocsChatPage, DocsMagpiePage } from '../pages/chat'
 import {
   DocsCcSwitchPage,
   DocsClaudeCodePage,
@@ -119,6 +120,132 @@ describe('docs client addresses', () => {
     }
     expect(document.querySelectorAll('a[href^="ccswitch:"]')).toHaveLength(2)
   })
+  it('groups image tutorials under one chapter and configuration tools separately', async () => {
+    await i18n.changeLanguage('en')
+    await renderWithRouter('/docs', DocsNav)
+    const tools = await screen.findByRole('region', {
+      name: 'Configuration tools',
+    })
+    expect(
+      within(tools).getByRole('link', { name: 'Set up CC Switch' })
+    ).toHaveAttribute('href', '/docs/cc-switch')
+    expect(
+      within(tools).getByRole('link', { name: 'Set up magpie' })
+    ).toHaveAttribute('href', '/docs/magpie')
+    const images = screen.getByRole('region', {
+      name: 'Image generation and editing',
+    })
+    expect(
+      within(images)
+        .getAllByRole('link')
+        .map((link) => link.getAttribute('href'))
+    ).toEqual(['/docs/image-mcp', '/docs/images', '/docs/image-edit'])
+  })
+
+  it('switches Cherry Studio imports between isolated GPT Responses and Grok chat providers', async () => {
+    const user = userEvent.setup()
+    await i18n.changeLanguage('en')
+    await renderWithRouter('/docs/chat', DocsChatPage)
+    const gptLink = await screen.findByRole('link', {
+      name: 'Import Cherry Studio · GPT template',
+    })
+    const decode = (link: HTMLElement) =>
+      JSON.parse(
+        atob(
+          new URL(link.getAttribute('href') ?? '').searchParams.get('data') ??
+            ''
+        )
+      )
+    expect(decode(gptLink)).toMatchObject({
+      id: 'new-api-gpt',
+      type: 'openai-response',
+      baseUrl: DOCS_OPENAI_BASE_URL,
+      apiKey: 'sk-your-api-token',
+    })
+    await user.click(screen.getByRole('tab', { name: 'Grok' }))
+    expect(
+      decode(
+        screen.getByRole('link', {
+          name: 'Import Cherry Studio · Grok template',
+        })
+      )
+    ).toMatchObject({ id: 'new-api-grok', type: 'openai' })
+    expect(screen.getByLabelText('Model ID')).toHaveTextContent('grok-4.7')
+    expect(screen.getByRole('tab', { name: 'Grok' })).toHaveAttribute(
+      'aria-selected',
+      'true'
+    )
+  })
+
+  it('imports magpie with the selected protocol and model group metadata', async () => {
+    const user = userEvent.setup()
+    await i18n.changeLanguage('en')
+    await renderWithRouter('/docs/magpie', DocsMagpiePage)
+    const gpt = new URL(
+      (
+        await screen.findByRole('link', {
+          name: 'Import magpie · GPT template',
+        })
+      ).getAttribute('href') ?? ''
+    )
+    expect(gpt.searchParams.get('responses')).toBe(DOCS_OPENAI_BASE_URL)
+    expect(gpt.searchParams.get('models')).toBe('gpt-6.1-sol')
+    await user.click(screen.getByRole('tab', { name: 'Grok' }))
+    const grok = new URL(
+      screen
+        .getByRole('link', { name: 'Import magpie · Grok template' })
+        .getAttribute('href') ?? ''
+    )
+    expect(grok.searchParams.get('chat')).toBe(DOCS_OPENAI_BASE_URL)
+    expect(grok.searchParams.get('catalog')).toBe('xai')
+    expect(grok.searchParams.get('models')).toBe('grok-4.7')
+    expect(grok.searchParams.has('anthropic')).toBe(false)
+  })
+
+  it('lets a reader reveal manual CC Switch setup and its matching screenshots', async () => {
+    const user = userEvent.setup()
+    await i18n.changeLanguage('en')
+    await renderWithRouter('/docs/cc-switch', DocsCcSwitchPage)
+    const manual = await screen.findByRole('button', {
+      name: 'Add the provider yourself',
+    })
+    expect(manual).toHaveAttribute('aria-expanded', 'false')
+    expect(
+      screen.queryByRole('img', {
+        name: 'CC Switch OpenCode Grok configuration',
+      })
+    ).not.toBeInTheDocument()
+    manual.focus()
+    await user.keyboard('{Enter}')
+    expect(manual).toHaveAttribute('aria-expanded', 'true')
+    expect(
+      await screen.findByRole('img', {
+        name: 'CC Switch OpenCode Grok configuration',
+      })
+    ).toBeVisible()
+  })
+
+  it('offers a Grok provider configuration with high as the default and every supported variant', async () => {
+    const user = userEvent.setup()
+    await i18n.changeLanguage('en')
+    await renderWithRouter('/docs/cc-switch', DocsCcSwitchPage)
+    expect(
+      await screen.findByLabelText('config.toml · high')
+    ).toHaveTextContent('model_reasoning_effort = "high"')
+    await user.click(screen.getByRole('tab', { name: 'Grok' }))
+    const settings = JSON.parse(
+      screen.getByLabelText('OpenCode · grok-4.7').textContent ?? '{}'
+    )
+    expect(settings.options.baseURL).toBe(DOCS_OPENAI_BASE_URL)
+    expect(settings.models['grok-4.7'].options.reasoningEffort).toBe('high')
+    expect(settings.models['grok-4.7'].variants).toEqual({
+      low: { reasoningEffort: 'low' },
+      medium: { reasoningEffort: 'medium' },
+      high: { reasoningEffort: 'high' },
+      xhigh: { reasoningEffort: 'xhigh' },
+    })
+  })
+
   it('offers a copyable AI setup prompt with image credentials kept as a local placeholder', async () => {
     await i18n.changeLanguage('en')
     await renderWithRouter('/docs/image-mcp', DocsImageMcpPage)
@@ -224,10 +351,14 @@ describe('docs client addresses', () => {
     toggle.focus()
     await user.keyboard('{Enter}')
     expect(toggle).toHaveAttribute('aria-expanded', 'true')
-    expect(await screen.findByRole('region')).toBeVisible()
+    expect(
+      await screen.findByRole('region', { name: i18n.t('Docs') })
+    ).toBeVisible()
     await user.keyboard('{Enter}')
     expect(toggle).toHaveAttribute('aria-expanded', 'false')
-    expect(screen.queryByRole('region')).not.toBeInTheDocument()
+    expect(
+      screen.queryByRole('region', { name: i18n.t('Docs') })
+    ).not.toBeInTheDocument()
   })
 
   it('opens a readable image preview with keyboard access and returns focus on close', async () => {

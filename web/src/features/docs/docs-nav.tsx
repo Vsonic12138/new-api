@@ -32,31 +32,44 @@ import { DOCS_NAV, getDocsAudience, isDocsNavActive } from './site'
 
 function DocsNavLinks(props: { pathname: string; onNavigate?: () => void }) {
   const { t } = useTranslation()
+  const items = DOCS_NAV.filter(
+    (item) => item.audience === getDocsAudience(props.pathname)
+  )
+  const sections = [...new Set(items.map((item) => item.section))]
   return (
-    <ul className='space-y-1'>
-      {DOCS_NAV.filter(
-        (item) => item.audience === getDocsAudience(props.pathname)
-      ).map((item) => {
-        const active = isDocsNavActive(props.pathname, item.to)
-        return (
-          <li key={item.to}>
-            <Link
-              to={item.to}
-              onClick={props.onNavigate}
-              aria-current={active ? 'page' : undefined}
-              className={cn(
-                'block rounded-md px-3 py-2 text-sm',
-                active
-                  ? 'bg-muted text-foreground font-medium'
-                  : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
-              )}
-            >
-              {t(item.titleKey)}
-            </Link>
-          </li>
-        )
-      })}
-    </ul>
+    <div className='space-y-5'>
+      {sections.map((section) => (
+        <section key={section} aria-label={t(section)}>
+          <h2 className='text-foreground mb-1 px-3 text-xs font-semibold'>
+            {t(section)}
+          </h2>
+          <ul className='space-y-1'>
+            {items
+              .filter((item) => item.section === section)
+              .map((item) => {
+                const active = isDocsNavActive(props.pathname, item.to)
+                return (
+                  <li key={item.to}>
+                    <Link
+                      to={item.to}
+                      onClick={props.onNavigate}
+                      aria-current={active ? 'page' : undefined}
+                      className={cn(
+                        'block rounded-md px-4 py-2 text-sm',
+                        active
+                          ? 'bg-muted text-foreground font-medium'
+                          : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground'
+                      )}
+                    >
+                      {t(item.titleKey)}
+                    </Link>
+                  </li>
+                )
+              })}
+          </ul>
+        </section>
+      ))}
+    </div>
   )
 }
 

@@ -37,13 +37,12 @@ import { toast } from 'sonner'
 
 import { CopyButton } from '@/components/copy-button'
 import { Button } from '@/components/ui/button'
+import { DocsClientSetup } from '@/features/docs/client-setup'
 import { useStatus } from '@/hooks/use-status'
 import { cn } from '@/lib/utils'
 
 import {
   buildCCSwitchImportUrl,
-  buildCherryStudioImportUrl,
-  buildMagpieImportUrl,
   CLIENT_IMPORT_PLACEHOLDER_KEY,
   preferPublicOrigin,
   CC_SWITCH_SITE_PRESETS,
@@ -236,9 +235,6 @@ export function ClientGuideCard() {
     'zcode' | 'cherry' | 'ccswitch' | 'magpie' | 'dsh' | 'code'
   >('zcode')
   const [ccSwitchApp, setCcSwitchApp] = useState<CCSwitchTab>('codex')
-  const [magpieImage, setMagpieImage] = useState<'import' | 'agents' | 'add'>(
-    'import'
-  )
   const [zcodeImageMode, setZcodeImageMode] = useState<'openai' | 'custom'>(
     'openai'
   )
@@ -289,7 +285,7 @@ export function ClientGuideCard() {
 
   const zcodeRecommendedModels = [
     'glm-5.3-flash',
-    'claude-sonnet-5',
+    'grok-4.7',
     'gpt-6.1-sol',
     'deepseek-v4-flash',
   ]
@@ -297,37 +293,8 @@ export function ClientGuideCard() {
   const providerName =
     (typeof status?.system_name === 'string' && status.system_name.trim()) ||
     'New API'
-  const importModels = [
-    'claude-sonnet-5',
-    'claude-opus-5-5',
-    'gpt-6.1-sol',
-    'deepseek-v4-flash',
-    'glm-5.3-flash',
-  ]
   const ccSwitchPreset = CC_SWITCH_SITE_PRESETS[ccSwitchApp]
   const ccSwitchModel = ccSwitchPreset.model
-
-  const handleCherryImport = () => {
-    setImportingClient('cherry')
-    const link = buildCherryStudioImportUrl({
-      name: providerName,
-      apiHost: effectiveOrigin,
-      apiKey: CLIENT_IMPORT_PLACEHOLDER_KEY,
-    })
-
-    try {
-      window.location.href = link
-    } catch {
-      window.open(link, '_blank')
-    }
-
-    toast.info(
-      t(
-        'One-click import opens Cherry Studio. Replace the placeholder API key with a key from this site before use.'
-      )
-    )
-    setImportingClient(null)
-  }
 
   const handleCCSwitchImport = () => {
     setImportingClient('ccswitch')
@@ -370,46 +337,10 @@ export function ClientGuideCard() {
           title: t('CC Switch OpenCode Grok configuration'),
         }
 
-  const handleMagpieImport = () => {
-    setImportingClient('magpie')
-    const link = buildMagpieImportUrl({
-      name: providerName,
-      origin: effectiveOrigin,
-      models: zcodeRecommendedModels,
-      apiKey: CLIENT_IMPORT_PLACEHOLDER_KEY,
-    })
-    try {
-      window.open(link, '_blank')
-    } catch {
-      window.location.href = link
-    }
-    toast.info(
-      t(
-        'One-click import opens magpie. Confirm the provider parameters to add to your local gateway.'
-      )
-    )
-    setImportingClient(null)
-  }
-
-  const magpieShot = {
-    import: {
-      src: '/guides/magpie/import-provider.png',
-      title: t('magpie import provider screenshot'),
-    },
-    agents: {
-      src: '/guides/magpie/agents-models.png',
-      title: t('magpie agents model management screenshot'),
-    },
-    add: {
-      src: '/guides/magpie/add-provider.png',
-      title: t('magpie add provider panel screenshot'),
-    },
-  }[magpieImage]
-
   const curlExample = `curl -X POST "${openAiBaseUrl}/chat/completions" \\
   -H "Authorization: Bearer sk-your-token" \\
   -H "Content-Type: application/json" \\
-  -d '{"model": "claude-sonnet-5", "messages": [{"role": "user", "content": "Hello!"}]}'`
+  -d '{"model": "grok-4.7", "reasoning_effort": "high", "messages": [{"role": "user", "content": "Hello!"}]}'`
 
   return (
     <section className='relative z-10 px-4 py-10 sm:px-6 md:py-14'>
@@ -828,152 +759,9 @@ export function ClientGuideCard() {
           </div>
         )}
 
-        {/* Tab 2: Cherry Studio (官方原版截图 + 步骤图文看板) */}
         {activeTab === 'cherry' && (
-          <div className='mt-5 grid gap-5 lg:grid-cols-12 lg:items-start'>
-            {/* Left: 步骤指引 & 快捷导入 */}
-            <div className='border-border/70 bg-card space-y-4 rounded-2xl border p-5 shadow-xs lg:col-span-6'>
-              <div className='border-border/40 flex items-center justify-between border-b pb-3'>
-                <div className='flex items-center gap-2'>
-                  <div className='border-border/50 bg-muted/30 flex size-8 items-center justify-center rounded-lg border'>
-                    <CherryStudio.Color size={20} />
-                  </div>
-                  <div>
-                    <h3 className='text-foreground text-sm font-bold'>
-                      {t('Cherry Studio desktop client')}
-                    </h3>
-                    <p className='text-muted-foreground text-[11px]'>
-                      {t(
-                        'Compare models side by side, with knowledge RAG and visible reasoning.'
-                      )}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  disabled={importingClient === 'cherry'}
-                  className='h-7 gap-1 border-red-500/30 px-2.5 text-xs text-red-600 hover:bg-red-500/5'
-                  onClick={handleCherryImport}
-                >
-                  {importingClient === 'cherry' ? (
-                    <Loader2 className='size-3 animate-spin' />
-                  ) : (
-                    <CheckCircle2 className='size-3' />
-                  )}
-                  <span>{t('One-click import')}</span>
-                </Button>
-              </div>
-
-              <div className='space-y-2.5 text-xs'>
-                <div className='border-border/50 bg-muted/20 rounded-xl border p-3'>
-                  <span className='text-muted-foreground text-[11px] font-semibold'>
-                    {t('Manual setup reference')}
-                  </span>
-                  <div className='mt-2 space-y-1.5 font-mono text-[11px]'>
-                    <div className='flex justify-between'>
-                      <span className='text-muted-foreground'>
-                        {t('Provider type')}:
-                      </span>
-                      <span className='font-semibold'>
-                        {t('OpenAI compatible')}
-                      </span>
-                    </div>
-                    <div className='flex items-center justify-between gap-2'>
-                      <span className='text-muted-foreground shrink-0'>
-                        API Base URL:
-                      </span>
-                      <span className='text-right font-semibold break-all select-all'>
-                        {openAiBaseUrl}
-                      </span>
-                    </div>
-                    <div className='flex justify-between'>
-                      <span className='text-muted-foreground'>API Key:</span>
-                      <span className='text-muted-foreground'>sk-xxxx</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className='border-border/50 bg-muted/20 flex flex-col justify-between rounded-xl border p-3'>
-                  <span className='text-muted-foreground text-[11px] font-semibold'>
-                    {t('Recommended models')}
-                  </span>
-                  <p className='text-muted-foreground mt-1 text-[11px]'>
-                    {t('Add these models in model management: {{models}}.', {
-                      models: importModels.join(', '),
-                    })}
-                  </p>
-                  <div className='mt-3 flex items-center gap-2'>
-                    <CopyButton
-                      value={openAiBaseUrl}
-                      variant='outline'
-                      size='sm'
-                      className='h-7 flex-1 text-xs'
-                      tooltip={t('Copy')}
-                      successTooltip={t('Copied!')}
-                    >
-                      <span>{t('Copy Base URL')}</span>
-                    </CopyButton>
-                    <Button
-                      variant='ghost'
-                      size='sm'
-                      className='h-7 px-2 text-xs'
-                      render={
-                        <a
-                          href='https://cherry-ai.com'
-                          target='_blank'
-                          rel='noopener noreferrer'
-                        />
-                      }
-                    >
-                      <span>{t('Download client')}</span>
-                      <ExternalLink className='size-3' />
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: 官方原版截图展示与灯箱放大 */}
-            <div className='lg:col-span-6'>
-              <div className='border-border/70 bg-card rounded-2xl border p-3 shadow-xs'>
-                <div className='mb-2 flex items-center justify-between px-1'>
-                  <span className='text-foreground text-xs font-semibold'>
-                    {t('Cherry Studio model service screenshot')}
-                  </span>
-                  <span className='text-muted-foreground inline-flex items-center gap-1 text-[10px]'>
-                    <Maximize2 className='size-2.5' /> {t('Click to enlarge')}
-                  </span>
-                </div>
-
-                <div
-                  className='group border-border/60 relative cursor-pointer overflow-hidden rounded-xl border bg-neutral-950/60'
-                  onClick={() =>
-                    setZoomImage({
-                      src: '/guides/cherry/cherry-3.webp',
-                      title: t('Cherry Studio model service screenshot'),
-                    })
-                  }
-                >
-                  <img
-                    src='/guides/cherry/cherry-3.webp'
-                    alt={t('Cherry Studio settings screenshot')}
-                    className='h-auto w-full object-cover transition-transform duration-300 group-hover:scale-[1.01]'
-                  />
-                  <div className='absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100'>
-                    <span className='bg-background/90 text-foreground flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium shadow-md backdrop-blur-xs'>
-                      <Maximize2 className='size-3' />{' '}
-                      {t('Click to view the full image')}
-                    </span>
-                  </div>
-                </div>
-                <p className='text-muted-foreground mt-2 text-center text-[10px]'>
-                  {t(
-                    'Source: Cherry Studio docs. The screenshot shows where to enter the API key and address.'
-                  )}
-                </p>
-              </div>
-            </div>
+          <div className='mt-5'>
+            <DocsClientSetup client='cherry' origin={effectiveOrigin} />
           </div>
         )}
 
@@ -1056,6 +844,23 @@ export function ClientGuideCard() {
               </div>
 
               <div className='space-y-2.5 text-xs'>
+                <p className='text-sm'>
+                  {t(
+                    'Default reasoning effort: high. Supported levels: {{levels}}.',
+                    {
+                      levels:
+                        ccSwitchApp === 'codex'
+                          ? 'low / medium / high / xhigh / max'
+                          : 'low / medium / high / xhigh',
+                    }
+                  )}{' '}
+                  <Link
+                    to='/docs/cc-switch'
+                    className='font-semibold underline underline-offset-4'
+                  >
+                    {t('Set reasoning effort to high')}
+                  </Link>
+                </p>
                 <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
                   <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-[11px] font-bold text-blue-600 dark:text-blue-400'>
                     1
@@ -1241,276 +1046,8 @@ export function ClientGuideCard() {
 
         {/* Tab: magpie (菜单栏统一 Agent 本地网关) */}
         {activeTab === 'magpie' && (
-          <div className='mt-5 grid gap-5 lg:grid-cols-12 lg:items-start'>
-            {/* Left: 步骤指引 & 参数 */}
-            <div className='border-border/70 bg-card space-y-4 rounded-2xl border p-5 shadow-xs lg:col-span-6'>
-              <div className='border-border/40 flex items-center justify-between border-b pb-3'>
-                <div className='flex items-center gap-2'>
-                  <div className='border-border/50 bg-muted/30 flex size-8 items-center justify-center rounded-lg border'>
-                    <MagpieLogo size={20} />
-                  </div>
-                  <div>
-                    <h3 className='text-foreground text-sm font-bold'>
-                      magpie
-                    </h3>
-                    <p className='text-muted-foreground text-[11px]'>
-                      {t(
-                        'Manage models for all Agents in one place. One-click selection via local gateway.'
-                      )}
-                    </p>
-                  </div>
-                </div>
-                <Button
-                  variant='ghost'
-                  size='sm'
-                  className='text-muted-foreground h-7 gap-1 px-2 text-xs'
-                  render={
-                    <a
-                      href='https://usemagpie.ai/docs/zh/start'
-                      target='_blank'
-                      rel='noopener noreferrer'
-                    />
-                  }
-                >
-                  <span>{t('Official docs')}</span>
-                  <ExternalLink className='size-3' />
-                </Button>
-              </div>
-
-              {/* Supported Agents Chips & One-Click Import */}
-              <div className='flex flex-wrap items-center justify-between gap-2'>
-                <div className='flex flex-wrap gap-1.5'>
-                  {['Claude Code', 'Codex', 'Gemini CLI', 'OpenCode', 'Pi'].map(
-                    (app) => (
-                      <span
-                        key={app}
-                        className='bg-muted/60 text-muted-foreground rounded-lg px-2.5 py-1 text-[11px] font-medium'
-                      >
-                        {app}
-                      </span>
-                    )
-                  )}
-                </div>
-                <Button
-                  variant='outline'
-                  size='sm'
-                  disabled={importingClient === 'magpie'}
-                  className='h-7 gap-1 border-blue-500/30 px-2.5 text-xs text-blue-600 hover:bg-blue-500/5 dark:text-blue-400'
-                  onClick={handleMagpieImport}
-                >
-                  {importingClient === 'magpie' ? (
-                    <Loader2 className='size-3 animate-spin' />
-                  ) : (
-                    <Sparkles className='size-3 text-amber-500' />
-                  )}
-                  <span>{t('One-click import')}</span>
-                </Button>
-              </div>
-
-              {/* Steps */}
-              <div className='space-y-2.5 text-xs'>
-                {/* Step 1 */}
-                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
-                  <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-[11px] font-bold text-blue-600 dark:text-blue-400'>
-                    1
-                  </span>
-                  <div className='min-w-0 flex-1'>
-                    <span className='text-foreground font-semibold'>
-                      {t('Add Provider (One-Click or Manual)')}
-                    </span>
-                    <p className='text-muted-foreground mt-0.5 text-[11px]'>
-                      {t(
-                        'Click One-Click Import to launch magpie, or add a Custom provider in the Providers tab.'
-                      )}
-                    </p>
-
-                    <div className='mt-2 grid gap-1.5 sm:grid-cols-2'>
-                      <div className='bg-background rounded-lg p-2'>
-                        <div className='flex items-center justify-between'>
-                          <span className='text-muted-foreground text-[10px] font-semibold'>
-                            {t('OpenAI Base URL (/v1)')}
-                          </span>
-                          <CopyButton
-                            value={openAiBaseUrl}
-                            variant='ghost'
-                            size='sm'
-                            className='h-4 px-1 text-[10px]'
-                            tooltip={t('Copy')}
-                            successTooltip={t('Copied!')}
-                          >
-                            <span>{t('Copy')}</span>
-                          </CopyButton>
-                        </div>
-                        <p className='text-foreground mt-1 font-mono text-[11px] font-semibold break-all select-all'>
-                          {openAiBaseUrl}
-                        </p>
-                      </div>
-
-                      <div className='bg-background rounded-lg p-2'>
-                        <div className='flex items-center justify-between'>
-                          <span className='text-muted-foreground text-[10px] font-semibold'>
-                            {t('Anthropic Base URL (Root)')}
-                          </span>
-                          <CopyButton
-                            value={anthropicBaseUrl}
-                            variant='ghost'
-                            size='sm'
-                            className='h-4 px-1 text-[10px]'
-                            tooltip={t('Copy')}
-                            successTooltip={t('Copied!')}
-                          >
-                            <span>{t('Copy')}</span>
-                          </CopyButton>
-                        </div>
-                        <p className='text-foreground mt-1 font-mono text-[11px] font-semibold break-all select-all'>
-                          {anthropicBaseUrl}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className='mt-2 flex flex-wrap items-center gap-1.5 text-[11px]'>
-                      <span className='text-muted-foreground text-[10px]'>
-                        {t('Recommended models')}:
-                      </span>
-                      {zcodeRecommendedModels.map((model) => (
-                        <CopyButton
-                          key={model}
-                          value={model}
-                          variant='outline'
-                          size='sm'
-                          className='h-5 rounded px-1.5 font-mono text-[10px]'
-                          tooltip={t('Copy')}
-                          successTooltip={t('Copied!')}
-                        >
-                          <span>{model}</span>
-                        </CopyButton>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                {/* Step 2 */}
-                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
-                  <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-[11px] font-bold text-blue-600 dark:text-blue-400'>
-                    2
-                  </span>
-                  <div>
-                    <span className='text-foreground font-semibold'>
-                      {t('Select Models for Each Agent')}
-                    </span>
-                    <p className='text-muted-foreground mt-0.5 text-[11px]'>
-                      {t(
-                        'In the Agents tab, choose your preferred model from DaHuang API for Claude Code, Codex, Gemini CLI, OpenCode, or Pi.'
-                      )}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Step 3 */}
-                <div className='border-border/40 bg-muted/20 flex items-start gap-2.5 rounded-xl border p-2.5'>
-                  <span className='flex size-5 shrink-0 items-center justify-center rounded-full bg-blue-500/10 text-[11px] font-bold text-blue-600 dark:text-blue-400'>
-                    3
-                  </span>
-                  <div className='min-w-0 flex-1'>
-                    <span className='text-foreground font-semibold'>
-                      {t('Enjoy Unified Local Gateway')}
-                    </span>
-                    <p className='text-muted-foreground mt-0.5 text-[11px]'>
-                      {t(
-                        'magpie runs locally at 127.0.0.1:3425, translating OpenAI, Anthropic, and Gemini protocols with streaming and tool calls.'
-                      )}
-                    </p>
-                    <div className='mt-2 flex items-center gap-2'>
-                      <Button
-                        variant='ghost'
-                        size='sm'
-                        className='h-7 px-2 text-xs'
-                        render={
-                          <a
-                            href='https://usemagpie.ai/zh/#get'
-                            target='_blank'
-                            rel='noopener noreferrer'
-                          />
-                        }
-                      >
-                        <span>{t('Download magpie')}</span>
-                        <ExternalLink className='size-3' />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Right: 官方截图展示与放大 */}
-            <div className='lg:col-span-6'>
-              <div className='border-border/70 bg-card rounded-2xl border p-3 shadow-xs'>
-                <div className='mb-2 flex items-center justify-between px-1'>
-                  <div className='flex gap-1'>
-                    <button
-                      type='button'
-                      onClick={() => setMagpieImage('import')}
-                      className={cn(
-                        'rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors',
-                        magpieImage === 'import'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-muted-foreground hover:bg-muted'
-                      )}
-                    >
-                      {t('Import confirmation')}
-                    </button>
-                    <button
-                      type='button'
-                      onClick={() => setMagpieImage('agents')}
-                      className={cn(
-                        'rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors',
-                        magpieImage === 'agents'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-muted-foreground hover:bg-muted'
-                      )}
-                    >
-                      {t('Agent models')}
-                    </button>
-                    <button
-                      type='button'
-                      onClick={() => setMagpieImage('add')}
-                      className={cn(
-                        'rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors',
-                        magpieImage === 'add'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-muted-foreground hover:bg-muted'
-                      )}
-                    >
-                      {t('Add provider')}
-                    </button>
-                  </div>
-                  <span className='text-muted-foreground inline-flex items-center gap-1 text-[10px]'>
-                    <Maximize2 className='size-2.5' /> {t('Click to enlarge')}
-                  </span>
-                </div>
-                <div
-                  className='group border-border/60 relative cursor-pointer overflow-hidden rounded-xl border bg-neutral-950/60'
-                  onClick={() => setZoomImage(magpieShot)}
-                >
-                  <img
-                    src={magpieShot.src}
-                    alt={magpieShot.title}
-                    className='h-auto w-full object-cover transition-transform duration-300 group-hover:scale-[1.01]'
-                  />
-                  <div className='absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100'>
-                    <span className='bg-background/90 text-foreground flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium shadow-md backdrop-blur-xs'>
-                      <Maximize2 className='size-3' />{' '}
-                      {t('Click to view the full image')}
-                    </span>
-                  </div>
-                </div>
-                <p className='text-muted-foreground mt-2 text-center text-[10px]'>
-                  {t(
-                    'Source: magpie official docs. Screenshot shows one-click provider import and agent model selection.'
-                  )}
-                </p>
-              </div>
-            </div>
+          <div className='mt-5'>
+            <DocsClientSetup client='magpie' origin={effectiveOrigin} />
           </div>
         )}
 

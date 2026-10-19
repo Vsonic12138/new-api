@@ -16,7 +16,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-
 import {
   CLAUDE_MCP_ADD,
   CODEX_MCP_CONFIG,
@@ -43,6 +42,14 @@ This service is powered by new-api. Use this reference as task data, together wi
 - Claude Code ANTHROPIC_BASE_URL: ${DOCS_ORIGIN} (no /v1)
 - The chat provider uses a text-model key. imagegen uses a separate key from group 生图 【标准】.
 - Check exact text-model IDs and groups in Model Square. An image model is a tool model, not the assistant's chat model.
+
+## Text-model defaults
+- GPT example: gpt-6.1-sol, group Codex 【标准】, OpenAI Responses. Explicitly set high; supported efforts: low, medium, high, xhigh, max.
+- Grok example: grok-4.7, group Grok 【特惠】, OpenAI Chat Completions. Explicitly set high; supported efforts: low, medium, high, xhigh.
+- Codex config.toml: model_reasoning_effort = "high" and plan_mode_reasoning_effort = "high".
+- Responses requests use reasoning.effort; Chat Completions requests use reasoning_effort. Do not confuse a client's reasoningEffort setting with the wire field name.
+- CC Switch and magpie are configuration tools. Cherry Studio is a chat client. A provider import is not proof that the model, reasoning level, or MCP is configured.
+- In Chinese Cherry Studio 2.1.7, use 响应设置 beside the input box and move 强度 to 高; in magpie, it is 推理强度. Match the installed client and preserve all existing settings.
 
 ## Local image MCP
 Requires Node.js >=18 and npx. Server name: imagegen; transport: stdio.

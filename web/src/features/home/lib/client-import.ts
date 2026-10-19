@@ -27,6 +27,25 @@ export const CLIENT_IMPORT_PLACEHOLDER_KEY = 'sk-your-api-token'
  */
 export type CCSwitchApp = 'claude' | 'codex' | 'gemini' | 'opencode'
 
+export const SITE_MODEL_PRESETS = {
+  gpt: {
+    name: '大黄 API · GPT',
+    model: 'gpt-6.1-sol',
+    group: 'Codex 【标准】',
+    protocol: 'OpenAI Responses',
+    efforts: ['low', 'medium', 'high', 'xhigh', 'max'],
+  },
+  grok: {
+    name: '大黄 API · Grok',
+    model: 'grok-4.7',
+    group: 'Grok 【特惠】',
+    protocol: 'OpenAI Chat Completions',
+    efforts: ['low', 'medium', 'high', 'xhigh'],
+  },
+} as const
+
+export type SiteModelFamily = keyof typeof SITE_MODEL_PRESETS
+
 // Shared by the homepage and documentation so the public templates stay aligned.
 export const CC_SWITCH_SITE_PRESETS = {
   codex: {
@@ -34,14 +53,14 @@ export const CC_SWITCH_SITE_PRESETS = {
     name: 'DaHuang API - GPT',
     model: 'gpt-6.1-sol',
     group: 'Codex 【标准】',
-    alternatives: ['gpt-6.1-sol', 'gpt-6-astra'],
+    alternatives: ['gpt-6.1-sol'],
   },
   opencode: {
     label: 'OpenCode · Grok',
     name: 'DaHuang API - Grok',
     model: 'grok-4.7',
     group: 'Grok 【特惠】',
-    alternatives: ['grok-4.7', 'grok-4.6', 'grok-4.5'],
+    alternatives: ['grok-4.7'],
   },
 } as const
 
@@ -84,16 +103,16 @@ function toStandardBase64(value: string): string {
 export function buildCherryStudioImportUrl(input: {
   name: string
   apiHost: string
+  family?: SiteModelFamily
   apiKey?: string
 }) {
-  // Cherry Studio's built-in new-api provider expects the root server address
-  // (without /v1), as it automatically appends version paths.
+  const family = input.family ?? 'gpt'
   const cleanHost = trimTrailingSlashes(input.apiHost).replace(/\/v1$/, '')
   const data = {
-    id: 'new-api',
+    id: `new-api-${family}`,
     name: input.name,
-    baseUrl: cleanHost,
-    apiHost: cleanHost,
+    type: family === 'gpt' ? 'openai-response' : 'openai',
+    baseUrl: `${cleanHost}/v1`,
     apiKey: input.apiKey || CLIENT_IMPORT_PLACEHOLDER_KEY,
   }
   return `cherrystudio://providers/api-keys?v=1&data=${encodeURIComponent(toStandardBase64(JSON.stringify(data)))}`
@@ -129,6 +148,16 @@ export function buildCCSwitchImportUrl(input: {
   for (const [key, value] of Object.entries(input.models ?? {})) {
     if (value) params.set(key, value)
   }
+  if (input.app === 'codex') {
+    // CC Switch 4.0.16 accepts provider-owned TOML fields in this payload.
+    params.set('configFormat', 'toml')
+    params.set(
+      'config',
+      toStandardBase64(
+        'model_reasoning_effort = "high"\nplan_mode_reasoning_effort = "high"'
+      )
+    )
+  }
   params.set('homepage', origin)
   params.set(
     'enabled',
@@ -145,18 +174,21 @@ export function buildMagpieImportUrl(input: {
   models?: string[]
   apiKey?: string
   preferProtocol?: 'web' | 'app'
+  family?: SiteModelFamily
 }) {
-  const origin = trimTrailingSlashes(input.origin)
+  const origin = trimTrailingSlashes(input.origin).replace(/\/v1$/, '')
+  const family = input.family ?? 'gpt'
   const params = new URLSearchParams()
   params.set('name', input.name)
-  params.set('chat', `${origin}/v1`)
-  params.set('anthropic', origin)
+  params.set(family === 'gpt' ? 'responses' : 'chat', `${origin}/v1`)
+  params.set('catalog', family === 'gpt' ? 'openai' : 'xai')
   params.set('key', input.apiKey || CLIENT_IMPORT_PLACEHOLDER_KEY)
-  const models =
-    input.models && input.models.length > 0
+  params.set(
+    'models',
+    input.models?.length
       ? input.models.join(',')
-      : 'claude-sonnet-5,gpt-6.1-sol,deepseek-v4-flash,gemini-3.8-flash,glm-5.3-flash'
-  params.set('models', models)
+      : SITE_MODEL_PRESETS[family].model
+  )
   params.set('website', origin)
   params.set('keys', `${origin}/keys`)
 

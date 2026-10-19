@@ -16,7 +16,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-
 import { useTranslation } from 'react-i18next'
 
 import { DocsTitle, DocsSection, DocsActionLink } from '../docs-blocks'
@@ -53,12 +52,15 @@ export function DocsStartPage() {
         <div className='space-y-6'>
           <p>
             {t(
-              'For coding, use CC Switch to import your key into your assistant.'
+              'Use CC Switch or magpie to manage model connections for your AI assistant.'
             )}
           </p>
           <div className='flex flex-wrap gap-3'>
             <DocsActionLink href='/docs/cc-switch'>
               {t('Set up CC Switch')}
+            </DocsActionLink>
+            <DocsActionLink href='/docs/magpie'>
+              {t('Set up magpie')}
             </DocsActionLink>
           </div>
           <p>
@@ -83,9 +85,7 @@ export function DocsStartPage() {
             )}
           </p>
           <div className='flex flex-wrap gap-3'>
-            <DocsActionLink href='/docs/chat'>
-              {t('Chat clients')}
-            </DocsActionLink>
+            <DocsActionLink href='/docs/chat'>Cherry Studio</DocsActionLink>
           </div>
         </div>
       </DocsSection>

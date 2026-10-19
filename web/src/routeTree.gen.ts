@@ -40,6 +40,7 @@ import { Route as DocsEndpointRouteImport } from './routes/docs/endpoint'
 import { Route as DocsImageEditRouteImport } from './routes/docs/image-edit'
 import { Route as DocsImageMcpRouteImport } from './routes/docs/image-mcp'
 import { Route as DocsImagesRouteImport } from './routes/docs/images'
+import { Route as DocsMagpieRouteImport } from './routes/docs/magpie'
 import { Route as DocsRegisterRouteImport } from './routes/docs/register'
 import { Route as DocsTokenRouteImport } from './routes/docs/token'
 import { Route as DocsTopupRouteImport } from './routes/docs/topup'
@@ -240,6 +241,11 @@ const DocsImageMcpRoute = DocsImageMcpRouteImport.update({
 const DocsImagesRoute = DocsImagesRouteImport.update({
   id: '/images',
   path: '/images',
+  getParentRoute: () => DocsRouteRoute,
+} as any)
+const DocsMagpieRoute = DocsMagpieRouteImport.update({
+  id: '/magpie',
+  path: '/magpie',
   getParentRoute: () => DocsRouteRoute,
 } as any)
 const DocsRegisterRoute = DocsRegisterRouteImport.update({
@@ -540,6 +546,7 @@ export interface FileRoutesByFullPath {
   '/docs/image-edit': typeof DocsImageEditRoute
   '/docs/image-mcp': typeof DocsImageMcpRoute
   '/docs/images': typeof DocsImagesRoute
+  '/docs/magpie': typeof DocsMagpieRoute
   '/docs/register': typeof DocsRegisterRoute
   '/docs/token': typeof DocsTokenRoute
   '/docs/topup': typeof DocsTopupRoute
@@ -616,6 +623,7 @@ export interface FileRoutesByTo {
   '/docs/image-edit': typeof DocsImageEditRoute
   '/docs/image-mcp': typeof DocsImageMcpRoute
   '/docs/images': typeof DocsImagesRoute
+  '/docs/magpie': typeof DocsMagpieRoute
   '/docs/register': typeof DocsRegisterRoute
   '/docs/token': typeof DocsTokenRoute
   '/docs/topup': typeof DocsTopupRoute
@@ -697,6 +705,7 @@ export interface FileRoutesById {
   '/docs/image-edit': typeof DocsImageEditRoute
   '/docs/image-mcp': typeof DocsImageMcpRoute
   '/docs/images': typeof DocsImagesRoute
+  '/docs/magpie': typeof DocsMagpieRoute
   '/docs/register': typeof DocsRegisterRoute
   '/docs/token': typeof DocsTokenRoute
   '/docs/topup': typeof DocsTopupRoute
@@ -777,6 +786,7 @@ export interface FileRouteTypes {
     | '/docs/image-edit'
     | '/docs/image-mcp'
     | '/docs/images'
+    | '/docs/magpie'
     | '/docs/register'
     | '/docs/token'
     | '/docs/topup'
@@ -853,6 +863,7 @@ export interface FileRouteTypes {
     | '/docs/image-edit'
     | '/docs/image-mcp'
     | '/docs/images'
+    | '/docs/magpie'
     | '/docs/register'
     | '/docs/token'
     | '/docs/topup'
@@ -933,6 +944,7 @@ export interface FileRouteTypes {
     | '/docs/image-edit'
     | '/docs/image-mcp'
     | '/docs/images'
+    | '/docs/magpie'
     | '/docs/register'
     | '/docs/token'
     | '/docs/topup'
@@ -1221,6 +1233,13 @@ declare module '@tanstack/react-router' {
       path: '/images'
       fullPath: '/docs/images'
       preLoaderRoute: typeof DocsImagesRouteImport
+      parentRoute: typeof DocsRouteRoute
+    }
+    '/docs/magpie': {
+      id: '/docs/magpie'
+      path: '/magpie'
+      fullPath: '/docs/magpie'
+      preLoaderRoute: typeof DocsMagpieRouteImport
       parentRoute: typeof DocsRouteRoute
     }
     '/docs/register': {
@@ -1709,6 +1728,7 @@ interface DocsRouteRouteChildren {
   DocsImageEditRoute: typeof DocsImageEditRoute
   DocsImageMcpRoute: typeof DocsImageMcpRoute
   DocsImagesRoute: typeof DocsImagesRoute
+  DocsMagpieRoute: typeof DocsMagpieRoute
   DocsRegisterRoute: typeof DocsRegisterRoute
   DocsTokenRoute: typeof DocsTokenRoute
   DocsTopupRoute: typeof DocsTopupRoute
@@ -1726,6 +1746,7 @@ const DocsRouteRouteChildren: DocsRouteRouteChildren = {
   DocsImageEditRoute: DocsImageEditRoute,
   DocsImageMcpRoute: DocsImageMcpRoute,
   DocsImagesRoute: DocsImagesRoute,
+  DocsMagpieRoute: DocsMagpieRoute,
   DocsRegisterRoute: DocsRegisterRoute,
   DocsTokenRoute: DocsTokenRoute,
   DocsTopupRoute: DocsTopupRoute,

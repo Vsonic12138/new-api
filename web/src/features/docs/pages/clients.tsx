@@ -18,6 +18,12 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { useTranslation } from 'react-i18next'
 
+import { Button } from '@/components/ui/button'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible'
 import {
   buildCCSwitchImportUrl,
   CC_SWITCH_SITE_PRESETS,
@@ -34,6 +40,7 @@ import {
   DocsTextLink,
   DocsTitle,
 } from '../docs-blocks'
+import { DocsReasoningSettings } from '../reasoning-settings'
 import {
   CC_SWITCH_RELEASES_URL,
   CC_SWITCH_SITE_URL,
@@ -201,41 +208,63 @@ export function DocsCcSwitchPage() {
           />
         </div>
       </DocsSection>
-      <DocsSection title={t('Add the provider yourself')}>
-        <DocsSteps>
-          <DocsStep
-            n={1}
-            title={t(
-              'Select Codex for GPT or OpenCode for Grok, add a custom provider, and paste your API key.'
-            )}
-          />
-          <DocsStep
-            n={2}
-            title={t(
-              'Use the address below. For Codex select OpenAI Responses; for OpenCode select OpenAI Compatible (Chat Completions).'
-            )}
-          >
-            <DocsCode
-              label={t('OpenAI base URL')}
-              code={DOCS_OPENAI_BASE_URL}
+      <Collapsible>
+        <CollapsibleTrigger
+          render={
+            <Button
+              variant='outline'
+              className='h-auto min-h-10 whitespace-normal'
             />
-          </DocsStep>
-          <DocsStep n={3} title={t('Save the provider and enable it.')} />
-        </DocsSteps>
-        <DocsImage
-          src='/docs-images/ccswitch-codex-gpt-1e460de954.png'
-          alt={t('CC Switch Codex GPT configuration')}
-          caption={t(
-            'Captured in CC Switch 4.0.16 with this site address and an example key. Replace the example key before use.'
+          }
+        >
+          {t('Add the provider yourself')}
+        </CollapsibleTrigger>
+        <CollapsibleContent className='space-y-3 pt-4'>
+          <DocsSection title={t('Add the provider yourself')}>
+            <DocsSteps>
+              <DocsStep
+                n={1}
+                title={t(
+                  'Select Codex for GPT or OpenCode for Grok, add a custom provider, and paste your API key.'
+                )}
+              />
+              <DocsStep
+                n={2}
+                title={t(
+                  'Use the address below. For Codex select OpenAI Responses; for OpenCode select OpenAI Compatible (Chat Completions).'
+                )}
+              >
+                <DocsCode
+                  label={t('OpenAI base URL')}
+                  code={DOCS_OPENAI_BASE_URL}
+                />
+              </DocsStep>
+              <DocsStep n={3} title={t('Save the provider and enable it.')} />
+            </DocsSteps>
+            <DocsImage
+              src='/docs-images/ccswitch-codex-gpt-1e460de954.png'
+              alt={t('CC Switch Codex GPT configuration')}
+              caption={t(
+                'Captured in CC Switch 4.0.16 with this site address and an example key. Replace the example key before use.'
+              )}
+            />
+            <DocsImage
+              src='/docs-images/ccswitch-opencode-grok-21c7db8a73.png'
+              alt={t('CC Switch OpenCode Grok configuration')}
+              caption={t(
+                'Captured in CC Switch 4.0.16 with this site address and an example key. Replace the example key before use.'
+              )}
+            />
+          </DocsSection>
+        </CollapsibleContent>
+      </Collapsible>
+      <DocsReasoningSettings />
+      <DocsSection title={t('3. Confirm it works')}>
+        <p>
+          {t(
+            'Start a new conversation and send Hello. Check that the selected model and high are still displayed. A reply confirms the connection; importing alone does not.'
           )}
-        />
-        <DocsImage
-          src='/docs-images/ccswitch-opencode-grok-21c7db8a73.png'
-          alt={t('CC Switch OpenCode Grok configuration')}
-          caption={t(
-            'Captured in CC Switch 4.0.16 with this site address and an example key. Replace the example key before use.'
-          )}
-        />
+        </p>
       </DocsSection>
     </>
   )

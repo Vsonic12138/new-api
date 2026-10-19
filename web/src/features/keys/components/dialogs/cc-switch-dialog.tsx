@@ -27,6 +27,10 @@ import { Combobox } from '@/components/ui/combobox'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
+import {
+  buildCCSwitchImportUrl,
+  preferPublicOrigin,
+} from '@/features/home/lib/client-import'
 import { getUserModels } from '@/lib/api'
 import { requireServerSuccess } from '@/lib/server-error-message'
 
@@ -72,27 +76,24 @@ function getServerAddress(): string {
 }
 
 function buildCCSwitchURL(
-  app: string,
+  app: AppType,
   name: string,
   models: Record<string, string>,
   apiKey: string
 ): string {
-  const serverAddress = getServerAddress()
-  // Claude Code reads the Anthropic protocol from the site root; the
-  // OpenAI-compatible clients read it from the /v1 path.
-  const endpoint = app === 'claude' ? serverAddress : `${serverAddress}/v1`
-  const params = new URLSearchParams()
-  params.set('resource', 'provider')
-  params.set('app', app)
-  params.set('name', name)
-  params.set('endpoint', endpoint)
-  params.set('apiKey', apiKey)
-  for (const [k, v] of Object.entries(models)) {
-    if (v) params.set(k, v)
-  }
-  params.set('homepage', serverAddress)
-  params.set('enabled', 'true')
-  return `ccswitch://v1/import?${params.toString()}`
+  const origin = preferPublicOrigin(
+    window.location.origin,
+    getServerAddress(),
+    window.location.origin
+  )
+  return buildCCSwitchImportUrl({
+    app,
+    name,
+    origin,
+    model: models.model,
+    models,
+    apiKey,
+  })
 }
 
 interface Props {
@@ -103,8 +104,8 @@ interface Props {
 
 export function CCSwitchDialog(props: Props) {
   const { t } = useTranslation()
-  const [app, setApp] = useState<AppType>('claude')
-  const [name, setName] = useState<string>(APP_CONFIGS.claude.defaultName)
+  const [app, setApp] = useState<AppType>('codex')
+  const [name, setName] = useState<string>(APP_CONFIGS.codex.defaultName)
   const [models, setModels] = useState<Record<string, string>>({})
 
   const { data: modelsData } = useQuery({
@@ -124,9 +125,9 @@ export function CCSwitchDialog(props: Props) {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setModels({})
 
-      setApp('claude')
+      setApp('codex')
 
-      setName(APP_CONFIGS.claude.defaultName)
+      setName(APP_CONFIGS.codex.defaultName)
     }
   }, [props.open])
 

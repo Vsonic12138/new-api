@@ -33,6 +33,8 @@ beforeEach(() => {
 
 afterEach(() => {
   queryClient.clear()
+  localStorage.removeItem('status')
+  vi.restoreAllMocks()
 })
 
 function renderDialog(models = ['gpt-5.4', 'claude-sonnet-4-6']) {
@@ -48,6 +50,30 @@ function renderDialog(models = ['gpt-5.4', 'claude-sonnet-4-6']) {
 }
 
 describe('CC Switch model selection', () => {
+  it('defaults to Codex and imports the selected GPT with high reasoning and a normalized public endpoint', async () => {
+    localStorage.setItem(
+      'status',
+      JSON.stringify({ server_address: 'https://newapi.vsonic12138.shop/v1/' })
+    )
+    const open = vi.spyOn(window, 'open').mockReturnValue(null)
+    renderDialog(['gpt-6.1-sol'])
+    const user = userEvent.setup()
+    expect(screen.getByRole('radio', { name: 'Codex' })).toBeChecked()
+    await user.click(screen.getByRole('combobox', { name: 'Primary Model' }))
+    await user.click(await screen.findByRole('option', { name: 'gpt-6.1-sol' }))
+    await user.click(screen.getByRole('button', { name: 'Open CC Switch' }))
+    const url = new URL(String(open.mock.calls[0]?.[0] ?? ''))
+    expect(url.searchParams.get('endpoint')).toBe(
+      'https://newapi.vsonic12138.shop/v1'
+    )
+    expect(url.searchParams.get('apiFormat')).toBe('openai_responses')
+    expect(url.searchParams.get('apiKey')).toBe('sk-test-only')
+    expect(url.searchParams.get('enabled')).toBe('true')
+    expect(atob(url.searchParams.get('config') ?? '')).toContain(
+      'model_reasoning_effort = "high"'
+    )
+  })
+
   it.each(['Claude Code', 'Codex', 'OpenCode'])(
     'opens %s models outside the clipping dialog and keeps the dialog open after selection',
     async (app) => {

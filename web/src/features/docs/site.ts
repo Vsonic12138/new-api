@@ -16,7 +16,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-
 export const DOCS_ORIGIN = 'https://newapi.vsonic12138.shop'
 export const DOCS_OPENAI_BASE_URL = `${DOCS_ORIGIN}/v1`
 export const DOCS_CARD_SHOP_URL = 'https://wzyp.cn/shop/XE6S10RT'
@@ -110,6 +109,8 @@ export const CLAUDE_CODE_SETTINGS = `{
 
 export const CODEX_CONFIG = `model_provider = "dahua"
 model = "gpt-6.1-sol"
+model_reasoning_effort = "high"
+plan_mode_reasoning_effort = "high"
 
 [model_providers.dahua]
 name = "Dahua API"
@@ -122,39 +123,95 @@ export const CODEX_ENV_UNIX = 'export DAHUA_API_KEY="sk-your-api-token"'
 export const CODEX_ENV_WINDOWS = '$env:DAHUA_API_KEY="sk-your-api-token"'
 
 export const DOCS_NAV = [
-  { to: '/docs', titleKey: 'Start here', audience: 'user' },
-  { to: '/docs/register', titleKey: 'Create an account', audience: 'user' },
+  {
+    to: '/docs',
+    titleKey: 'Start here',
+    audience: 'user',
+    section: 'Getting started',
+  },
+  {
+    to: '/docs/register',
+    titleKey: 'Create an account',
+    audience: 'user',
+    section: 'Getting started',
+  },
   {
     to: '/docs/topup',
     titleKey: 'Add quota with a redemption code',
     audience: 'user',
+    section: 'Getting started',
   },
-  { to: '/docs/token', titleKey: 'Create an API key', audience: 'user' },
-  { to: '/docs/cc-switch', titleKey: 'Set up CC Switch', audience: 'user' },
-  { to: '/docs/chat', titleKey: 'Chat clients', audience: 'user' },
-  { to: '/docs/image-mcp', titleKey: 'Image MCP setup', audience: 'user' },
+  {
+    to: '/docs/token',
+    titleKey: 'Create an API key',
+    audience: 'user',
+    section: 'Getting started',
+  },
+  {
+    to: '/docs/cc-switch',
+    titleKey: 'Set up CC Switch',
+    audience: 'user',
+    section: 'Configuration tools',
+  },
+  {
+    to: '/docs/magpie',
+    titleKey: 'Set up magpie',
+    audience: 'user',
+    section: 'Configuration tools',
+  },
+  {
+    to: '/docs/chat',
+    titleKey: 'Cherry Studio',
+    audience: 'user',
+    section: 'Chat clients',
+  },
+  {
+    to: '/docs/image-mcp',
+    titleKey: 'Image MCP setup',
+    audience: 'user',
+    section: 'Image generation and editing',
+  },
   {
     to: '/docs/images',
     titleKey: 'Generate your first image',
     audience: 'user',
+    section: 'Image generation and editing',
   },
   {
     to: '/docs/image-edit',
     titleKey: 'Edit an existing image',
     audience: 'user',
+    section: 'Image generation and editing',
   },
   {
     to: '/docs/troubleshooting',
     titleKey: 'Troubleshooting',
     audience: 'user',
+    section: 'Help',
   },
-  { to: '/docs/agent', titleKey: 'Agent reference', audience: 'agent' },
-  { to: '/docs/endpoint', titleKey: 'API addresses', audience: 'agent' },
-  { to: '/docs/codex', titleKey: 'Set up Codex', audience: 'agent' },
+  {
+    to: '/docs/agent',
+    titleKey: 'Agent reference',
+    audience: 'agent',
+    section: 'Technical reference',
+  },
+  {
+    to: '/docs/endpoint',
+    titleKey: 'API addresses',
+    audience: 'agent',
+    section: 'Technical reference',
+  },
+  {
+    to: '/docs/codex',
+    titleKey: 'Set up Codex',
+    audience: 'agent',
+    section: 'Technical reference',
+  },
   {
     to: '/docs/claude-code',
     titleKey: 'Set up Claude Code',
     audience: 'agent',
+    section: 'Technical reference',
   },
 ] as const
 

@@ -46,7 +46,7 @@ describe('homepage client import links', () => {
     ).toBe('https://newapi.vsonic12138.shop')
   })
 
-  it('fills Cherry Studio with root provider endpoint and standard base64 data', () => {
+  it('imports a separate GPT Responses provider with UTF-8 base64 data', () => {
     const url = buildCherryStudioImportUrl({
       name: '大黄API · 大狗叫',
       apiHost: `${origin}/v1/`,
@@ -58,17 +58,17 @@ describe('homepage client import links', () => {
       id: string
       name: string
       baseUrl: string
-      apiHost: string
+      type: string
       apiKey: string
     }
 
     expect(url.startsWith('cherrystudio://providers/api-keys?v=1&data=')).toBe(
       true
     )
-    expect(data.id).toBe('new-api')
+    expect(data.id).toBe('new-api-gpt')
     expect(data.name).toBe('大黄API · 大狗叫')
-    expect(data.baseUrl).toBe(origin)
-    expect(data.apiHost).toBe(origin)
+    expect(data.baseUrl).toBe(`${origin}/v1`)
+    expect(data.type).toBe('openai-response')
     expect(data.apiKey).toBe('sk-your-api-token')
     expect(url).not.toContain('127.0.0.1')
   })
@@ -155,16 +155,18 @@ describe('homepage client import links', () => {
     const webUrl = buildMagpieImportUrl({
       name: '大黄API',
       origin,
-      models: ['claude-sonnet-5', 'deepseek-flash'],
+      models: ['gpt-6.1-sol'],
       apiKey: 'sk-custom-test-key',
     })
     expect(webUrl.startsWith('https://usemagpie.ai/import#')).toBe(true)
     const hashParams = new URLSearchParams(webUrl.split('#')[1])
     expect(hashParams.get('name')).toBe('大黄API')
-    expect(hashParams.get('chat')).toBe(`${origin}/v1`)
-    expect(hashParams.get('anthropic')).toBe(origin)
+    expect(hashParams.has('chat')).toBe(false)
+    expect(hashParams.get('responses')).toBe(`${origin}/v1`)
+    expect(hashParams.has('anthropic')).toBe(false)
+    expect(hashParams.get('catalog')).toBe('openai')
     expect(hashParams.get('key')).toBe('sk-custom-test-key')
-    expect(hashParams.get('models')).toBe('claude-sonnet-5,deepseek-flash')
+    expect(hashParams.get('models')).toBe('gpt-6.1-sol')
     expect(hashParams.get('website')).toBe(origin)
     expect(hashParams.get('keys')).toBe(`${origin}/keys`)
 
@@ -175,8 +177,53 @@ describe('homepage client import links', () => {
     })
     expect(appUrl.startsWith('magpie://import?')).toBe(true)
     const appParams = new URLSearchParams(appUrl.split('?')[1])
-    expect(appParams.get('models')).toBe(
-      'claude-sonnet-5,gpt-6.1-sol,deepseek-v4-flash,gemini-3.8-flash,glm-5.3-flash'
+    expect(appParams.get('models')).toBe('gpt-6.1-sol')
+  })
+  it('keeps Grok chat imports separate from GPT Responses imports', () => {
+    const cherry = new URL(
+      buildCherryStudioImportUrl({
+        name: 'Grok',
+        apiHost: origin,
+        family: 'grok',
+      })
     )
+    const data = JSON.parse(
+      Buffer.from(cherry.searchParams.get('data') ?? '', 'base64').toString(
+        'utf8'
+      )
+    )
+    expect(data.id).toBe('new-api-grok')
+    expect(data.type).toBe('openai')
+    const magpie = new URL(
+      buildMagpieImportUrl({
+        name: 'Grok',
+        origin: `${origin}/v1/`,
+        family: 'grok',
+      })
+    )
+    const params = new URLSearchParams(magpie.hash.slice(1))
+    expect(params.get('chat')).toBe(`${origin}/v1`)
+    expect(params.has('responses')).toBe(false)
+    expect(params.get('catalog')).toBe('xai')
+    expect(params.get('models')).toBe('grok-4.7')
+    expect(magpie.search).toBe('')
+  })
+
+  it('includes explicit high reasoning in the Codex import config', () => {
+    const url = new URL(
+      buildCCSwitchImportUrl({
+        app: 'codex',
+        name: 'GPT',
+        origin,
+        model: 'gpt-6.1-sol',
+      })
+    )
+    const config = Buffer.from(
+      url.searchParams.get('config') ?? '',
+      'base64'
+    ).toString('utf8')
+    expect(config).toContain('model_reasoning_effort = "high"')
+    expect(config).toContain('plan_mode_reasoning_effort = "high"')
+    expect(url.searchParams.get('configFormat')).toBe('toml')
   })
 })

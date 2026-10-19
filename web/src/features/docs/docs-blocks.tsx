@@ -104,7 +104,7 @@ export function DocsImage(props: {
               alt={props.alt}
               loading='lazy'
               decoding='async'
-              className='border-border bg-muted/20 h-auto w-full rounded-xl border'
+              className='border-border bg-muted/20 h-auto max-w-full rounded-xl border'
             />
           </Button>
         }
@@ -119,7 +119,7 @@ export function DocsImage(props: {
           {t('Open original image')}
         </a>
       </Dialog>
-      <figcaption className='text-muted-foreground text-xs leading-5'>
+      <figcaption className='text-muted-foreground mx-auto max-w-prose text-center text-[12px] leading-[18px]'>
         {props.caption}
       </figcaption>
     </figure>
@@ -132,7 +132,7 @@ export function DocsFigure(props: { caption: string; children: ReactNode }) {
       <div className='border-border bg-card overflow-hidden rounded-xl border shadow-xs'>
         {props.children}
       </div>
-      <figcaption className='text-muted-foreground text-xs leading-5'>
+      <figcaption className='text-muted-foreground mx-auto max-w-prose text-center text-[12px] leading-[18px]'>
         {props.caption}
       </figcaption>
     </figure>
