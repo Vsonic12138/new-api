@@ -15,7 +15,7 @@ import (
 )
 
 func Playground(c *gin.Context) {
-  playgroundRelay(c, format)
+  playgroundRelay(c, types.RelayFormatOpenAI)
 }
 
 func PlaygroundImage(c *gin.Context) {
@@ -74,5 +74,5 @@ func playgroundRelay(c *gin.Context, format types.RelayFormat) {
 	}
 	_ = middleware.SetupContextForToken(c, tempToken)
 
-	Relay(c, types.RelayFormatOpenAI)
+	Relay(c, format)
 }
