@@ -206,7 +206,7 @@ describe('docs client addresses', () => {
     render(
       <I18nextProvider i18n={i18n}>
         <DocsImage
-          src='/docs-images/token-create.png'
+          src='/docs-images/token-create-e819b20ce1.png'
           alt='Image key example'
           caption='Image key example'
         />

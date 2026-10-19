@@ -47,7 +47,7 @@ export function DocsImageMcpPage() {
           )}
         </p>
         <DocsImage
-          src='/docs-images/token-create.png'
+          src='/docs-images/token-create-e819b20ce1.png'
           alt={t('Create an API key')}
           caption={t(
             'Image key example: the selected group is 生图 【标准】. Use your own key; the name is only for identification.'

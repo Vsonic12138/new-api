@@ -58,7 +58,7 @@ export function DocsRegisterPage() {
           </DocsStep>
         </DocsSteps>
         <DocsImage
-          src='/docs-images/sign-up.png'
+          src='/docs-images/sign-up-743ccd7c74.png'
           alt={t('Sign-up page screenshot')}
           caption={t(
             'The sign-up page. The form is email registration. GitHub is the button under the form.'
@@ -129,7 +129,7 @@ export function DocsRegisterPage() {
 
       <DocsSection title={t('Sign in')}>
         <DocsImage
-          src='/docs-images/sign-in.png'
+          src='/docs-images/sign-in-bc27299d1f.png'
           alt={t('Sign-in page screenshot')}
           caption={t(
             'The sign-in page. Use the username or email with the password, or use GitHub again.'
@@ -184,13 +184,13 @@ export function DocsTopupPage() {
           <DocsStep
             n={3}
             title={t(
-              'In the order window, fill in a phone number or an email address. The page recommends a phone number. An email address also receives the code.'
+              'Enter a phone number or an email address so you can find your order later.'
             )}
           />
           <DocsStep
             n={4}
             title={t(
-              'Choose Alipay or WeChat, then click 去支付 and finish the payment.'
+              'Choose a payment method shown on the page, then click 去支付 and finish the payment.'
             )}
           />
           <DocsStep
@@ -201,15 +201,15 @@ export function DocsTopupPage() {
           />
         </DocsSteps>
         <DocsImage
-          src='/docs-images/card-shop.png'
+          src='/docs-images/card-shop-c22f79f53a.png'
           alt={t('Card shop screenshot')}
           caption={t('The card shop home. Choose a code under 中转卡密.')}
         />
         <DocsImage
-          src='/docs-images/card-buy.png'
+          src='/docs-images/card-buy-009e16d37c.png'
           alt={t('Card shop order screenshot')}
           caption={t(
-            'The order window for the 10 yuan code. It states that 1 yuan equals 1 USD of quota. Pay with Alipay or WeChat.'
+            'The order window for the 10 yuan code. Check the quota, contact information, and available payment method before paying.'
           )}
         />
         <DocsNote>
@@ -340,7 +340,7 @@ export function DocsTokenPage() {
           />
         </DocsSteps>
         <DocsImage
-          src='/docs-images/model-square.png'
+          src='/docs-images/model-square-2d30121e4e.png'
           alt={t('Model Square screenshot')}
           caption={t(
             'Model Square. Read the Group line on the card before you create the key. Prices here are the quota prices.'
