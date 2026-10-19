@@ -44,6 +44,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     items: [
     {
       "tag": "fix",
+      "titleEn": "[docs] 统一本站配置导入并补充新版客户端实拍教程",
+      "titleZh": "[docs] 统一本站配置导入并补充新版客户端实拍教程",
+      "descEn": "Commit: a89ffda43 (2026-10-19)",
+      "descZh": "提交: a89ffda43 · 2026-10-19",
+      "commitHash": "a89ffda43"
+    },
+    {
+      "tag": "fix",
       "titleEn": "[docs] 重截文档配图并通过资源版本避免旧图缓存",
       "titleZh": "[docs] 重截文档配图并通过资源版本避免旧图缓存",
       "descEn": "Commit: b0773c192 (2026-10-19)",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 47230be4a (2026-10-06)",
       "descZh": "提交: 47230be4a · 2026-10-06",
       "commitHash": "47230be4a"
-    },
-    {
-      "tag": "chore",
-      "titleEn": "[changelog] 在 AGENTS.md 中增补提交规范与更新日志保障要求",
-      "titleZh": "[changelog] 在 AGENTS.md 中增补提交规范与更新日志保障要求",
-      "descEn": "Commit: 6501e2a74 (2026-10-06)",
-      "descZh": "提交: 6501e2a74 · 2026-10-06",
-      "commitHash": "6501e2a74"
     }
 ],
   },
