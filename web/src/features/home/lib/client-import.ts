@@ -27,6 +27,24 @@ export const CLIENT_IMPORT_PLACEHOLDER_KEY = 'sk-your-api-token'
  */
 export type CCSwitchApp = 'claude' | 'codex' | 'gemini' | 'opencode'
 
+// Shared by the homepage and documentation so the public templates stay aligned.
+export const CC_SWITCH_SITE_PRESETS = {
+  codex: {
+    label: 'Codex · GPT',
+    name: 'DaHuang API - GPT',
+    model: 'gpt-6.1-sol',
+    group: 'Codex 【标准】',
+    alternatives: ['gpt-6.1-sol', 'gpt-6-astra'],
+  },
+  opencode: {
+    label: 'OpenCode · Grok',
+    name: 'DaHuang API - Grok',
+    model: 'grok-4.7',
+    group: 'Grok 【特惠】',
+    alternatives: ['grok-4.7', 'grok-4.6', 'grok-4.5'],
+  },
+} as const
+
 function trimTrailingSlashes(value: string) {
   return value.replace(/\/+$/, '')
 }
@@ -89,22 +107,35 @@ export function buildCCSwitchImportUrl(input: {
   models?: Record<string, string>
   apiKey?: string
 }) {
-  const origin = trimTrailingSlashes(input.origin)
+  const origin = trimTrailingSlashes(input.origin).replace(/\/v1$/, '')
   // Claude Code speaks the Anthropic protocol from the site root, while the
   // OpenAI-compatible clients need the /v1 path.
-  const endpoint = input.app === 'claude' ? origin : `${origin}/v1`
+  const endpoint =
+    input.app === 'claude' || input.app === 'gemini' ? origin : `${origin}/v1`
   const params = new URLSearchParams()
   params.set('resource', 'provider')
   params.set('app', input.app)
   params.set('name', input.name)
   params.set('endpoint', endpoint)
   params.set('apiKey', input.apiKey || CLIENT_IMPORT_PLACEHOLDER_KEY)
+  const formats: Record<CCSwitchApp, string> = {
+    claude: 'anthropic',
+    codex: 'openai_responses',
+    gemini: 'gemini_native',
+    opencode: 'openai_chat',
+  }
+  params.set('apiFormat', formats[input.app])
   if (input.model) params.set('model', input.model)
   for (const [key, value] of Object.entries(input.models ?? {})) {
     if (value) params.set(key, value)
   }
   params.set('homepage', origin)
-  params.set('enabled', 'true')
+  params.set(
+    'enabled',
+    String(
+      Boolean(input.apiKey && input.apiKey !== CLIENT_IMPORT_PLACEHOLDER_KEY)
+    )
+  )
   return `ccswitch://v1/import?${params.toString()}`
 }
 
@@ -134,4 +165,3 @@ export function buildMagpieImportUrl(input: {
   }
   return `https://usemagpie.ai/import#${params.toString()}`
 }
-

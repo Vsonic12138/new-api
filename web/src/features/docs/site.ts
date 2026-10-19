@@ -99,6 +99,7 @@ else:
     print(image.url)`
 
 export const CC_SWITCH_SITE_URL = 'https://ccswitch.io'
+export const CC_SWITCH_TUTORIALS_URL = 'https://ccswitch.io/zh/tutorials'
 
 export const CLAUDE_CODE_SETTINGS = `{
   "env": {

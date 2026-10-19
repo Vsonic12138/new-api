@@ -35,7 +35,11 @@ import zh from '@/i18n/locales/zh.json'
 import { DocsImage } from '../docs-blocks'
 import { DocsNav } from '../docs-nav'
 import { DocsAgentPage } from '../pages/agent'
-import { DocsClaudeCodePage, DocsCodexPage } from '../pages/clients'
+import {
+  DocsCcSwitchPage,
+  DocsClaudeCodePage,
+  DocsCodexPage,
+} from '../pages/clients'
 import { DocsImageEditPage } from '../pages/image-edit'
 import { DocsImageMcpPage } from '../pages/image-mcp'
 import { DocsStartPage } from '../pages/start'
@@ -90,6 +94,31 @@ async function renderWithRouter(
 }
 
 describe('docs client addresses', () => {
+  it('links the official tutorials and offers GPT and Grok templates with inactive example keys', async () => {
+    await i18n.changeLanguage('en')
+    await renderWithRouter('/docs/cc-switch', DocsCcSwitchPage)
+    expect(
+      await screen.findByRole('link', { name: 'CC Switch official website' })
+    ).toHaveAttribute('href', 'https://ccswitch.io')
+    expect(
+      screen.getByRole('link', { name: 'CC Switch official tutorials' })
+    ).toHaveAttribute('href', 'https://ccswitch.io/zh/tutorials')
+    for (const [client, app, model] of [
+      ['Codex · GPT', 'codex', 'gpt-6.1-sol'],
+      ['OpenCode · Grok', 'opencode', 'grok-4.7'],
+    ]) {
+      const link = screen.getByRole('link', {
+        name: `Import ${client} template`,
+      })
+      const url = new URL(link.getAttribute('href') ?? '')
+      expect(url.searchParams.get('app')).toBe(app)
+      expect(url.searchParams.get('model')).toBe(model)
+      expect(url.searchParams.get('endpoint')).toBe(DOCS_OPENAI_BASE_URL)
+      expect(url.searchParams.get('apiKey')).toBe('sk-your-api-token')
+      expect(url.searchParams.get('enabled')).toBe('false')
+    }
+    expect(document.querySelectorAll('a[href^="ccswitch:"]')).toHaveLength(2)
+  })
   it('offers a copyable AI setup prompt with image credentials kept as a local placeholder', async () => {
     await i18n.changeLanguage('en')
     await renderWithRouter('/docs/image-mcp', DocsImageMcpPage)

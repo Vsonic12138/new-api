@@ -22,6 +22,7 @@ import {
   buildCCSwitchImportUrl,
   buildCherryStudioImportUrl,
   buildMagpieImportUrl,
+  CC_SWITCH_SITE_PRESETS,
   preferPublicOrigin,
 } from '../client-import'
 
@@ -109,7 +110,7 @@ describe('homepage client import links', () => {
     expect(claude.searchParams.get('model')).toBe('claude-opus-5-5')
     expect(claude.searchParams.get('sonnetModel')).toBe('claude-sonnet-5')
     expect(claude.searchParams.get('opusModel')).toBe('claude-opus-5-5')
-    expect(claude.searchParams.get('enabled')).toBe('true')
+    expect(claude.searchParams.get('enabled')).toBe('false')
     const gemini = new URL(
       buildCCSwitchImportUrl({
         app: 'gemini',
@@ -118,15 +119,37 @@ describe('homepage client import links', () => {
         model: 'gpt-6.1-sol',
       })
     )
-    for (const client of [codex, opencode, gemini]) {
+    for (const client of [codex, opencode]) {
       expect(client.searchParams.get('endpoint')).toBe(`${origin}/v1`)
       expect(client.searchParams.get('model')).toBe('gpt-6.1-sol')
     }
+    expect(gemini.searchParams.get('endpoint')).toBe(origin)
+    expect(gemini.searchParams.get('apiFormat')).toBe('gemini_native')
     expect(codex.searchParams.get('app')).toBe('codex')
     expect(gemini.searchParams.get('app')).toBe('gemini')
     expect(opencode.searchParams.get('app')).toBe('opencode')
     expect(claude.href).not.toContain('127.0.0.1')
   })
+
+  it.each(['codex', 'opencode'] as const)(
+    'imports the public %s template without activating its placeholder key',
+    (app) => {
+      const preset = CC_SWITCH_SITE_PRESETS[app]
+      const url = new URL(
+        buildCCSwitchImportUrl({ app, origin: `${origin}/v1/`, ...preset })
+      )
+      expect(url.searchParams.get('endpoint')).toBe(`${origin}/v1`)
+      expect(url.searchParams.get('apiKey')).toBe('sk-your-api-token')
+      expect(url.searchParams.get('enabled')).toBe('false')
+      expect(url.searchParams.get('model')).toBe(
+        app === 'codex' ? 'gpt-6.1-sol' : 'grok-4.7'
+      )
+      expect(url.searchParams.get('apiFormat')).toBe(
+        app === 'codex' ? 'openai_responses' : 'openai_chat'
+      )
+      expect(url.href).not.toContain('claude')
+    }
+  )
 
   it('builds magpie web import url with hash fragment and app protocol', () => {
     const webUrl = buildMagpieImportUrl({
@@ -157,4 +180,3 @@ describe('homepage client import links', () => {
     )
   })
 })
-

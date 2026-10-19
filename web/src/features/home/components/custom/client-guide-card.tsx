@@ -46,7 +46,7 @@ import {
   buildMagpieImportUrl,
   CLIENT_IMPORT_PLACEHOLDER_KEY,
   preferPublicOrigin,
-  type CCSwitchApp,
+  CC_SWITCH_SITE_PRESETS,
 } from '../../lib/client-import'
 
 // 智谱 ZCode 官方原版 Logo
@@ -226,7 +226,7 @@ function DshMockupVisual(props: {
   )
 }
 
-type CCSwitchTab = CCSwitchApp
+type CCSwitchTab = keyof typeof CC_SWITCH_SITE_PRESETS
 
 export function ClientGuideCard() {
   const { t } = useTranslation()
@@ -235,8 +235,7 @@ export function ClientGuideCard() {
   const [activeTab, setActiveTab] = useState<
     'zcode' | 'cherry' | 'ccswitch' | 'magpie' | 'dsh' | 'code'
   >('zcode')
-  const [ccSwitchApp, setCcSwitchApp] = useState<CCSwitchTab>('claude')
-  const [ccSwitchImage, setCcSwitchImage] = useState<'add' | 'main'>('add')
+  const [ccSwitchApp, setCcSwitchApp] = useState<CCSwitchTab>('codex')
   const [magpieImage, setMagpieImage] = useState<'import' | 'agents' | 'add'>(
     'import'
   )
@@ -262,13 +261,7 @@ export function ClientGuideCard() {
         )
       ) {
         setActiveTab(
-          detail as
-            | 'zcode'
-            | 'cherry'
-            | 'ccswitch'
-            | 'magpie'
-            | 'dsh'
-            | 'code'
+          detail as 'zcode' | 'cherry' | 'ccswitch' | 'magpie' | 'dsh' | 'code'
         )
       }
     }
@@ -311,25 +304,8 @@ export function ClientGuideCard() {
     'deepseek-v4-flash',
     'glm-5.3-flash',
   ]
-  const ccSwitchModelMap: Record<CCSwitchTab, Record<string, string>> = {
-    claude: {
-      model: 'claude-sonnet-5',
-      opusModel: 'claude-opus-5-5',
-      opus_model: 'claude-opus-5-5',
-      sonnetModel: 'claude-sonnet-5',
-      sonnet_model: 'claude-sonnet-5',
-    },
-    codex: { model: 'gpt-6.1-sol' },
-    gemini: { model: 'gemini-3.8-flash' },
-    opencode: { model: 'gpt-6.1-sol' },
-  }
-  const ccSwitchAltModels: Record<CCSwitchTab, string[]> = {
-    claude: ['claude-sonnet-5', 'claude-opus-5-5'],
-    codex: ['gpt-6.1-sol', 'gpt-5.6-luna'],
-    gemini: ['gemini-3.8-flash', 'deepseek-v4-flash'],
-    opencode: ['gpt-6.1-sol', 'claude-sonnet-5', 'deepseek-v4-flash'],
-  }
-  const ccSwitchModel = ccSwitchModelMap[ccSwitchApp].model ?? ''
+  const ccSwitchPreset = CC_SWITCH_SITE_PRESETS[ccSwitchApp]
+  const ccSwitchModel = ccSwitchPreset.model
 
   const handleCherryImport = () => {
     setImportingClient('cherry')
@@ -358,9 +334,9 @@ export function ClientGuideCard() {
 
     const link = buildCCSwitchImportUrl({
       app: ccSwitchApp,
-      name: providerName,
+      name: ccSwitchPreset.name,
       origin: effectiveOrigin,
-      models: ccSwitchModelMap[ccSwitchApp],
+      model: ccSwitchPreset.model,
       apiKey: CLIENT_IMPORT_PLACEHOLDER_KEY,
     })
 
@@ -372,27 +348,26 @@ export function ClientGuideCard() {
 
     toast.info(
       t(
-        'One-click import opens CC Switch and shows a confirmation. Replace the placeholder API key with a key from this site before confirming.'
+        'Import the template, replace sk-your-api-token with your site key in CC Switch, then enable the provider.'
       )
     )
     setImportingClient(null)
   }
 
-  const ccSwitchEndpoint =
-    ccSwitchApp === 'claude' ? anthropicBaseUrl : openAiBaseUrl
+  const ccSwitchEndpoint = openAiBaseUrl
   const ccSwitchSupportsImport = true
   const ccSwitchStepText = t(
-    'One-click import opens CC Switch and shows a confirmation. Replace the placeholder API key with a key from this site before confirming.'
+    'Import the template, replace sk-your-api-token with your site key in CC Switch, then enable the provider.'
   )
   const ccSwitchShot =
-    ccSwitchImage === 'add'
+    ccSwitchApp === 'codex'
       ? {
-          src: '/guides/ccswitch/add-provider.png',
-          title: t('CC Switch add provider screenshot'),
+          src: '/docs-images/ccswitch-codex-gpt-1e460de954.png',
+          title: t('CC Switch Codex GPT configuration'),
         }
       : {
-          src: '/guides/ccswitch/main-window.png',
-          title: t('CC Switch main window screenshot'),
+          src: '/docs-images/ccswitch-opencode-grok-21c7db8a73.png',
+          title: t('CC Switch OpenCode Grok configuration'),
         }
 
   const handleMagpieImport = () => {
@@ -416,22 +391,20 @@ export function ClientGuideCard() {
     setImportingClient(null)
   }
 
-  const magpieShot =
-    magpieImage === 'import'
-      ? {
-          src: '/guides/magpie/import-provider.png',
-          title: t('magpie import provider screenshot'),
-        }
-      : magpieImage === 'agents'
-        ? {
-            src: '/guides/magpie/agents-models.png',
-            title: t('magpie agents model management screenshot'),
-          }
-        : {
-            src: '/guides/magpie/add-provider.png',
-            title: t('magpie add provider panel screenshot'),
-          }
-
+  const magpieShot = {
+    import: {
+      src: '/guides/magpie/import-provider.png',
+      title: t('magpie import provider screenshot'),
+    },
+    agents: {
+      src: '/guides/magpie/agents-models.png',
+      title: t('magpie agents model management screenshot'),
+    },
+    add: {
+      src: '/guides/magpie/add-provider.png',
+      title: t('magpie add provider panel screenshot'),
+    },
+  }[magpieImage]
 
   const curlExample = `curl -X POST "${openAiBaseUrl}/chat/completions" \\
   -H "Authorization: Bearer sk-your-token" \\
@@ -757,7 +730,7 @@ export function ClientGuideCard() {
               </div>
 
               {/* Download */}
-              <div className='flex items-center justify-between pt-2 border-t border-border/40'>
+              <div className='border-border/40 flex items-center justify-between border-t pt-2'>
                 <span className='text-muted-foreground text-[11px]'>
                   {t('Need the ZCode IDE developer client?')}
                 </span>
@@ -1007,7 +980,7 @@ export function ClientGuideCard() {
         {activeTab === 'ccswitch' && (
           <div className='mt-5 grid gap-5 lg:grid-cols-12 lg:items-start'>
             <div className='border-border/70 bg-card space-y-4 rounded-2xl border p-5 shadow-xs lg:col-span-6'>
-              <div className='border-border/40 flex items-center justify-between border-b pb-3'>
+              <div className='border-border/40 flex flex-wrap items-center justify-between gap-3 border-b pb-3'>
                 <div className='flex items-center gap-2'>
                   <div className='border-border/50 bg-muted/30 flex size-8 items-center justify-center rounded-lg border'>
                     <CCSwitchLogo size={20} />
@@ -1018,7 +991,7 @@ export function ClientGuideCard() {
                     </h3>
                     <p className='text-muted-foreground text-[11px]'>
                       {t(
-                        'Switch Claude Code, Codex, OpenCode, and Pi providers from one desktop app.'
+                        'Configure GPT in Codex or Grok in OpenCode with this site.'
                       )}
                     </p>
                   </div>
@@ -1029,13 +1002,13 @@ export function ClientGuideCard() {
                   className='text-muted-foreground h-7 gap-1 px-2 text-xs'
                   render={
                     <a
-                      href='https://ccswitch.io/zh/docs?section=getting-started&item=quickstart'
+                      href='https://ccswitch.io/zh/tutorials'
                       target='_blank'
                       rel='noopener noreferrer'
                     />
                   }
                 >
-                  <span>{t('Official docs')}</span>
+                  <span>{t('CC Switch official tutorials')}</span>
                   <ExternalLink className='size-3' />
                 </Button>
               </div>
@@ -1044,13 +1017,14 @@ export function ClientGuideCard() {
                 <div className='flex flex-wrap gap-1.5'>
                   {(
                     [
-                      ['claude', 'Claude Code'],
-                      ['codex', 'Codex'],
-                      ['gemini', 'Gemini CLI'],
-                      ['opencode', 'OpenCode'],
+                      ['codex', 'Codex · GPT'],
+                      ['opencode', 'OpenCode · Grok'],
                     ] as const
                   ).map(([app, label]) => (
-                    <button
+                    <Button
+                      variant='ghost'
+                      size='sm'
+                      aria-pressed={ccSwitchApp === app}
                       key={app}
                       type='button'
                       onClick={() => setCcSwitchApp(app)}
@@ -1062,7 +1036,7 @@ export function ClientGuideCard() {
                       )}
                     >
                       {label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
                 <Button
@@ -1077,7 +1051,7 @@ export function ClientGuideCard() {
                   ) : (
                     <CheckCircle2 className='size-3' />
                   )}
-                  <span>{t('One-click import')}</span>
+                  <span>{t('Import configuration template')}</span>
                 </Button>
               </div>
 
@@ -1088,11 +1062,11 @@ export function ClientGuideCard() {
                   </span>
                   <div className='min-w-0 flex-1'>
                     <span className='text-foreground font-semibold'>
-                      {t('Add provider')}
+                      {t('Choose a configuration')}
                     </span>
                     <p className='text-muted-foreground mt-0.5 text-[11px]'>
                       {t(
-                        'Click the plus button, choose Custom, then fill in the API key and endpoint. A preset only needs an API key.'
+                        'Choose GPT or Grok above. The template fills in the site address and model for you.'
                       )}
                     </p>
                     <div className='mt-2 grid gap-2 sm:grid-cols-2'>
@@ -1139,52 +1113,27 @@ export function ClientGuideCard() {
                         </p>
                       </div>
                     </div>
-                    {ccSwitchApp === 'claude' ? (
-                      <div className='mt-2 flex flex-wrap items-center gap-1.5 text-[11px]'>
-                        <span className='text-muted-foreground text-[10px]'>
-                          {t('Recommended models')}:
-                        </span>
+                    <p className='text-muted-foreground mt-2 text-[11px]'>
+                      {t('Group')}: {ccSwitchPreset.group}
+                    </p>
+                    <div className='mt-2 flex flex-wrap items-center gap-1.5 text-[11px]'>
+                      <span className='text-muted-foreground text-[10px]'>
+                        {t('Recommended models')}:
+                      </span>
+                      {ccSwitchPreset.alternatives.map((model) => (
                         <CopyButton
-                          value='claude-opus-5-5'
+                          key={model}
+                          value={model}
                           variant='outline'
                           size='sm'
                           className='h-5 rounded px-1.5 font-mono text-[10px]'
                           tooltip={t('Copy')}
                           successTooltip={t('Copied!')}
                         >
-                          <span>opus: claude-opus-5-5</span>
+                          <span>{model}</span>
                         </CopyButton>
-                        <CopyButton
-                          value='claude-sonnet-5'
-                          variant='outline'
-                          size='sm'
-                          className='h-5 rounded px-1.5 font-mono text-[10px]'
-                          tooltip={t('Copy')}
-                          successTooltip={t('Copied!')}
-                        >
-                          <span>sonnet: claude-sonnet-5</span>
-                        </CopyButton>
-                      </div>
-                    ) : (
-                      <div className='mt-2 flex flex-wrap items-center gap-1.5 text-[11px]'>
-                        <span className='text-muted-foreground text-[10px]'>
-                          {t('Recommended models')}:
-                        </span>
-                        {ccSwitchAltModels[ccSwitchApp].map((model) => (
-                          <CopyButton
-                            key={model}
-                            value={model}
-                            variant='outline'
-                            size='sm'
-                            className='h-5 rounded px-1.5 font-mono text-[10px]'
-                            tooltip={t('Copy')}
-                            successTooltip={t('Copied!')}
-                          >
-                            <span>{model}</span>
-                          </CopyButton>
-                        ))}
-                      </div>
-                    )}
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -1214,7 +1163,7 @@ export function ClientGuideCard() {
                     </span>
                     <p className='text-muted-foreground mt-0.5 text-[11px]'>
                       {t(
-                        'Click Enable on the provider card. Claude Code applies immediately. For Codex and OpenCode, restart the terminal or CLI.'
+                        'After replacing the example key, enable the provider and restart Codex or OpenCode.'
                       )}
                     </p>
                   </div>
@@ -1226,13 +1175,13 @@ export function ClientGuideCard() {
                 <AlertCircle className='size-3.5 shrink-0 text-blue-600 dark:text-blue-400' />
                 <span>
                   {t(
-                    'Claude Code uses the site root with the Anthropic protocol. Codex and OpenCode use the OpenAI-compatible /v1 address.'
+                    'Both use the /v1 address. Choose a key from Codex 【标准】 for GPT or Grok 【特惠】 for Grok.'
                   )}
                 </span>
               </div>
 
               {/* Download link */}
-              <div className='flex items-center justify-between pt-2 border-t border-border/40'>
+              <div className='border-border/40 flex items-center justify-between border-t pt-2'>
                 <span className='text-muted-foreground text-[11px]'>
                   {t('Need the CC Switch desktop client?')}
                 </span>
@@ -1248,7 +1197,7 @@ export function ClientGuideCard() {
                     />
                   }
                 >
-                  <span>{t('Download CC Switch')}</span>
+                  <span>{t('CC Switch official website')}</span>
                   <ExternalLink className='size-3' />
                 </Button>
               </div>
@@ -1257,32 +1206,9 @@ export function ClientGuideCard() {
             <div className='lg:col-span-6'>
               <div className='border-border/70 bg-card rounded-2xl border p-3 shadow-xs'>
                 <div className='mb-2 flex items-center justify-between px-1'>
-                  <div className='flex gap-1'>
-                    <button
-                      type='button'
-                      onClick={() => setCcSwitchImage('add')}
-                      className={cn(
-                        'rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors',
-                        ccSwitchImage === 'add'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-muted-foreground hover:bg-muted'
-                      )}
-                    >
-                      {t('Add provider')}
-                    </button>
-                    <button
-                      type='button'
-                      onClick={() => setCcSwitchImage('main')}
-                      className={cn(
-                        'rounded-md px-2 py-0.5 text-[10px] font-medium transition-colors',
-                        ccSwitchImage === 'main'
-                          ? 'bg-primary text-primary-foreground'
-                          : 'text-muted-foreground hover:bg-muted'
-                      )}
-                    >
-                      {t('Main window')}
-                    </button>
-                  </div>
+                  <span className='text-sm font-medium'>
+                    {ccSwitchPreset.label}
+                  </span>
                   <span className='text-muted-foreground inline-flex items-center gap-1 text-[10px]'>
                     <Maximize2 className='size-2.5' /> {t('Click to enlarge')}
                   </span>
@@ -1305,7 +1231,7 @@ export function ClientGuideCard() {
                 </div>
                 <p className='text-muted-foreground mt-2 text-center text-[10px]'>
                   {t(
-                    'Source: CC Switch official quick start. The screenshot shows where to add a provider and API key.'
+                    'Captured in CC Switch 4.0.16 with this site address and an example key. Replace the example key before use.'
                   )}
                 </p>
               </div>

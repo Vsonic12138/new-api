@@ -19,7 +19,14 @@ For commercial licensing, please contact support@quantumnous.com
 import { useTranslation } from 'react-i18next'
 
 import {
+  buildCCSwitchImportUrl,
+  CC_SWITCH_SITE_PRESETS,
+} from '@/features/home/lib/client-import'
+
+import {
+  DocsActionLink,
   DocsCode,
+  DocsImage,
   DocsNote,
   DocsSection,
   DocsStep,
@@ -27,10 +34,10 @@ import {
   DocsTextLink,
   DocsTitle,
 } from '../docs-blocks'
-import { CcSwitchFigure } from '../docs-figures'
 import {
   CC_SWITCH_RELEASES_URL,
   CC_SWITCH_SITE_URL,
+  CC_SWITCH_TUTORIALS_URL,
   CLAUDE_CODE_SETTINGS,
   CODEX_CONFIG,
   CODEX_ENV_UNIX,
@@ -99,29 +106,26 @@ export function DocsCcSwitchPage() {
       <DocsTitle
         title={t('Set up CC Switch')}
         summary={t(
-          'CC Switch writes the Claude Code or Codex provider for you. Create an API key first.'
+          'Configure GPT in Codex or Grok in OpenCode with this site.'
         )}
       />
       <DocsSection title={t('Install')}>
-        <DocsSteps>
-          <DocsStep n={1} title={t('Download the installer for your system.')}>
-            <p>
-              <DocsTextLink href={CC_SWITCH_RELEASES_URL} external>
-                {t('GitHub releases')}
-              </DocsTextLink>
-              {' · '}
-              <DocsTextLink href={CC_SWITCH_SITE_URL} external>
-                ccswitch.io
-              </DocsTextLink>
-            </p>
-          </DocsStep>
-          <DocsStep
-            n={2}
-            title={t(
-              'Install it, then open CC Switch once before you click an import link. A closed app cannot receive the link.'
-            )}
-          />
-        </DocsSteps>
+        <p>
+          {t(
+            'Download and install CC Switch. When the browser asks to open CC Switch, allow it.'
+          )}
+        </p>
+        <div className='flex flex-wrap gap-3'>
+          <DocsActionLink href={CC_SWITCH_SITE_URL} external>
+            {t('CC Switch official website')}
+          </DocsActionLink>
+          <DocsActionLink href={CC_SWITCH_RELEASES_URL} external>
+            {t('GitHub releases')}
+          </DocsActionLink>
+          <DocsActionLink href={CC_SWITCH_TUTORIALS_URL} external>
+            {t('CC Switch official tutorials')}
+          </DocsActionLink>
+        </div>
       </DocsSection>
       <DocsSection title={t('Import from this site')}>
         <DocsSteps>
@@ -131,61 +135,107 @@ export function DocsCcSwitchPage() {
               'Open API Keys, open the menu on the key row, and choose CC Switch.'
             )}
           >
-            <DocsTextLink href='/keys'>{t('API Keys')}</DocsTextLink>
+            <DocsActionLink href='/keys' primary>
+              {t('API Keys')}
+            </DocsActionLink>
           </DocsStep>
           <DocsStep
             n={2}
             title={t(
-              'Choose Claude Code or Codex. Select a primary model that belongs to this key group. Claude Code can also fill Haiku, Sonnet, and Opus model fields.'
+              'Choose Codex for GPT or OpenCode for Grok, then select a model available to your key.'
             )}
           />
           <DocsStep
             n={3}
             title={t(
-              'Click Open CC Switch and confirm the provider in the app.'
+              'Click Open CC Switch, check the address and model, and confirm the import.'
             )}
           />
           <DocsStep
             n={4}
-            title={t(
-              'Enable the provider. Claude Code can be used immediately. Quit and reopen the terminal before starting Codex.'
-            )}
+            title={t('Enable the provider and restart Codex or OpenCode.')}
           />
         </DocsSteps>
-        <div className='grid gap-4 sm:grid-cols-2'>
-          <CcSwitchFigure />
-          <CcSwitchFigure client='codex' />
-        </div>
+        <DocsNote>
+          {t(
+            'Both use the /v1 address. Choose a key from Codex 【标准】 for GPT or Grok 【特惠】 for Grok.'
+          )}
+        </DocsNote>
+      </DocsSection>
+      <DocsSection title={t('Import configuration template')}>
         <p>
           {t(
-            'Configuration field example. Select the Codex tab for Codex, or the Claude tab for Claude Code. Use the site address below, not an address from another provider screenshot.'
+            'Import the template, replace sk-your-api-token with your site key in CC Switch, then enable the provider.'
           )}
         </p>
-        <DocsNote>
-          {t('The import fills the address for you:')} {DOCS_ORIGIN}{' '}
-          {t('for Claude Code, and')} {DOCS_OPENAI_BASE_URL} {t('for Codex.')}
-        </DocsNote>
+        <div className='space-y-4'>
+          {(['codex', 'opencode'] as const).map((app) => {
+            const preset = CC_SWITCH_SITE_PRESETS[app]
+            return (
+              <div key={app} className='space-y-2'>
+                <p className='text-sm font-medium'>
+                  {preset.label} · {preset.group} · <code>{preset.model}</code>
+                </p>
+                <DocsActionLink
+                  href={buildCCSwitchImportUrl({
+                    app,
+                    name: preset.name,
+                    origin: DOCS_ORIGIN,
+                    model: preset.model,
+                  })}
+                  external
+                >
+                  {t('Import {{client}} template', { client: preset.label })}
+                </DocsActionLink>
+              </div>
+            )
+          })}
+        </div>
+        <div className='max-w-lg'>
+          <DocsImage
+            src='/docs-images/ccswitch-import-gpt-8d3a3f9010.png'
+            alt={t('CC Switch GPT import confirmation')}
+            caption={t(
+              'Captured in CC Switch 4.0.16 with this site address and an example key. Replace the example key before use.'
+            )}
+          />
+        </div>
       </DocsSection>
       <DocsSection title={t('Add the provider yourself')}>
         <DocsSteps>
           <DocsStep
             n={1}
             title={t(
-              'In CC Switch, add a provider and choose the custom option.'
+              'Select Codex for GPT or OpenCode for Grok, add a custom provider, and paste your API key.'
             )}
           />
           <DocsStep
             n={2}
             title={t(
-              'Paste the API key. Use the Claude Code address with no /v1, or the Codex address with /v1. Do not swap them.'
+              'Use the address below. For Codex select OpenAI Responses; for OpenCode select OpenAI Compatible (Chat Completions).'
             )}
           >
-            <DocsTextLink href='/docs/endpoint'>
-              {t('API addresses')}
-            </DocsTextLink>
+            <DocsCode
+              label={t('OpenAI base URL')}
+              code={DOCS_OPENAI_BASE_URL}
+            />
           </DocsStep>
           <DocsStep n={3} title={t('Save the provider and enable it.')} />
         </DocsSteps>
+        <DocsImage
+          src='/docs-images/ccswitch-codex-gpt-1e460de954.png'
+          alt={t('CC Switch Codex GPT configuration')}
+          caption={t(
+            'Captured in CC Switch 4.0.16 with this site address and an example key. Replace the example key before use.'
+          )}
+        />
+        <DocsImage
+          src='/docs-images/ccswitch-opencode-grok-21c7db8a73.png'
+          alt={t('CC Switch OpenCode Grok configuration')}
+          caption={t(
+            'Captured in CC Switch 4.0.16 with this site address and an example key. Replace the example key before use.'
+          )}
+        />
       </DocsSection>
     </>
   )
