@@ -18,8 +18,11 @@ For commercial licensing, please contact support@quantumnous.com
 */
 import { Link } from '@tanstack/react-router'
 import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { CopyButton } from '@/components/copy-button'
+import { Dialog } from '@/components/dialog'
+import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 
 export function DocsTitle(props: { title: string; summary: string }) {
@@ -31,9 +34,13 @@ export function DocsTitle(props: { title: string; summary: string }) {
   )
 }
 
-export function DocsSection(props: { title: string; children: ReactNode }) {
+export function DocsSection(props: {
+  title: string
+  id?: string
+  children: ReactNode
+}) {
   return (
-    <section className='space-y-3'>
+    <section id={props.id} className='scroll-mt-24 space-y-3'>
       <h2 className='text-base font-semibold'>{props.title}</h2>
       <div className='text-foreground/90 space-y-3 text-sm leading-6'>
         {props.children}
@@ -77,13 +84,40 @@ export function DocsImage(props: {
   alt: string
   caption: string
 }) {
+  const { t } = useTranslation()
   return (
     <figure className='space-y-2'>
-      <img
-        src={props.src}
-        alt={props.alt}
-        className='border-border bg-muted/20 w-full rounded-xl border'
-      />
+      <Dialog
+        title={props.alt}
+        description={props.caption}
+        contentClassName='sm:max-w-6xl'
+        bodyClassName='overflow-x-auto'
+        trigger={
+          <Button
+            variant='ghost'
+            className='h-auto w-full cursor-zoom-in p-0 whitespace-normal'
+            aria-label={t('Enlarge image: {{title}}', { title: props.alt })}
+          >
+            <img
+              src={props.src}
+              alt={props.alt}
+              loading='lazy'
+              decoding='async'
+              className='border-border bg-muted/20 h-auto w-full rounded-xl border'
+            />
+          </Button>
+        }
+      >
+        <img src={props.src} alt={props.alt} className='h-auto w-full' />
+        <a
+          href={props.src}
+          target='_blank'
+          rel='noopener noreferrer'
+          className='text-primary mt-3 inline-block underline underline-offset-4'
+        >
+          {t('Open original image')}
+        </a>
+      </Dialog>
       <figcaption className='text-muted-foreground text-xs leading-5'>
         {props.caption}
       </figcaption>

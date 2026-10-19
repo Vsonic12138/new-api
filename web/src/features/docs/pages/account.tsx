@@ -276,7 +276,7 @@ export function DocsTokenPage() {
           <DocsStep
             n={4}
             title={t(
-              'Group: you must select one. Open Model Square first and read the group printed on the model card. Select that same group here. There is no fixed group named CC or Codex.'
+              'Group: select the group shown for your model in Model Square. Current names can change. For the image MCP, create a separate key in 生图 【标准】.'
             )}
           />
           <DocsStep

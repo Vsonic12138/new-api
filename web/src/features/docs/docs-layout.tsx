@@ -25,8 +25,8 @@ import { DocsNav } from './docs-nav'
 export function DocsLayout() {
   return (
     <PublicLayout>
-      <div className='mx-auto grid w-full max-w-6xl gap-8 lg:grid-cols-[220px_minmax(0,1fr)]'>
-        <aside className='lg:sticky lg:top-20 lg:self-start'>
+      <div className='mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 lg:grid-cols-[220px_minmax(0,1fr)]'>
+        <aside className='min-w-0 lg:sticky lg:top-20 lg:self-start'>
           <DocsNav />
         </aside>
         <article className='min-w-0 space-y-8 pb-16'>

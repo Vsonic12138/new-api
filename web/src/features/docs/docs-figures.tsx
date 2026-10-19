@@ -19,6 +19,8 @@ For commercial licensing, please contact support@quantumnous.com
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { DOCS_OPENAI_BASE_URL, DOCS_ORIGIN } from './site'
+
 function MockWindow(props: { title: string; children: ReactNode }) {
   return (
     <div>
@@ -151,19 +153,22 @@ export function ModelGroupFigure() {
   )
 }
 
-export function CcSwitchFigure() {
+export function CcSwitchFigure(props: { client?: 'codex' | 'claude' }) {
   const { t } = useTranslation()
   return (
-    <MockWindow title={t('Import to CC Switch')}>
-      <div className='flex flex-wrap gap-2'>
-        <div className='bg-foreground text-background rounded-md px-2.5 py-1 text-xs font-medium'>
-          Claude Code
-        </div>
-        <div className='border-border rounded-md border px-2.5 py-1 text-xs'>
-          Codex
-        </div>
-      </div>
-      <MockField label={t('Primary Model')} value='claude-sonnet-5' />
+    <MockWindow title={t('Configuration example')}>
+      <p className='text-xs'>
+        {props.client === 'codex' ? 'Codex' : 'Claude Code'}
+      </p>
+      <MockField label={t('Provider')} value='Dahua API' />
+      <MockField
+        label={t('Base URL')}
+        value={props.client === 'codex' ? DOCS_OPENAI_BASE_URL : DOCS_ORIGIN}
+      />
+      <MockField
+        label={t('Primary Model')}
+        value={props.client === 'codex' ? 'gpt-6.1-sol' : 'claude-sonnet-5'}
+      />
       <div className='bg-foreground text-background w-fit rounded-md px-3 py-1.5 text-xs font-medium'>
         {t('Open CC Switch')}
       </div>

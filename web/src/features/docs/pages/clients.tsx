@@ -20,7 +20,6 @@ import { useTranslation } from 'react-i18next'
 
 import {
   DocsCode,
-  DocsImage,
   DocsNote,
   DocsSection,
   DocsStep,
@@ -123,13 +122,6 @@ export function DocsCcSwitchPage() {
             )}
           />
         </DocsSteps>
-        <DocsImage
-          src='/guides/ccswitch/main-window.png'
-          alt={t('CC Switch main window screenshot')}
-          caption={t(
-            'CC Switch after it is open. The import from this site adds a provider card here.'
-          )}
-        />
       </DocsSection>
       <DocsSection title={t('Import from this site')}>
         <DocsSteps>
@@ -160,7 +152,15 @@ export function DocsCcSwitchPage() {
             )}
           />
         </DocsSteps>
-        <CcSwitchFigure />
+        <div className='grid gap-4 sm:grid-cols-2'>
+          <CcSwitchFigure />
+          <CcSwitchFigure client='codex' />
+        </div>
+        <p>
+          {t(
+            'Configuration field example. Select the Codex tab for Codex, or the Claude tab for Claude Code. Use the site address below, not an address from another provider screenshot.'
+          )}
+        </p>
         <DocsNote>
           {t('The import fills the address for you:')} {DOCS_ORIGIN}{' '}
           {t('for Claude Code, and')} {DOCS_OPENAI_BASE_URL} {t('for Codex.')}
@@ -186,13 +186,6 @@ export function DocsCcSwitchPage() {
           </DocsStep>
           <DocsStep n={3} title={t('Save the provider and enable it.')} />
         </DocsSteps>
-        <DocsImage
-          src='/guides/ccswitch/add-provider.png'
-          alt={t('CC Switch add provider screenshot')}
-          caption={t(
-            'Where CC Switch asks for the provider, the API key, and the endpoint.'
-          )}
-        />
       </DocsSection>
     </>
   )
@@ -305,7 +298,7 @@ export function DocsCodexPage() {
       <DocsTitle
         title={t('Set up Codex')}
         summary={t(
-          'Codex uses the OpenAI-compatible address ending in /v1. The API key stays in an environment variable, not in the config file.'
+          'This page configures Codex CLI in a terminal. For the desktop app, follow the CC Switch guide. The CLI uses a base URL ending in /v1 and reads the key from the same terminal environment.'
         )}
       />
       <DocsSection title={t('Check Node.js')}>
@@ -370,7 +363,7 @@ export function DocsCodexPage() {
           <DocsStep
             n={2}
             title={t(
-              'Replace sk-your-api-token with a key from API Keys, then open a new terminal.'
+              'Set the variable below, then run codex in that same terminal. These variables last only for that terminal session; a desktop app launched elsewhere may not inherit them.'
             )}
           >
             <DocsTextLink href='/keys'>{t('API Keys')}</DocsTextLink>

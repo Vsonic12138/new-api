@@ -32,12 +32,17 @@ import { Route as AuthenticatedSystemSettingsRouteRouteImport } from './routes/_
 import { Route as AboutIndexRouteImport } from './routes/about/index'
 import { Route as DocsIndexRouteImport } from './routes/docs/index'
 import { Route as DocsCcSwitchRouteImport } from './routes/docs/cc-switch'
+import { Route as DocsChatRouteImport } from './routes/docs/chat'
 import { Route as DocsClaudeCodeRouteImport } from './routes/docs/claude-code'
 import { Route as DocsCodexRouteImport } from './routes/docs/codex'
 import { Route as DocsEndpointRouteImport } from './routes/docs/endpoint'
+import { Route as DocsImageEditRouteImport } from './routes/docs/image-edit'
+import { Route as DocsImageMcpRouteImport } from './routes/docs/image-mcp'
+import { Route as DocsImagesRouteImport } from './routes/docs/images'
 import { Route as DocsRegisterRouteImport } from './routes/docs/register'
 import { Route as DocsTokenRouteImport } from './routes/docs/token'
 import { Route as DocsTopupRouteImport } from './routes/docs/topup'
+import { Route as DocsTroubleshootingRouteImport } from './routes/docs/troubleshooting'
 import { Route as OauthProviderRouteImport } from './routes/oauth/$provider'
 import { Route as PricingIndexRouteImport } from './routes/pricing/index'
 import { Route as RankingsIndexRouteImport } from './routes/rankings/index'
@@ -196,6 +201,11 @@ const DocsCcSwitchRoute = DocsCcSwitchRouteImport.update({
   path: '/cc-switch',
   getParentRoute: () => DocsRouteRoute,
 } as any)
+const DocsChatRoute = DocsChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
+  getParentRoute: () => DocsRouteRoute,
+} as any)
 const DocsClaudeCodeRoute = DocsClaudeCodeRouteImport.update({
   id: '/claude-code',
   path: '/claude-code',
@@ -211,6 +221,21 @@ const DocsEndpointRoute = DocsEndpointRouteImport.update({
   path: '/endpoint',
   getParentRoute: () => DocsRouteRoute,
 } as any)
+const DocsImageEditRoute = DocsImageEditRouteImport.update({
+  id: '/image-edit',
+  path: '/image-edit',
+  getParentRoute: () => DocsRouteRoute,
+} as any)
+const DocsImageMcpRoute = DocsImageMcpRouteImport.update({
+  id: '/image-mcp',
+  path: '/image-mcp',
+  getParentRoute: () => DocsRouteRoute,
+} as any)
+const DocsImagesRoute = DocsImagesRouteImport.update({
+  id: '/images',
+  path: '/images',
+  getParentRoute: () => DocsRouteRoute,
+} as any)
 const DocsRegisterRoute = DocsRegisterRouteImport.update({
   id: '/register',
   path: '/register',
@@ -224,6 +249,11 @@ const DocsTokenRoute = DocsTokenRouteImport.update({
 const DocsTopupRoute = DocsTopupRouteImport.update({
   id: '/topup',
   path: '/topup',
+  getParentRoute: () => DocsRouteRoute,
+} as any)
+const DocsTroubleshootingRoute = DocsTroubleshootingRouteImport.update({
+  id: '/troubleshooting',
+  path: '/troubleshooting',
   getParentRoute: () => DocsRouteRoute,
 } as any)
 const OauthProviderRoute = OauthProviderRouteImport.update({
@@ -496,12 +526,17 @@ export interface FileRoutesByFullPath {
   '/503': typeof errors503Route
   '/chat2link': typeof AuthenticatedChat2linkRoute
   '/docs/cc-switch': typeof DocsCcSwitchRoute
+  '/docs/chat': typeof DocsChatRoute
   '/docs/claude-code': typeof DocsClaudeCodeRoute
   '/docs/codex': typeof DocsCodexRoute
   '/docs/endpoint': typeof DocsEndpointRoute
+  '/docs/image-edit': typeof DocsImageEditRoute
+  '/docs/image-mcp': typeof DocsImageMcpRoute
+  '/docs/images': typeof DocsImagesRoute
   '/docs/register': typeof DocsRegisterRoute
   '/docs/token': typeof DocsTokenRoute
   '/docs/topup': typeof DocsTopupRoute
+  '/docs/troubleshooting': typeof DocsTroubleshootingRoute
   '/oauth/$provider': typeof OauthProviderRoute
   '/about/': typeof AboutIndexRoute
   '/docs/': typeof DocsIndexRoute
@@ -566,12 +601,17 @@ export interface FileRoutesByTo {
   '/503': typeof errors503Route
   '/chat2link': typeof AuthenticatedChat2linkRoute
   '/docs/cc-switch': typeof DocsCcSwitchRoute
+  '/docs/chat': typeof DocsChatRoute
   '/docs/claude-code': typeof DocsClaudeCodeRoute
   '/docs/codex': typeof DocsCodexRoute
   '/docs/endpoint': typeof DocsEndpointRoute
+  '/docs/image-edit': typeof DocsImageEditRoute
+  '/docs/image-mcp': typeof DocsImageMcpRoute
+  '/docs/images': typeof DocsImagesRoute
   '/docs/register': typeof DocsRegisterRoute
   '/docs/token': typeof DocsTokenRoute
   '/docs/topup': typeof DocsTopupRoute
+  '/docs/troubleshooting': typeof DocsTroubleshootingRoute
   '/oauth/$provider': typeof OauthProviderRoute
   '/about': typeof AboutIndexRoute
   '/docs': typeof DocsIndexRoute
@@ -641,12 +681,17 @@ export interface FileRoutesById {
   '/(errors)/503': typeof errors503Route
   '/_authenticated/chat2link': typeof AuthenticatedChat2linkRoute
   '/docs/cc-switch': typeof DocsCcSwitchRoute
+  '/docs/chat': typeof DocsChatRoute
   '/docs/claude-code': typeof DocsClaudeCodeRoute
   '/docs/codex': typeof DocsCodexRoute
   '/docs/endpoint': typeof DocsEndpointRoute
+  '/docs/image-edit': typeof DocsImageEditRoute
+  '/docs/image-mcp': typeof DocsImageMcpRoute
+  '/docs/images': typeof DocsImagesRoute
   '/docs/register': typeof DocsRegisterRoute
   '/docs/token': typeof DocsTokenRoute
   '/docs/topup': typeof DocsTopupRoute
+  '/docs/troubleshooting': typeof DocsTroubleshootingRoute
   '/oauth/$provider': typeof OauthProviderRoute
   '/about/': typeof AboutIndexRoute
   '/docs/': typeof DocsIndexRoute
@@ -715,12 +760,17 @@ export interface FileRouteTypes {
     | '/503'
     | '/chat2link'
     | '/docs/cc-switch'
+    | '/docs/chat'
     | '/docs/claude-code'
     | '/docs/codex'
     | '/docs/endpoint'
+    | '/docs/image-edit'
+    | '/docs/image-mcp'
+    | '/docs/images'
     | '/docs/register'
     | '/docs/token'
     | '/docs/topup'
+    | '/docs/troubleshooting'
     | '/oauth/$provider'
     | '/about/'
     | '/docs/'
@@ -785,12 +835,17 @@ export interface FileRouteTypes {
     | '/503'
     | '/chat2link'
     | '/docs/cc-switch'
+    | '/docs/chat'
     | '/docs/claude-code'
     | '/docs/codex'
     | '/docs/endpoint'
+    | '/docs/image-edit'
+    | '/docs/image-mcp'
+    | '/docs/images'
     | '/docs/register'
     | '/docs/token'
     | '/docs/topup'
+    | '/docs/troubleshooting'
     | '/oauth/$provider'
     | '/about'
     | '/docs'
@@ -859,12 +914,17 @@ export interface FileRouteTypes {
     | '/(errors)/503'
     | '/_authenticated/chat2link'
     | '/docs/cc-switch'
+    | '/docs/chat'
     | '/docs/claude-code'
     | '/docs/codex'
     | '/docs/endpoint'
+    | '/docs/image-edit'
+    | '/docs/image-mcp'
+    | '/docs/images'
     | '/docs/register'
     | '/docs/token'
     | '/docs/topup'
+    | '/docs/troubleshooting'
     | '/oauth/$provider'
     | '/about/'
     | '/docs/'
@@ -1095,6 +1155,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocsCcSwitchRouteImport
       parentRoute: typeof DocsRouteRoute
     }
+    '/docs/chat': {
+      id: '/docs/chat'
+      path: '/chat'
+      fullPath: '/docs/chat'
+      preLoaderRoute: typeof DocsChatRouteImport
+      parentRoute: typeof DocsRouteRoute
+    }
     '/docs/claude-code': {
       id: '/docs/claude-code'
       path: '/claude-code'
@@ -1116,6 +1183,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DocsEndpointRouteImport
       parentRoute: typeof DocsRouteRoute
     }
+    '/docs/image-edit': {
+      id: '/docs/image-edit'
+      path: '/image-edit'
+      fullPath: '/docs/image-edit'
+      preLoaderRoute: typeof DocsImageEditRouteImport
+      parentRoute: typeof DocsRouteRoute
+    }
+    '/docs/image-mcp': {
+      id: '/docs/image-mcp'
+      path: '/image-mcp'
+      fullPath: '/docs/image-mcp'
+      preLoaderRoute: typeof DocsImageMcpRouteImport
+      parentRoute: typeof DocsRouteRoute
+    }
+    '/docs/images': {
+      id: '/docs/images'
+      path: '/images'
+      fullPath: '/docs/images'
+      preLoaderRoute: typeof DocsImagesRouteImport
+      parentRoute: typeof DocsRouteRoute
+    }
     '/docs/register': {
       id: '/docs/register'
       path: '/register'
@@ -1135,6 +1223,13 @@ declare module '@tanstack/react-router' {
       path: '/topup'
       fullPath: '/docs/topup'
       preLoaderRoute: typeof DocsTopupRouteImport
+      parentRoute: typeof DocsRouteRoute
+    }
+    '/docs/troubleshooting': {
+      id: '/docs/troubleshooting'
+      path: '/troubleshooting'
+      fullPath: '/docs/troubleshooting'
+      preLoaderRoute: typeof DocsTroubleshootingRouteImport
       parentRoute: typeof DocsRouteRoute
     }
     '/oauth/$provider': {
@@ -1587,23 +1682,33 @@ const AuthenticatedRouteRouteWithChildren =
 
 interface DocsRouteRouteChildren {
   DocsCcSwitchRoute: typeof DocsCcSwitchRoute
+  DocsChatRoute: typeof DocsChatRoute
   DocsClaudeCodeRoute: typeof DocsClaudeCodeRoute
   DocsCodexRoute: typeof DocsCodexRoute
   DocsEndpointRoute: typeof DocsEndpointRoute
+  DocsImageEditRoute: typeof DocsImageEditRoute
+  DocsImageMcpRoute: typeof DocsImageMcpRoute
+  DocsImagesRoute: typeof DocsImagesRoute
   DocsRegisterRoute: typeof DocsRegisterRoute
   DocsTokenRoute: typeof DocsTokenRoute
   DocsTopupRoute: typeof DocsTopupRoute
+  DocsTroubleshootingRoute: typeof DocsTroubleshootingRoute
   DocsIndexRoute: typeof DocsIndexRoute
 }
 
 const DocsRouteRouteChildren: DocsRouteRouteChildren = {
   DocsCcSwitchRoute: DocsCcSwitchRoute,
+  DocsChatRoute: DocsChatRoute,
   DocsClaudeCodeRoute: DocsClaudeCodeRoute,
   DocsCodexRoute: DocsCodexRoute,
   DocsEndpointRoute: DocsEndpointRoute,
+  DocsImageEditRoute: DocsImageEditRoute,
+  DocsImageMcpRoute: DocsImageMcpRoute,
+  DocsImagesRoute: DocsImagesRoute,
   DocsRegisterRoute: DocsRegisterRoute,
   DocsTokenRoute: DocsTokenRoute,
   DocsTopupRoute: DocsTopupRoute,
+  DocsTroubleshootingRoute: DocsTroubleshootingRoute,
   DocsIndexRoute: DocsIndexRoute,
 }
 
