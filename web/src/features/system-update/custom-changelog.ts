@@ -44,6 +44,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     items: [
     {
       "tag": "feat",
+      "titleEn": "[docs] 区分用户与智能体文档并突出操作入口",
+      "titleZh": "[docs] 区分用户与智能体文档并突出操作入口",
+      "descEn": "Commit: 88ed17958 (2026-10-19)",
+      "descZh": "提交: 88ed17958 · 2026-10-19",
+      "commitHash": "88ed17958"
+    },
+    {
+      "tag": "feat",
       "titleEn": "[docs] 增加生图工具提示词配置说明与操作指引",
       "titleZh": "[docs] 增加生图工具提示词配置说明与操作指引",
       "descEn": "Commit: 30f760549 (2026-10-19)",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 71d7813de (2026-10-06)",
       "descZh": "提交: 71d7813de · 2026-10-06",
       "commitHash": "71d7813de"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[mail] 增加大黄定制卡片式邮件模版与防拦截提示",
-      "titleZh": "[mail] 增加大黄定制卡片式邮件模版与防拦截提示",
-      "descEn": "Commit: 3b65989fb (2026-10-06)",
-      "descZh": "提交: 3b65989fb · 2026-10-06",
-      "commitHash": "3b65989fb"
     }
 ],
   },
