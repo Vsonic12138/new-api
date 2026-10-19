@@ -18,11 +18,39 @@ func Playground(c *gin.Context) {
   playgroundRelay(c, types.RelayFormatOpenAI)
 }
 
+func playgroundImageModelAllowed(modelName string) bool {
+  return modelName == "gpt-image-2.5-flare" || modelName == "gpt-image-2.5-sunburst"
+}
+
 func PlaygroundImage(c *gin.Context) {
+  // Even account mode cannot use this product endpoint for other image models.
+  if !playgroundImageModelAllowed(c.GetString("original_model")) {
+    c.JSON(400, gin.H{"error":gin.H{"message":"Only GPT Image 2.5 Flare and Sunburst are available in this Playground"}})
+    return
+  }
   playgroundRelay(c, types.RelayFormatOpenAIImage)
 }
 
 func PlaygroundResponses(c *gin.Context) {
+  // Preserve general LLM/VLM Responses requests; restrict only image tool
+  // models. The top-level mainline model is selected from the user's normal
+  // authorized model catalogue and is NOT limited to the two image models.
+  var request struct {
+    Tools []struct {
+      Type string `json:"type"`
+      Model string `json:"model"`
+    } `json:"tools"`
+  }
+  if err := common.UnmarshalBodyReusable(c, &request); err != nil {
+    c.JSON(400, gin.H{"error":gin.H{"message":"Invalid Responses request"}})
+    return
+  }
+  for _, tool := range request.Tools {
+    if tool.Type == "image_generation" && !playgroundImageModelAllowed(tool.Model) {
+      c.JSON(400, gin.H{"error":gin.H{"message":"Image tool must use GPT Image 2.5 Flare or Sunburst"}})
+      return
+    }
+  }
   playgroundRelay(c, types.RelayFormatOpenAIResponses)
 }
 
