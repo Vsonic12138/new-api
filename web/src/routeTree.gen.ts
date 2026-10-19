@@ -31,6 +31,7 @@ import { Route as AuthenticatedChat2linkRouteImport } from './routes/_authentica
 import { Route as AuthenticatedSystemSettingsRouteRouteImport } from './routes/_authenticated/system-settings/route'
 import { Route as AboutIndexRouteImport } from './routes/about/index'
 import { Route as DocsIndexRouteImport } from './routes/docs/index'
+import { Route as DocsAgentRouteImport } from './routes/docs/agent'
 import { Route as DocsCcSwitchRouteImport } from './routes/docs/cc-switch'
 import { Route as DocsChatRouteImport } from './routes/docs/chat'
 import { Route as DocsClaudeCodeRouteImport } from './routes/docs/claude-code'
@@ -194,6 +195,11 @@ const AboutIndexRoute = AboutIndexRouteImport.update({
 const DocsIndexRoute = DocsIndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => DocsRouteRoute,
+} as any)
+const DocsAgentRoute = DocsAgentRouteImport.update({
+  id: '/agent',
+  path: '/agent',
   getParentRoute: () => DocsRouteRoute,
 } as any)
 const DocsCcSwitchRoute = DocsCcSwitchRouteImport.update({
@@ -525,6 +531,7 @@ export interface FileRoutesByFullPath {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/chat2link': typeof AuthenticatedChat2linkRoute
+  '/docs/agent': typeof DocsAgentRoute
   '/docs/cc-switch': typeof DocsCcSwitchRoute
   '/docs/chat': typeof DocsChatRoute
   '/docs/claude-code': typeof DocsClaudeCodeRoute
@@ -600,6 +607,7 @@ export interface FileRoutesByTo {
   '/500': typeof errors500Route
   '/503': typeof errors503Route
   '/chat2link': typeof AuthenticatedChat2linkRoute
+  '/docs/agent': typeof DocsAgentRoute
   '/docs/cc-switch': typeof DocsCcSwitchRoute
   '/docs/chat': typeof DocsChatRoute
   '/docs/claude-code': typeof DocsClaudeCodeRoute
@@ -680,6 +688,7 @@ export interface FileRoutesById {
   '/(errors)/500': typeof errors500Route
   '/(errors)/503': typeof errors503Route
   '/_authenticated/chat2link': typeof AuthenticatedChat2linkRoute
+  '/docs/agent': typeof DocsAgentRoute
   '/docs/cc-switch': typeof DocsCcSwitchRoute
   '/docs/chat': typeof DocsChatRoute
   '/docs/claude-code': typeof DocsClaudeCodeRoute
@@ -759,6 +768,7 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/chat2link'
+    | '/docs/agent'
     | '/docs/cc-switch'
     | '/docs/chat'
     | '/docs/claude-code'
@@ -834,6 +844,7 @@ export interface FileRouteTypes {
     | '/500'
     | '/503'
     | '/chat2link'
+    | '/docs/agent'
     | '/docs/cc-switch'
     | '/docs/chat'
     | '/docs/claude-code'
@@ -913,6 +924,7 @@ export interface FileRouteTypes {
     | '/(errors)/500'
     | '/(errors)/503'
     | '/_authenticated/chat2link'
+    | '/docs/agent'
     | '/docs/cc-switch'
     | '/docs/chat'
     | '/docs/claude-code'
@@ -1146,6 +1158,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/docs/'
       preLoaderRoute: typeof DocsIndexRouteImport
+      parentRoute: typeof DocsRouteRoute
+    }
+    '/docs/agent': {
+      id: '/docs/agent'
+      path: '/agent'
+      fullPath: '/docs/agent'
+      preLoaderRoute: typeof DocsAgentRouteImport
       parentRoute: typeof DocsRouteRoute
     }
     '/docs/cc-switch': {
@@ -1681,6 +1700,7 @@ const AuthenticatedRouteRouteWithChildren =
   AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface DocsRouteRouteChildren {
+  DocsAgentRoute: typeof DocsAgentRoute
   DocsCcSwitchRoute: typeof DocsCcSwitchRoute
   DocsChatRoute: typeof DocsChatRoute
   DocsClaudeCodeRoute: typeof DocsClaudeCodeRoute
@@ -1697,6 +1717,7 @@ interface DocsRouteRouteChildren {
 }
 
 const DocsRouteRouteChildren: DocsRouteRouteChildren = {
+  DocsAgentRoute: DocsAgentRoute,
   DocsCcSwitchRoute: DocsCcSwitchRoute,
   DocsChatRoute: DocsChatRoute,
   DocsClaudeCodeRoute: DocsClaudeCodeRoute,

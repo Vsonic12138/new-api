@@ -34,6 +34,7 @@ import zh from '@/i18n/locales/zh.json'
 
 import { DocsImage } from '../docs-blocks'
 import { DocsNav } from '../docs-nav'
+import { DocsAgentPage } from '../pages/agent'
 import { DocsClaudeCodePage, DocsCodexPage } from '../pages/clients'
 import { DocsImageEditPage } from '../pages/image-edit'
 import { DocsImageMcpPage } from '../pages/image-mcp'
@@ -94,8 +95,8 @@ describe('docs client addresses', () => {
     await renderWithRouter('/docs/image-mcp', DocsImageMcpPage)
     const prompt =
       (await screen.findByLabelText('AI setup prompt')).textContent ?? ''
-    expect(prompt).toContain('@bigyellow12138/imagegen-mcp@0.5.0')
-    expect(prompt).toContain(DOCS_OPENAI_BASE_URL)
+    expect(prompt).toContain('/agent-guide.txt')
+    expect(prompt).toContain(DOCS_ORIGIN)
     expect(prompt).toContain('IMAGE_API_TOKEN')
     expect(prompt).toContain('sk-your-image-key')
   })
@@ -103,22 +104,22 @@ describe('docs client addresses', () => {
     await renderWithRouter('/docs', DocsStartPage)
     expect(
       await screen.findByRole('heading', {
-        name: zh.translation['Choose what you want to do'],
+        name: zh.translation['User guide'],
       })
     ).toBeVisible()
     await i18n.changeLanguage('en')
     expect(
-      await screen.findByRole('heading', { name: 'Choose what you want to do' })
+      await screen.findByRole('heading', { name: 'User guide' })
     ).toBeVisible()
     expect(
       screen.queryByRole('heading', {
-        name: zh.translation['Choose what you want to do'],
+        name: zh.translation['User guide'],
       })
     ).not.toBeInTheDocument()
   })
 
   it('provides a local image path for editing and keeps source dimensions by omitting size', async () => {
-    await renderWithRouter('/docs/image-edit', DocsImageEditPage)
+    await renderWithRouter('/docs/agent', DocsAgentPage)
     const args = JSON.parse(
       (await screen.findByLabelText('generate_image · JSON')).textContent ??
         '{}'
@@ -132,7 +133,7 @@ describe('docs client addresses', () => {
   })
 
   it('keeps image credentials in the MCP environment and uses the image API address', async () => {
-    await renderWithRouter('/docs/image-mcp', DocsImageMcpPage)
+    await renderWithRouter('/docs/agent', DocsAgentPage)
     const config = JSON.parse(
       (await screen.findByLabelText('Cursor · mcp.json')).textContent ?? '{}'
     )
@@ -157,6 +158,34 @@ describe('docs client addresses', () => {
         )
       ).toBe(true)
     }
+  })
+
+  it('keeps technical reference out of the user navigation and exposes it in the agent navigation', async () => {
+    await renderWithRouter('/docs', DocsNav)
+    expect(
+      screen.queryByRole('link', { name: '接口地址' })
+    ).not.toBeInTheDocument()
+    cleanup()
+    await renderWithRouter('/docs/agent', DocsNav)
+    expect(await screen.findByRole('link', { name: '接口地址' })).toBeVisible()
+    expect(
+      screen.queryByRole('link', { name: '创建一个账户' })
+    ).not.toBeInTheDocument()
+  })
+
+  it('shows plain-language image editing steps without API payloads', async () => {
+    await renderWithRouter('/docs/image-edit', DocsImageEditPage)
+    expect(await screen.findByRole('heading', { level: 1 })).toBeVisible()
+    expect(
+      screen.queryByLabelText('generate_image · JSON')
+    ).not.toBeInTheDocument()
+    expect(
+      screen.queryByLabelText('Bash · POST /v1/images/edits')
+    ).not.toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Agent/ })).toHaveAttribute(
+      'href',
+      '/docs/agent'
+    )
   })
 
   it('expands and collapses the compact docs menu from the keyboard', async () => {

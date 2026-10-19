@@ -121,20 +121,48 @@ export const CODEX_ENV_UNIX = 'export DAHUA_API_KEY="sk-your-api-token"'
 export const CODEX_ENV_WINDOWS = '$env:DAHUA_API_KEY="sk-your-api-token"'
 
 export const DOCS_NAV = [
-  { to: '/docs', titleKey: 'Start here' },
-  { to: '/docs/register', titleKey: 'Create an account' },
-  { to: '/docs/topup', titleKey: 'Add quota with a redemption code' },
-  { to: '/docs/token', titleKey: 'Create an API key' },
-  { to: '/docs/endpoint', titleKey: 'API addresses' },
-  { to: '/docs/cc-switch', titleKey: 'Set up CC Switch' },
-  { to: '/docs/claude-code', titleKey: 'Set up Claude Code' },
-  { to: '/docs/codex', titleKey: 'Set up Codex' },
-  { to: '/docs/chat', titleKey: 'Chat clients' },
-  { to: '/docs/image-mcp', titleKey: 'Image MCP setup' },
-  { to: '/docs/images', titleKey: 'Generate your first image' },
-  { to: '/docs/image-edit', titleKey: 'Edit an existing image' },
-  { to: '/docs/troubleshooting', titleKey: 'Troubleshooting' },
+  { to: '/docs', titleKey: 'Start here', audience: 'user' },
+  { to: '/docs/register', titleKey: 'Create an account', audience: 'user' },
+  {
+    to: '/docs/topup',
+    titleKey: 'Add quota with a redemption code',
+    audience: 'user',
+  },
+  { to: '/docs/token', titleKey: 'Create an API key', audience: 'user' },
+  { to: '/docs/cc-switch', titleKey: 'Set up CC Switch', audience: 'user' },
+  { to: '/docs/chat', titleKey: 'Chat clients', audience: 'user' },
+  { to: '/docs/image-mcp', titleKey: 'Image MCP setup', audience: 'user' },
+  {
+    to: '/docs/images',
+    titleKey: 'Generate your first image',
+    audience: 'user',
+  },
+  {
+    to: '/docs/image-edit',
+    titleKey: 'Edit an existing image',
+    audience: 'user',
+  },
+  {
+    to: '/docs/troubleshooting',
+    titleKey: 'Troubleshooting',
+    audience: 'user',
+  },
+  { to: '/docs/agent', titleKey: 'Agent reference', audience: 'agent' },
+  { to: '/docs/endpoint', titleKey: 'API addresses', audience: 'agent' },
+  { to: '/docs/codex', titleKey: 'Set up Codex', audience: 'agent' },
+  {
+    to: '/docs/claude-code',
+    titleKey: 'Set up Claude Code',
+    audience: 'agent',
+  },
 ] as const
+
+export const DOCS_AGENT_URL = `${DOCS_ORIGIN}/agent-guide.txt`
+
+export function getDocsAudience(pathname: string) {
+  const path = pathname.replace(/\/+$/, '')
+  return DOCS_NAV.find((item) => item.to === path)?.audience ?? 'user'
+}
 
 export type DocsPath = (typeof DOCS_NAV)[number]['to']
 

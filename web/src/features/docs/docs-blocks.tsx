@@ -17,6 +17,7 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { Link } from '@tanstack/react-router'
+import { ArrowRight } from 'lucide-react'
 import type { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 
@@ -138,16 +139,28 @@ export function DocsFigure(props: { caption: string; children: ReactNode }) {
   )
 }
 
-export function DocsCode(props: { label: string; code: string }) {
+export function DocsCode(props: {
+  label: string
+  code: string
+  prose?: boolean
+}) {
+  const { t } = useTranslation()
   return (
     <div className='border-border bg-muted/40 overflow-hidden rounded-lg border'>
       <div className='flex items-center justify-between gap-3 px-3 py-1.5'>
         <span className='text-muted-foreground text-xs'>{props.label}</span>
-        <CopyButton value={props.code} />
+        <CopyButton value={props.code} size='sm' variant='outline'>
+          {t('Copy')}
+        </CopyButton>
       </div>
       <pre
         aria-label={props.label}
-        className='overflow-x-auto px-3 pb-3 font-mono text-xs leading-5'
+        className={cn(
+          'overflow-x-auto px-3 pb-3',
+          props.prose
+            ? 'font-sans text-sm leading-7 whitespace-pre-wrap break-words'
+            : 'font-mono text-xs leading-5'
+        )}
       >
         <code>{props.code}</code>
       </pre>
@@ -169,7 +182,7 @@ export function DocsTextLink(props: {
   external?: boolean
 }) {
   const className =
-    'text-primary font-medium underline-offset-4 hover:underline'
+    'text-primary rounded-sm font-semibold underline decoration-2 underline-offset-4 hover:decoration-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring'
   if (props.external) {
     return (
       <a
@@ -186,5 +199,30 @@ export function DocsTextLink(props: {
     <Link to={props.href} className={cn(className)}>
       {props.children}
     </Link>
+  )
+}
+
+export function DocsActionLink(props: {
+  href: string
+  children: ReactNode
+  external?: boolean
+  primary?: boolean
+}) {
+  return (
+    <Button
+      role='link'
+      variant={props.primary ? 'default' : 'outline'}
+      className='h-auto min-h-10 max-w-full justify-between gap-3 px-4 py-2 text-start whitespace-normal'
+      render={
+        props.external ? (
+          <a href={props.href} target='_blank' rel='noopener noreferrer' />
+        ) : (
+          <Link to={props.href} />
+        )
+      }
+    >
+      {props.children}
+      <ArrowRight aria-hidden='true' className='size-4 shrink-0' />
+    </Button>
   )
 }

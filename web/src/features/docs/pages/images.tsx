@@ -21,12 +21,12 @@ import { useTranslation } from 'react-i18next'
 
 import {
   DocsTitle,
+  DocsActionLink,
   DocsSection,
   DocsTextLink,
   DocsCode,
   DocsFigure,
 } from '../docs-blocks'
-import { IMAGE_CURL, IMAGE_PYTHON } from '../site'
 
 export function DocsImagesPage() {
   const { t } = useTranslation()
@@ -41,16 +41,17 @@ export function DocsImagesPage() {
       <DocsSection title={t('1. Open a project and send this request')}>
         <p>
           {t(
-            'First finish the MCP setup. In the assistant chat, paste the prompt below. Replace the output folder with a real absolute path on the machine running MCP.'
+            'First finish the MCP setup. Open your project in the assistant, then copy and send the request below.'
           )}
         </p>
         <DocsTextLink href='/docs/image-mcp'>
           {t('Image MCP setup')}
         </DocsTextLink>
         <DocsCode
+          prose
           label={t('Generate your first image')}
           code={t(
-            'Use imagegen generate_image to create one image: a red ceramic mug on a pale gray table, soft daylight, no text. Use gpt-image-2.5-flare, size 1K, quality high. Save it in /ABSOLUTE/PATH/ai-images and return the full file path.'
+            'Use imagegen to create one square image: a red ceramic mug on a pale gray table, soft daylight, no text. Save it in this project and give me the full file path.'
           )}
         />
       </DocsSection>
@@ -79,41 +80,8 @@ export function DocsImagesPage() {
           </pre>
         </DocsFigure>
       </DocsSection>
-      <DocsSection title={t('Choose size, model and save location')}>
-        <p>
-          {t(
-            '1K, 2K and 4K are square presets. For a portrait, request 1536x2048; for landscape, 2048x1536. flare is the default; sunburst is an option for more detailed editing. Start with n=1.'
-          )}
-        </p>
-        <p>
-          {t(
-            'An explicit outputPath sets the first file location. Otherwise outputDir overrides IMAGE_OUTPUT_DIR. Without either, MCP uses project/ai-images when started in a project, or home/ai-images. Always trust the returned absolute path.'
-          )}
-        </p>
-        <DocsTextLink href='/docs/image-edit'>
-          {t('Edit an existing image')}
-        </DocsTextLink>
-      </DocsSection>
-      <DocsSection
-        title={t('For developers: call the image API directly')}
-        id='api'
-      >
-        <p>
-          {t(
-            'These commands are for macOS/Linux or a Bash terminal. Use the image-group key. The response contains data[].b64_json or data[].url; JSON itself is not the image file.'
-          )}
-        </p>
-        <DocsCode
-          label='Bash · POST /v1/images/generations'
-          code={IMAGE_CURL}
-        />
-        <p>
-          {t(
-            'Install the Python SDK with python -m pip install openai. Run the example from a writable folder; it saves base64 output as out.png or prints the download URL.'
-          )}
-        </p>
-        <DocsCode label='Python' code={IMAGE_PYTHON} />
-      </DocsSection>
+
+      <DocsActionLink href='/docs/agent'>{t('Agent reference')}</DocsActionLink>
     </>
   )
 }

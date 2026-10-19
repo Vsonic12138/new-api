@@ -21,13 +21,12 @@ import { useTranslation } from 'react-i18next'
 
 import {
   DocsTitle,
+  DocsActionLink,
   DocsSection,
-  DocsTextLink,
   DocsNote,
   DocsCode,
   DocsFigure,
 } from '../docs-blocks'
-import { IMAGE_EDIT_TOOL, IMAGE_EDIT_CURL } from '../site'
 
 export function DocsImageEditPage() {
   const { t } = useTranslation()
@@ -53,17 +52,12 @@ export function DocsImageEditPage() {
       </DocsSection>
       <DocsSection title={t('2. State what to change and what to keep')}>
         <DocsCode
+          prose
           label={t('Edit an existing image')}
           code={t(
-            'Use imagegen generate_image to edit /ABSOLUTE/PATH/source.png. Pass that file in images. Change only the background to pale blue; keep the mug shape, red color, camera angle and lighting. Use gpt-image-2.5-sunburst, omit size to reuse source dimensions, save to /ABSOLUTE/PATH/results, and return the new file path.'
+            'Use imagegen to edit /ABSOLUTE/PATH/source.png. Change only the background to pale blue. Keep the mug shape, red color, camera angle and lighting. Save a new file without overwriting the original, and give me its full path.'
           )}
         />
-        <p>
-          {t(
-            'The same generate_image tool handles generation and editing: an images array selects editing. The example below shows the arguments, not another configuration file to install.'
-          )}
-        </p>
-        <DocsCode label='generate_image · JSON' code={IMAGE_EDIT_TOOL} />
       </DocsSection>
       <DocsSection title={t('3. Compare the result and continue editing')}>
         <p>
@@ -83,20 +77,7 @@ export function DocsImageEditPage() {
           </div>
         </DocsFigure>
       </DocsSection>
-      <DocsSection
-        title={t('For developers: call the image API directly')}
-        id='api'
-      >
-        <p>
-          {t(
-            'These commands are for macOS/Linux or a Bash terminal. Use the image-group key. The response contains data[].b64_json or data[].url; JSON itself is not the image file.'
-          )}
-        </p>
-        <DocsCode label='Bash · POST /v1/images/edits' code={IMAGE_EDIT_CURL} />
-        <DocsTextLink href='/docs/troubleshooting'>
-          {t('Troubleshooting')}
-        </DocsTextLink>
-      </DocsSection>
+      <DocsActionLink href='/docs/agent'>{t('Agent reference')}</DocsActionLink>
     </>
   )
 }

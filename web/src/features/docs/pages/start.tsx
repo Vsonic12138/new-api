@@ -19,95 +19,80 @@ For commercial licensing, please contact support@quantumnous.com
 
 import { useTranslation } from 'react-i18next'
 
-import { DocsTitle, DocsSection, DocsTextLink } from '../docs-blocks'
+import { DocsTitle, DocsSection, DocsActionLink } from '../docs-blocks'
 
 export function DocsStartPage() {
   const { t } = useTranslation()
   return (
     <>
       <DocsTitle
-        title={t('Choose what you want to do')}
+        title={t('User guide')}
         summary={t(
-          'Create an account, add quota, then follow the guide for your app. Image generation has its own key and MCP setup.'
+          'Choose a task below. Follow the steps on that page; you do not need to read the technical reference.'
         )}
       />
-      <DocsSection title={t('Prepare your account')}>
+      <DocsSection title={t('First time here')}>
         <p>
           {t(
-            'Register and sign in. Buy a redemption code from the card shop, then redeem it in Wallet. The code adds quota; it is not an API key.'
+            'Complete these three steps once: register, add quota, then create an API key.'
           )}
         </p>
-        <DocsTextLink href='/docs/register'>
-          {t('Create an account')}
-        </DocsTextLink>{' '}
-        ·{' '}
-        <DocsTextLink href='/docs/topup'>
-          {t('Add quota with a redemption code')}
-        </DocsTextLink>
+        <div className='flex flex-wrap gap-3'>
+          <DocsActionLink href='/docs/register'>
+            {t('Create an account')}
+          </DocsActionLink>
+          <DocsActionLink href='/docs/topup'>
+            {t('Add quota with a redemption code')}
+          </DocsActionLink>
+          <DocsActionLink href='/docs/token'>
+            {t('Create an API key')}
+          </DocsActionLink>
+        </div>
       </DocsSection>
-      <DocsSection title={t('Create a key for each purpose')}>
-        <p>
-          {t(
-            'For chat or coding, find the model in Model Square and choose its group. For images, create another key in 生图 【标准】. Give the keys different names so you do not mix them up.'
-          )}
-        </p>
-        <DocsTextLink href='/docs/token'>{t('Create an API key')}</DocsTextLink>
-      </DocsSection>
-      <DocsSection title={t('Use a coding assistant')}>
-        <p>
-          {t(
-            'Use CC Switch to import your provider, or follow the manual setup for Codex CLI or Claude Code. Finish one route and send a short test message before adding MCP.'
-          )}
-        </p>
-        <DocsTextLink href='/docs/cc-switch'>
-          {t('Set up CC Switch')}
-        </DocsTextLink>{' '}
-        · <DocsTextLink href='/docs/codex'>{t('Set up Codex')}</DocsTextLink> ·{' '}
-        <DocsTextLink href='/docs/claude-code'>
-          {t('Set up Claude Code')}
-        </DocsTextLink>
-      </DocsSection>
-      <DocsSection title={t('Use images in your assistant')}>
-        <p>
-          {t(
-            'Follow these three guides in order: connect the image MCP, generate one image, then edit a local image. You do not need to write API code.'
-          )}
-        </p>
-        <ol className='list-decimal space-y-2 pl-5'>
-          <li>
-            <DocsTextLink href='/docs/image-mcp'>
+      <DocsSection title={t('Choose a tool')}>
+        <div className='space-y-6'>
+          <p>
+            {t(
+              'For coding, use CC Switch to import your key into your assistant.'
+            )}
+          </p>
+          <div className='flex flex-wrap gap-3'>
+            <DocsActionLink href='/docs/cc-switch'>
+              {t('Set up CC Switch')}
+            </DocsActionLink>
+          </div>
+          <p>
+            {t(
+              'For images, connect MCP first. Then generate a picture or edit a local image.'
+            )}
+          </p>
+          <div className='flex flex-wrap gap-3'>
+            <DocsActionLink href='/docs/image-mcp'>
               {t('Image MCP setup')}
-            </DocsTextLink>
-          </li>
-          <li>
-            <DocsTextLink href='/docs/images'>
+            </DocsActionLink>
+            <DocsActionLink href='/docs/images'>
               {t('Generate your first image')}
-            </DocsTextLink>
-          </li>
-          <li>
-            <DocsTextLink href='/docs/image-edit'>
+            </DocsActionLink>
+            <DocsActionLink href='/docs/image-edit'>
               {t('Edit an existing image')}
-            </DocsTextLink>
-          </li>
-        </ol>
+            </DocsActionLink>
+          </div>
+          <p>
+            {t(
+              'For everyday chat, add this site as a provider in your chat app.'
+            )}
+          </p>
+          <div className='flex flex-wrap gap-3'>
+            <DocsActionLink href='/docs/chat'>
+              {t('Chat clients')}
+            </DocsActionLink>
+          </div>
+        </div>
       </DocsSection>
-      <DocsSection title={t('Use an ordinary chat app')}>
-        <p>
-          {t(
-            'Cherry Studio and other clients need an OpenAI-compatible provider and a model available to your key. Chat setup and image-tool setup are separate.'
-          )}
-        </p>
-        <DocsTextLink href='/docs/chat'>{t('Chat clients')}</DocsTextLink>
-      </DocsSection>
-      <DocsSection title={t('How to know it works')}>
-        <p>
-          {t(
-            'A chat reply confirms chat access. An image-tool result with an existing local file confirms image access. Check Usage Logs if a request fails, then use the troubleshooting guide.'
-          )}
-        </p>
-        <DocsTextLink href='/docs/troubleshooting'>
+      <DocsSection title={t('Need help?')}>
+        <DocsActionLink href='/docs/troubleshooting'>
           {t('Troubleshooting')}
-        </DocsTextLink>
+        </DocsActionLink>
       </DocsSection>
     </>
   )

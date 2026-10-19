@@ -21,20 +21,14 @@ import { useTranslation } from 'react-i18next'
 
 import {
   DocsTitle,
+  DocsActionLink,
   DocsSection,
   DocsTextLink,
   DocsNote,
   DocsCode,
   DocsImage,
-  DocsFigure,
 } from '../docs-blocks'
-import {
-  CLAUDE_MCP_ADD,
-  CODEX_MCP_CONFIG,
-  DOCS_MCP_CONFIG,
-  NODE_CHECK,
-  DOCS_OPENAI_BASE_URL,
-} from '../site'
+import { DOCS_AGENT_URL } from '../site'
 
 export function DocsImageMcpPage() {
   const { t } = useTranslation()
@@ -43,34 +37,10 @@ export function DocsImageMcpPage() {
       <DocsTitle
         title={t('Image MCP setup')}
         summary={t(
-          'Connect your assistant to the image service. Keep your chat key in the assistant and put your image-group key in IMAGE_API_TOKEN.'
+          'Create an image key, copy the setup request to your assistant, then restart and check the tool.'
         )}
       />
-      <DocsSection title={t('How the two keys work together')}>
-        <p>
-          {t(
-            'The assistant uses your chat key. MCP reads IMAGE_API_TOKEN for image requests. Its default image model is gpt-image-2.5-flare. You do not replace the assistant model with an image model.'
-          )}
-        </p>
-        <DocsFigure caption={t('How the two keys work together')}>
-          <ol className='grid gap-5 p-5 sm:grid-cols-4'>
-            {t('Chat model → generate_image → image API → local image file')
-              .split(' → ')
-              .map((label, index) => (
-                <li
-                  key={label}
-                  className='flex gap-3 text-sm leading-6 sm:flex-col'
-                >
-                  <span className='bg-muted flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold'>
-                    {index + 1}
-                  </span>
-                  <span>{label}</span>
-                </li>
-              ))}
-          </ol>
-        </DocsFigure>
-      </DocsSection>
-      <DocsSection title={t('1. Prepare the image key and Node.js')}>
+      <DocsSection title={t('1. Create an image key')}>
         <p>
           {t(
             'Open API Keys, create a key named Image MCP, choose 生图 【标准】, save, and copy its sk- value. Your account needs available quota.'
@@ -83,98 +53,32 @@ export function DocsImageMcpPage() {
             'Image key example: the selected group is 生图 【标准】. Use your own key; the name is only for identification.'
           )}
         />
-        <p>
-          {t(
-            'Open Terminal (macOS/Linux) or PowerShell (Windows). Run both commands below. If either fails, install Node.js 18 or newer, then reopen your app so it can find npx.'
-          )}
-        </p>
-        <DocsCode label='Terminal' code={NODE_CHECK} />
-        <DocsTextLink href='https://nodejs.org/' external>
-          Node.js
-        </DocsTextLink>
       </DocsSection>
       <DocsSection title={t('2. Let AI help configure MCP')} id='ai-setup'>
         <p>
           {t(
-            'Use an assistant that can read and edit local files, such as Codex, Claude Code or Cursor. Copy the prompt below into that assistant. Ordinary web chat can explain the steps but cannot directly edit your computer configuration. Choose this method or the manual method below; you do not need both.'
+            'In Codex, Claude Code or Cursor, send the request below. The assistant needs permission to edit local files.'
           )}
         </p>
         <DocsCode
           label={t('AI setup prompt')}
+          prose
           code={t(
-            'Please configure the imagegen MCP on this computer. First identify my OS and whether I use Codex, Claude Code or Cursor, and ask if unclear. Check Node.js 18+ and npx. Back up the existing configuration, then merge a local stdio server named imagegen using npx -y @bigyellow12138/imagegen-mcp@0.5.0. Set IMAGE_API_BASE_URL={{baseUrl}} and IMAGE_API_TOKEN=sk-your-image-key. Leave the key as a placeholder for me to fill locally; do not ask me to paste a real key into chat. Preserve other providers and MCP servers. For Codex set startup_timeout_sec=60 and tool_timeout_sec=600. Explain the changed file, how to restart, and how to check generate_image. Do not generate an image during setup.',
-            { baseUrl: DOCS_OPENAI_BASE_URL }
+            'Read {{agentUrl}} and help me configure the image MCP for my current client. Preserve my existing settings. Leave IMAGE_API_TOKEN=sk-your-image-key for me to fill locally. Tell me how to restart and check the tool.',
+            { agentUrl: DOCS_AGENT_URL }
           )}
         />
         <DocsNote>
           {t(
-            'After AI finishes, fill the real image-group key locally, save, and restart the client. Then check imagegen and generate_image in the tool list. If the assistant cannot edit files, use the manual instructions below.'
+            'Fill your image key in the local configuration when prompted, then restart the app. For manual setup, open Agent reference.'
           )}
         </DocsNote>
       </DocsSection>
-      <DocsSection title={t('Manual setup (alternative)')} id='clients'>
-        <p>
-          {t(
-            'Choose only the instructions for your client. Replace sk-your-image-key with the image key. Merge the new entry into existing configuration; do not overwrite your other providers or MCP servers.'
-          )}
-        </p>
-        <p className='flex flex-wrap gap-4'>
-          <a
-            className='text-primary underline underline-offset-4'
-            href='#codex'
-          >
-            Codex
-          </a>
-          <a
-            className='text-primary underline underline-offset-4'
-            href='#claude-code'
-          >
-            Claude Code
-          </a>
-          <a
-            className='text-primary underline underline-offset-4'
-            href='#cursor'
-          >
-            Cursor
-          </a>
-        </p>
-        <h3 id='codex' className='scroll-mt-24 font-semibold'>
-          Codex
-        </h3>
-        <p>
-          {t(
-            'Codex: append this to ~/.codex/config.toml (Windows: %USERPROFILE%\\.codex\\config.toml). Save and restart Codex. Your existing model provider stays in the same file.'
-          )}
-        </p>
-        <DocsCode label='Codex · config.toml' code={CODEX_MCP_CONFIG} />
-        <h3 id='claude-code' className='scroll-mt-24 font-semibold'>
-          Claude Code
-        </h3>
-        <p>
-          {t(
-            'Claude Code: run this single-line command in a terminal. It adds a user-level server available across projects. Restart Claude Code, run /mcp, and check that imagegen is connected.'
-          )}
-        </p>
-        <DocsCode label='Claude Code' code={CLAUDE_MCP_ADD} />
-        <h3 id='cursor' className='scroll-mt-24 font-semibold'>
-          Cursor
-        </h3>
-        <p>
-          {t(
-            'Cursor: open Settings, find MCP, and add a local stdio server. Merge this JSON into ~/.cursor/mcp.json or your project .cursor/mcp.json, save, and enable imagegen. Never commit a file containing your key.'
-          )}
-        </p>
-        <DocsCode label='Cursor · mcp.json' code={DOCS_MCP_CONFIG} />
-        <DocsNote>
-          {t(
-            'Windows: if npx fails to start, use cmd as command and prepend /c, npx to args. Only use this variant if the normal configuration fails.'
-          )}
-        </DocsNote>
-      </DocsSection>
+      <DocsActionLink href='/docs/agent'>{t('Agent reference')}</DocsActionLink>
       <DocsSection title={t('3. Confirm the tool is available')}>
         <p>
           {t(
-            'Find imagegen and its generate_image tool in the client tool list. Connected means the local program started; it does not prove the image key works. Generate one image next to verify the full path.'
+            'After restarting, check that imagegen is connected and generate_image appears in the tool list. Then try generating one image.'
           )}
         </p>
         <DocsTextLink href='/docs/images'>
@@ -185,25 +89,6 @@ export function DocsImageMcpPage() {
           {t('Troubleshooting')}
         </DocsTextLink>
       </DocsSection>
-      <p className='text-muted-foreground text-xs'>
-        <DocsTextLink
-          href='https://github.com/Vsonic12138/bigyellow12138-imagegen-mcp'
-          external
-        >
-          imagegen-mcp
-        </DocsTextLink>{' '}
-        ·{' '}
-        <DocsTextLink
-          href='https://learn.chatgpt.com/docs/extend/mcp?surface=cli'
-          external
-        >
-          Codex MCP
-        </DocsTextLink>{' '}
-        ·{' '}
-        <DocsTextLink href='https://code.claude.com/docs/en/mcp' external>
-          Claude Code MCP
-        </DocsTextLink>
-      </p>
     </>
   )
 }

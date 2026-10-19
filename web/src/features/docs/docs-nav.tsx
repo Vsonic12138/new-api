@@ -28,13 +28,15 @@ import {
 } from '@/components/ui/collapsible'
 import { cn } from '@/lib/utils'
 
-import { DOCS_NAV, isDocsNavActive } from './site'
+import { DOCS_NAV, getDocsAudience, isDocsNavActive } from './site'
 
 function DocsNavLinks(props: { pathname: string; onNavigate?: () => void }) {
   const { t } = useTranslation()
   return (
     <ul className='space-y-1'>
-      {DOCS_NAV.map((item) => {
+      {DOCS_NAV.filter(
+        (item) => item.audience === getDocsAudience(props.pathname)
+      ).map((item) => {
         const active = isDocsNavActive(props.pathname, item.to)
         return (
           <li key={item.to}>

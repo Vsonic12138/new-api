@@ -16,15 +16,44 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { Outlet } from '@tanstack/react-router'
+import { Link, Outlet, useRouterState } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 
 import { PublicLayout } from '@/components/layout'
+import { Button } from '@/components/ui/button'
 
 import { DocsNav } from './docs-nav'
+import { getDocsAudience } from './site'
 
 export function DocsLayout() {
+  const { t } = useTranslation()
+  const pathname = useRouterState({
+    select: (state) => state.location.pathname,
+  })
+  const audience = getDocsAudience(pathname)
   return (
     <PublicLayout>
+      <div
+        className='mx-auto mb-8 flex w-full max-w-6xl flex-wrap gap-3'
+        aria-label={t('Documentation audience')}
+      >
+        <Button
+          role='link'
+          render={<Link to='/docs' />}
+          variant={audience === 'user' ? 'default' : 'outline'}
+          aria-current={audience === 'user' ? 'page' : undefined}
+        >
+          {t('User guide')}
+        </Button>
+        <Button
+          role='link'
+          render={<Link to='/docs/agent' />}
+          variant={audience === 'agent' ? 'default' : 'outline'}
+          aria-current={audience === 'agent' ? 'page' : undefined}
+        >
+          {t('Agent reference')}
+        </Button>
+      </div>
       <div className='mx-auto grid w-full max-w-6xl grid-cols-1 gap-8 lg:grid-cols-[220px_minmax(0,1fr)]'>
         <aside className='min-w-0 lg:sticky lg:top-20 lg:self-start'>
           <DocsNav />
