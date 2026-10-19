@@ -33,6 +33,48 @@ export const DOCS_MCP_CONFIG = `{
     }
   }
 }`
+export const CLAUDE_MCP_ADD = `claude mcp add imagegen \\
+  -e IMAGE_API_TOKEN=sk-your-api-token \\
+  -- npx -y @bigyellow12138/imagegen-mcp`
+
+export const CODEX_MCP_CONFIG = `[mcp_servers.imagegen]
+command = "npx"
+args = ["-y", "@bigyellow12138/imagegen-mcp"]
+env = { IMAGE_API_TOKEN = "sk-your-api-token" }
+startup_timeout_sec = 20
+tool_timeout_sec = 300`
+
+export const IMAGE_CURL = `curl ${DOCS_ORIGIN}/v1/images/generations \\
+  -H "Authorization: Bearer sk-your-api-token" \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "model": "gpt-image-2.5-flare",
+    "prompt": "雨夜的东京小巷，霓虹灯倒映在积水里",
+    "size": "1024x1024",
+    "n": 1
+  }'`
+
+export const IMAGE_PYTHON = `from openai import OpenAI
+import base64
+
+client = OpenAI(
+    base_url="${DOCS_OPENAI_BASE_URL}",
+    api_key="sk-your-api-token",
+)
+
+result = client.images.generate(
+    model="gpt-image-2.5-flare",
+    prompt="雨夜的东京小巷，霓虹灯倒映在积水里",
+    size="1024x1024",
+    n=1,
+)
+
+image = result.data[0]
+if getattr(image, "b64_json", None):
+    open("out.png", "wb").write(base64.b64decode(image.b64_json))
+else:
+    print(image.url)`
+
 export const CC_SWITCH_SITE_URL = 'https://ccswitch.io'
 
 export const CLAUDE_CODE_SETTINGS = `{
