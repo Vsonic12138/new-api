@@ -39,10 +39,20 @@ NewAPI，才能在侧边栏看到 Image Workspace。此开关默认关闭。
 ## Cloudflare Tunnel / Cookie / Origin
 
 当前部署形态可能是 Cloudflare HTTPS -> 本地 NewAPI HTTP。
-Playground 的付费请求要求可靠的 Origin 校验；必须验证 NewAPI 当前
-`SessionCookieTrustedURLs` 或等价可信公开域名设置已经包含站点 HTTPS
-origin，并验证正常请求成功而伪造 Origin 请求被拒绝。不要为了使
-请求通过而关闭 Origin 校验或扩大到任意来源。
+经审查 `common/session_cookie.go`，可信公开来源由下列环境变量配置：
+
+```dotenv
+SESSION_COOKIE_SECURE=true
+SESSION_COOKIE_TRUSTED_URL=https://your-newapi-public-domain.example
+```
+
+部署时将地址改成你自己的实际 HTTPS 站点 Origin（不带路径）。
+在 Cloudflare Tunnel 后面，Go 接收到的内部 HTTP 请求可能缺少 TLS，
+因此 PlaygroundOriginGuard 会使用这一可信 HTTPS Origin 校验；
+缺少配置时浏览器可能登录正常但无法生图。
+`SESSION_COOKIE_TRUSTED_URL` 要求 `SESSION_COOKIE_SECURE=true`，
+切勿为通过测试而关闭 Origin 校验或允许任意 Origin。
+仍需实测合法来源允许、恶意跨域和无 Origin 请求拒绝。
 
 ## 验收顺序
 
