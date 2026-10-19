@@ -656,8 +656,18 @@ func genBaseRelayInfo(c *gin.Context, request dto.Request) *RelayInfo {
 
 	if strings.HasPrefix(c.Request.URL.Path, "/pg") {
 		info.IsPlayground = true
-		info.RequestURLPath = strings.TrimPrefix(info.RequestURLPath, "/pg")
-		info.RequestURLPath = "/v1" + info.RequestURLPath
+		if canonical := relayconstant.CanonicalPlaygroundPath(c.Request.URL.Path); canonical != c.Request.URL.Path {
+			// Preserve the original /pg path for security and audit middleware,
+			// but send the provider a standard OpenAI endpoint URL.
+			info.RequestURLPath = canonical
+			if c.Request.URL.RawQuery != "" {
+				info.RequestURLPath += "?" + c.Request.URL.RawQuery
+			}
+		} else {
+			// Existing classic Playground behavior remains unchanged.
+			info.RequestURLPath = strings.TrimPrefix(info.RequestURLPath, "/pg")
+			info.RequestURLPath = "/v1" + info.RequestURLPath
+		}
 	}
 
 	userSetting, ok := common.GetContextKeyType[dto.UserSetting](c, constant.ContextKeyUserSetting)
