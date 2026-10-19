@@ -43,6 +43,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-19',
     items: [
     {
+      "tag": "feat",
+      "titleEn": "[docs] 重整文档章节并补齐模型思考配置与中文图解",
+      "titleZh": "[docs] 重整文档章节并补齐模型思考配置与中文图解",
+      "descEn": "Commit: cac94bb62 (2026-10-19)",
+      "descZh": "提交: cac94bb62 · 2026-10-19",
+      "commitHash": "cac94bb62"
+    },
+    {
       "tag": "fix",
       "titleEn": "[docs] 统一本站配置导入并补充新版客户端实拍教程",
       "titleZh": "[docs] 统一本站配置导入并补充新版客户端实拍教程",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 0a51871b9 (2026-10-07)",
       "descZh": "提交: 0a51871b9 · 2026-10-07",
       "commitHash": "0a51871b9"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 接入 magpie 本地网关客户端并修复首页多语言缺失",
-      "titleZh": "[home] 接入 magpie 本地网关客户端并修复首页多语言缺失",
-      "descEn": "Commit: 47230be4a (2026-10-06)",
-      "descZh": "提交: 47230be4a · 2026-10-06",
-      "commitHash": "47230be4a"
     }
 ],
   },
