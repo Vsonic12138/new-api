@@ -2940,6 +2940,8 @@
     "field": "字段",
     "Field": "字段",
     "Field change details were not recorded": "未记录字段变更明细",
+    "Field illustration only. Find the redemption-code input and Redeem button in your Wallet.": "仅为字段示意。请在钱包中找到兑换码输入框和兑换按钮。",
+    "Field illustration only. Follow your current interface and select the group for your model.": "仅为字段示意。请以当前界面为准，选择模型对应的分组。",
     "Field Mapping": "字段映射",
     "Field passthrough controls": "字段透传控制",
     "Field Path": "字段路径",

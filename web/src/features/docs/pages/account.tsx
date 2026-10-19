@@ -238,7 +238,7 @@ export function DocsTopupPage() {
         <RedeemFormFigure />
         <p className='text-muted-foreground text-xs'>
           {t(
-            'The picture above matches the Wallet form: the label, the input, and the Redeem button.'
+            'Field illustration only. Find the redemption-code input and Redeem button in your Wallet.'
           )}
         </p>
       </DocsSection>
@@ -308,7 +308,7 @@ export function DocsTokenPage() {
         <ApiKeyFormFigure />
         <p className='text-muted-foreground text-xs'>
           {t(
-            'The picture above matches the create-key panel. Your group list is loaded from the site and will not say “Select a group” after you pick one.'
+            'Field illustration only. Follow your current interface and select the group for your model.'
           )}
         </p>
         <DocsNote>

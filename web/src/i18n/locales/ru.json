@@ -2940,6 +2940,8 @@
     "field": "поле",
     "Field": "Поле",
     "Field change details were not recorded": "Подробности изменения полей не записаны",
+    "Field illustration only. Find the redemption-code input and Redeem button in your Wallet.": "Это схема полей. Найдите поле кода и кнопку активации в кошельке.",
+    "Field illustration only. Follow your current interface and select the group for your model.": "Это схема полей. Следуйте текущему интерфейсу и выберите группу модели.",
     "Field Mapping": "Сопоставление полей",
     "Field passthrough controls": "Полевые сквозные элементы управления",
     "Field Path": "Путь к полю",

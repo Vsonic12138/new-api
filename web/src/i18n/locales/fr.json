@@ -2940,6 +2940,8 @@
     "field": "champ",
     "Field": "Champ",
     "Field change details were not recorded": "Le détail des champs modifiés n’a pas été enregistré",
+    "Field illustration only. Find the redemption-code input and Redeem button in your Wallet.": "Illustration des champs uniquement. Repérez le champ du code et le bouton d’échange dans votre portefeuille.",
+    "Field illustration only. Follow your current interface and select the group for your model.": "Illustration des champs uniquement. Suivez votre interface et choisissez le groupe du modèle.",
     "Field Mapping": "Mappage de champs",
     "Field passthrough controls": "Contrôles de transmission des champs",
     "Field Path": "Chemin du champ",

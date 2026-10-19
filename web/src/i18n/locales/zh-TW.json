@@ -2940,6 +2940,8 @@
     "field": "欄位",
     "Field": "欄位",
     "Field change details were not recorded": "未記錄欄位變更明細",
+    "Field illustration only. Find the redemption-code input and Redeem button in your Wallet.": "僅為欄位示意，請在錢包找到兌換碼輸入框及兌換按鈕。",
+    "Field illustration only. Follow your current interface and select the group for your model.": "僅為欄位示意，請依目前介面選擇模型對應群組。",
     "Field Mapping": "欄位映射",
     "Field passthrough controls": "欄位透傳控制",
     "Field Path": "欄位路徑",

@@ -2940,6 +2940,8 @@
     "field": "フィールド",
     "Field": "項目",
     "Field change details were not recorded": "フィールドの変更詳細は記録されていません",
+    "Field illustration only. Find the redemption-code input and Redeem button in your Wallet.": "項目の模式図です。ウォレットのコード欄と交換ボタンを確認してください。",
+    "Field illustration only. Follow your current interface and select the group for your model.": "項目の模式図です。実際の画面でモデルの対象グループを選択してください。",
     "Field Mapping": "フィールドマッピング",
     "Field passthrough controls": "フィールドパススルーコントロール",
     "Field Path": "フィールドパス",

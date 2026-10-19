@@ -2940,6 +2940,8 @@
     "field": "trường",
     "Field": "Trường",
     "Field change details were not recorded": "Chi tiết thay đổi trường chưa được ghi lại",
+    "Field illustration only. Find the redemption-code input and Redeem button in your Wallet.": "Chỉ minh họa các trường. Tìm ô mã nạp và nút đổi trong Ví.",
+    "Field illustration only. Follow your current interface and select the group for your model.": "Chỉ minh họa các trường. Làm theo giao diện hiện tại và chọn nhóm của mô hình.",
     "Field Mapping": "Ánh Xạ Trường",
     "Field passthrough controls": "Điều khiển chuyển tiếp trường",
     "Field Path": "Đường dẫn trường",
