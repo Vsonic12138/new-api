@@ -40,8 +40,16 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
   {
     version: 'v1.0.0-rc.44+custom',
     upstreamBase: 'v1.0.0-rc.44',
-    date: '2026-10-18',
+    date: '2026-10-19',
     items: [
+    {
+      "tag": "feat",
+      "titleEn": "[docs] 重写新手指南并补充 Codex 与生图配置",
+      "titleZh": "[docs] 重写新手指南并补充 Codex 与生图配置",
+      "descEn": "Commit: d3914afcf (2026-10-19)",
+      "descZh": "提交: d3914afcf · 2026-10-19",
+      "commitHash": "d3914afcf"
+    },
     {
       "tag": "fix",
       "titleEn": "[theme] 对齐二开默认主题取值并修正主题偏好测试断言",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 214280bb8 (2026-10-03)",
       "descZh": "提交: 214280bb8 · 2026-10-03",
       "commitHash": "214280bb8"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 接入 ZCode 与 Cherry Studio 官方配置截图及全屏查看",
-      "titleZh": "[home] 接入 ZCode 与 Cherry Studio 官方配置截图及全屏查看",
-      "descEn": "Commit: 57adf125d (2026-10-03)",
-      "descZh": "提交: 57adf125d · 2026-10-03",
-      "commitHash": "57adf125d"
     }
 ],
   },
