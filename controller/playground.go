@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/constant"
 	"github.com/QuantumNous/new-api/i18n"
 	"github.com/QuantumNous/new-api/middleware"
 	"github.com/QuantumNous/new-api/model"
@@ -31,6 +32,13 @@ func PlaygroundImage(c *gin.Context) {
   playgroundRelay(c, types.RelayFormatOpenAIImage)
 }
 
+// A token limited to text models must not bypass those limits by embedding an
+// image_generation tool inside an otherwise authorized Responses request.
+func playgroundImageToolAllowed(modelName string, limited bool, limits map[string]bool) bool {
+  if !playgroundImageModelAllowed(modelName) { return false }
+  return !limited || middleware.TokenModelLimitAllows(limits, modelName)
+}
+
 func PlaygroundResponses(c *gin.Context) {
   // Preserve general LLM/VLM Responses requests; restrict only image tool
   // models. The top-level mainline model is selected from the user's normal
@@ -45,9 +53,17 @@ func PlaygroundResponses(c *gin.Context) {
     c.JSON(400, gin.H{"error":gin.H{"message":"Invalid Responses request"}})
     return
   }
+  limited := common.GetContextKeyBool(c, constant.ContextKeyTokenModelLimitEnabled)
+  rawLimits, _ := common.GetContextKey(c, constant.ContextKeyTokenModelLimit)
+  limits, _ := rawLimits.(map[string]bool)
   for _, tool := range request.Tools {
-    if tool.Type == "image_generation" && !playgroundImageModelAllowed(tool.Model) {
+    if tool.Type != "image_generation" { continue }
+    if !playgroundImageModelAllowed(tool.Model) {
       c.JSON(400, gin.H{"error":gin.H{"message":"Image tool must use GPT Image 2.5 Flare or Sunburst"}})
+      return
+    }
+    if !playgroundImageToolAllowed(tool.Model, limited, limits) {
+      c.JSON(403, gin.H{"error":gin.H{"message":"Selected token does not allow this image tool model"}})
       return
     }
   }
