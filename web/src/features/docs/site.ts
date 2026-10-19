@@ -22,6 +22,17 @@ export const DOCS_OPENAI_BASE_URL = `${DOCS_ORIGIN}/v1`
 export const DOCS_CARD_SHOP_URL = 'https://wzyp.cn/shop/XE6S10RT'
 export const CC_SWITCH_RELEASES_URL =
   'https://github.com/farion1231/cc-switch/releases/latest'
+export const CODEX_DOWNLOAD_URL = 'https://openai.com/zh-Hans-CN/codex/'
+export const DOCS_MCP_CONFIG = `{
+  "mcpServers": {
+    "imagegen": {
+      "command": "npx",
+      "args": ["-y", "@bigyellow12138/imagegen-mcp"],
+      "env": { "IMAGE_API_TOKEN": "sk-your-api-token" },
+      "timeoutMs": 180000
+    }
+  }
+}`
 export const CC_SWITCH_SITE_URL = 'https://ccswitch.io'
 
 export const CLAUDE_CODE_SETTINGS = `{
