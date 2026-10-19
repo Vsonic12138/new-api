@@ -43,6 +43,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-19',
     items: [
     {
+      "tag": "fix",
+      "titleEn": "[docs] 重截文档配图并通过资源版本避免旧图缓存",
+      "titleZh": "[docs] 重截文档配图并通过资源版本避免旧图缓存",
+      "descEn": "Commit: b0773c192 (2026-10-19)",
+      "descZh": "提交: b0773c192 · 2026-10-19",
+      "commitHash": "b0773c192"
+    },
+    {
       "tag": "feat",
       "titleEn": "[docs] 区分用户与智能体文档并突出操作入口",
       "titleZh": "[docs] 区分用户与智能体文档并突出操作入口",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 6501e2a74 (2026-10-06)",
       "descZh": "提交: 6501e2a74 · 2026-10-06",
       "commitHash": "6501e2a74"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "[changelog] 扩充日志提取深度并过滤内部构建提交",
-      "titleZh": "[changelog] 扩充日志提取深度并过滤内部构建提交",
-      "descEn": "Commit: 71d7813de (2026-10-06)",
-      "descZh": "提交: 71d7813de · 2026-10-06",
-      "commitHash": "71d7813de"
     }
 ],
   },
