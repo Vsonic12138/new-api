@@ -68,6 +68,25 @@ func SetRelayRouter(router *gin.Engine) {
 	{
 		playgroundRouter.POST("/chat/completions", controller.Playground)
 	}
+	// Session-authenticated image Playground. Requests can use the current
+	// NewAPI account/group or a token ID belonging to the logged-in user;
+	// selected tokens are verified with the existing TokenAuth middleware.
+	imagePlaygroundRouter := router.Group("/pg/image-playground")
+	imagePlaygroundRouter.Use(middleware.RouteTag("relay"))
+	imagePlaygroundRouter.Use(middleware.SystemPerformanceCheck())
+	imagePlaygroundRouter.Use(middleware.PlaygroundOriginGuard())
+	imagePlaygroundRouter.Use(middleware.UserAuth())
+	imagePlaygroundRouter.Use(middleware.PlaygroundCredentialSelector())
+	imagePlaygroundRouter.Use(middleware.StripPlaygroundAuthorization())
+	imagePlaygroundRouter.Use(middleware.ModelRequestRateLimit())
+	imagePlaygroundRouter.Use(middleware.Distribute())
+	{
+		imagePlaygroundRouter.POST("/chat/completions", controller.Playground)
+		imagePlaygroundRouter.POST("/responses", controller.PlaygroundResponses)
+		imagePlaygroundRouter.POST("/images/generations", controller.PlaygroundImage)
+		imagePlaygroundRouter.POST("/images/edits", controller.PlaygroundImage)
+	}
+
 	relayV1Router := router.Group("/v1")
 	relayV1Router.Use(middleware.RouteTag("relay"))
 	relayV1Router.Use(middleware.SystemPerformanceCheck())
@@ -114,6 +133,14 @@ func SetRelayRouter(router *gin.Engine) {
 		// alpha search related routes (Codex standalone web search)
 		httpRouter.POST("/alpha/search", func(c *gin.Context) {
 			controller.Relay(c, types.RelayFormatOpenAIAlphaSearch)
+		})
+
+		// DeepSeek Search and Fetch API routes
+		httpRouter.POST("/tools/search", func(c *gin.Context) {
+			controller.Relay(c, types.RelayFormatDeepSeekTools)
+		})
+		httpRouter.POST("/tools/fetch", func(c *gin.Context) {
+			controller.Relay(c, types.RelayFormatDeepSeekTools)
 		})
 
 		// image related routes. /images/generations and /images/edits are
