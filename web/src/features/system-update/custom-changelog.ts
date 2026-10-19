@@ -43,6 +43,22 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-19',
     items: [
     {
+      "tag": "fix",
+      "titleEn": "[docs] 更新站点登录截图并明确示意图说明",
+      "titleZh": "[docs] 更新站点登录截图并明确示意图说明",
+      "descEn": "Commit: acda4c915 (2026-10-19)",
+      "descZh": "提交: acda4c915 · 2026-10-19",
+      "commitHash": "acda4c915"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[docs] 重组新手文档并补充生图改图操作流程",
+      "titleZh": "[docs] 重组新手文档并补充生图改图操作流程",
+      "descEn": "Commit: 342c6b7ab (2026-10-19)",
+      "descZh": "提交: 342c6b7ab · 2026-10-19",
+      "commitHash": "342c6b7ab"
+    },
+    {
       "tag": "chore",
       "titleEn": "[docs] 补充生图配置说明并为关键操作添加界面截图",
       "titleZh": "[docs] 补充生图配置说明并为关键操作添加界面截图",
@@ -265,22 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: f879a9458 (2026-10-06)",
       "descZh": "提交: f879a9458 · 2026-10-06",
       "commitHash": "f879a9458"
-    },
-    {
-      "tag": "chore",
-      "titleEn": "[guidelines] 补充中文提交示例与文案要求",
-      "titleZh": "[guidelines] 补充中文提交示例与文案要求",
-      "descEn": "Commit: f50eecb70 (2026-10-03)",
-      "descZh": "提交: f50eecb70 · 2026-10-03",
-      "commitHash": "f50eecb70"
-    },
-    {
-      "tag": "chore",
-      "titleEn": "[guidelines] 统一 Commit 规范为客观克制中文并更新日志脚本",
-      "titleZh": "[guidelines] 统一 Commit 规范为客观克制中文并更新日志脚本",
-      "descEn": "Commit: 2e903d88b (2026-10-03)",
-      "descZh": "提交: 2e903d88b · 2026-10-03",
-      "commitHash": "2e903d88b"
     }
 ],
   },
