@@ -43,6 +43,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-19',
     items: [
     {
+      "tag": "fix",
+      "titleEn": "[docs] 补充聊天客户端启用服务商的首次配置步骤",
+      "titleZh": "[docs] 补充聊天客户端启用服务商的首次配置步骤",
+      "descEn": "Commit: b19183711 (2026-10-19)",
+      "descZh": "提交: b19183711 · 2026-10-19",
+      "commitHash": "b19183711"
+    },
+    {
       "tag": "feat",
       "titleEn": "[docs] 重整文档章节并补齐模型思考配置与中文图解",
       "titleZh": "[docs] 重整文档章节并补齐模型思考配置与中文图解",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: b0a023a6f (2026-10-07)",
       "descZh": "提交: b0a023a6f · 2026-10-07",
       "commitHash": "b0a023a6f"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 重构客户端生态分类与多模型网关预览并整合发卡入口",
-      "titleZh": "[home] 重构客户端生态分类与多模型网关预览并整合发卡入口",
-      "descEn": "Commit: 0a51871b9 (2026-10-07)",
-      "descZh": "提交: 0a51871b9 · 2026-10-07",
-      "commitHash": "0a51871b9"
     }
 ],
   },
