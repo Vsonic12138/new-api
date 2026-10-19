@@ -43,6 +43,22 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-19',
     items: [
     {
+      "tag": "chore",
+      "titleEn": "[docs] 补充生图配置说明并为关键操作添加界面截图",
+      "titleZh": "[docs] 补充生图配置说明并为关键操作添加界面截图",
+      "descEn": "Commit: 0476136ff (2026-10-19)",
+      "descZh": "提交: 0476136ff · 2026-10-19",
+      "commitHash": "0476136ff"
+    },
+    {
+      "tag": "fix",
+      "titleEn": "[docs] 修正路径显示与文案空格",
+      "titleZh": "[docs] 修正路径显示与文案空格",
+      "descEn": "Commit: 1188da182 (2026-10-19)",
+      "descZh": "提交: 1188da182 · 2026-10-19",
+      "commitHash": "1188da182"
+    },
+    {
       "tag": "feat",
       "titleEn": "[docs] 重写新手指南并补充 Codex 与生图配置",
       "titleZh": "[docs] 重写新手指南并补充 Codex 与生图配置",
@@ -265,22 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 2e903d88b (2026-10-03)",
       "descZh": "提交: 2e903d88b · 2026-10-03",
       "commitHash": "2e903d88b"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[system-update] 自动化提取 Git 提交记录生成更新日志并制定提交规范",
-      "titleZh": "[system-update] 自动化提取 Git 提交记录生成更新日志并制定提交规范",
-      "descEn": "Commit: bfc05c5ae (2026-10-03)",
-      "descZh": "提交: bfc05c5ae · 2026-10-03",
-      "commitHash": "bfc05c5ae"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[system-update] 更新二开更新日志数据",
-      "titleZh": "[system-update] 更新二开更新日志数据",
-      "descEn": "Commit: 214280bb8 (2026-10-03)",
-      "descZh": "提交: 214280bb8 · 2026-10-03",
-      "commitHash": "214280bb8"
     }
 ],
   },
