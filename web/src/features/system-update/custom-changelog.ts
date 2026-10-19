@@ -43,6 +43,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-19',
     items: [
     {
+      "tag": "feat",
+      "titleEn": "[docs] 增加生图工具提示词配置说明与操作指引",
+      "titleZh": "[docs] 增加生图工具提示词配置说明与操作指引",
+      "descEn": "Commit: 30f760549 (2026-10-19)",
+      "descZh": "提交: 30f760549 · 2026-10-19",
+      "commitHash": "30f760549"
+    },
+    {
       "tag": "fix",
       "titleEn": "[docs] 更新站点登录截图并明确示意图说明",
       "titleZh": "[docs] 更新站点登录截图并明确示意图说明",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 3b65989fb (2026-10-06)",
       "descZh": "提交: 3b65989fb · 2026-10-06",
       "commitHash": "3b65989fb"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[pricing] 配置 glm-5.3-flash 官方定价与阶梯费率",
-      "titleZh": "[pricing] 配置 glm-5.3-flash 官方定价与阶梯费率",
-      "descEn": "Commit: f879a9458 (2026-10-06)",
-      "descZh": "提交: f879a9458 · 2026-10-06",
-      "commitHash": "f879a9458"
     }
 ],
   },
