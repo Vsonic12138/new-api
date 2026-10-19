@@ -145,17 +145,15 @@ export function DocsStartPage() {
 
       <DocsSection title='6. 手动配置 Codex（进阶）'>
         <p>
-          不想安装 CC Switch 时，可以直接修改 Codex 的本地配置。配置文件位于
-          <code>~/.codex/config.toml</code>（Windows 为
-          <code>%USERPROFILE%\\.codex\\config.toml</code>）。
+          不想安装 CC Switch 时，可以直接修改 Codex 的本地配置。配置文件位于 <code>~/.codex/config.toml</code>（Windows 为
+          <code>%USERPROFILE%\.codex\config.toml</code>）。
         </p>
         <DocsCode label='config.toml' code={CODEX_CONFIG} />
         <p>再把 Key 写入环境变量：</p>
         <DocsCode label='macOS / Linux' code={CODEX_ENV_UNIX} />
         <DocsCode label='Windows PowerShell' code={CODEX_ENV_WINDOWS} />
         <p>
-          保存后完全退出并重启 Codex。接口地址为
-          <code>{DOCS_OPENAI_BASE_URL}</code>，兼容 OpenAI Responses 协议。
+          保存后完全退出并重启 Codex。接口地址为 <code>{DOCS_OPENAI_BASE_URL}</code>，兼容 OpenAI Responses 协议。
         </p>
         <p>
           <DocsTextLink href='/docs/codex'>查看 Codex 配置的完整说明</DocsTextLink>
@@ -164,8 +162,7 @@ export function DocsStartPage() {
 
       <DocsSection title='7. Claude Code（可选）'>
         <p>
-          如果你使用 Claude Code，把接口地址指向本站根地址，再用令牌作为
-          <code>ANTHROPIC_AUTH_TOKEN</code> 即可。
+          如果你使用 Claude Code，把接口地址指向本站根地址，再用令牌作为 <code>ANTHROPIC_AUTH_TOKEN</code> 即可。
         </p>
         <p>
           <DocsTextLink href='/docs/claude-code'>
@@ -184,8 +181,7 @@ export function DocsStartPage() {
         <DocsCode label='MCP 配置（Claude Code / Codex / Cursor / ZCode）' code={DOCS_MCP_CONFIG} />
         <p>
           配置好之后，直接对模型说「画一张……」「把这张图改成……」即可。
-          图片默认保存到当前项目下的 <code>ai-images</code>，没有项目时保存到用户目录下的
-          <code>ai-images</code>。
+          图片默认保存到当前项目下的 <code>ai-images</code>，没有项目时保存到用户目录下的 <code>ai-images</code>。
         </p>
       </DocsSection>
 
