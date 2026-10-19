@@ -74,7 +74,7 @@ func SetRelayRouter(router *gin.Engine) {
 	imagePlaygroundRouter := router.Group("/pg/image-playground")
 	imagePlaygroundRouter.Use(middleware.RouteTag("relay"))
 	imagePlaygroundRouter.Use(middleware.SystemPerformanceCheck())
-	imagePlaygroundRouter.Use(middleware.SessionCookieOriginGuard())
+	imagePlaygroundRouter.Use(middleware.PlaygroundOriginGuard())
 	imagePlaygroundRouter.Use(middleware.UserAuth())
 	imagePlaygroundRouter.Use(middleware.PlaygroundCredentialSelector())
 	imagePlaygroundRouter.Use(middleware.StripPlaygroundAuthorization())
