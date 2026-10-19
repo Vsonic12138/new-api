@@ -15,6 +15,26 @@ import (
 )
 
 func Playground(c *gin.Context) {
+  playgroundRelay(c, format)
+}
+
+func PlaygroundImage(c *gin.Context) {
+  playgroundRelay(c, types.RelayFormatOpenAIImage)
+}
+
+func PlaygroundResponses(c *gin.Context) {
+  playgroundRelay(c, types.RelayFormatOpenAIResponses)
+}
+
+func playgroundRelay(c *gin.Context, format types.RelayFormat) {
+  // Token-ID mode was fully verified in PlaygroundCredentialSelector using
+  // ordinary TokenAuth and already carries the user's actual token context.
+  // Never replace it with a synthetic unlimited Playground token.
+  if c.GetBool("image_playground_selected_token") {
+    Relay(c, format)
+    return
+  }
+
 	var newAPIError *types.NewAPIError
 
 	defer func() {
@@ -31,7 +51,7 @@ func Playground(c *gin.Context) {
 		return
 	}
 
-	relayInfo, err := relaycommon.GenRelayInfo(c, types.RelayFormatOpenAI, nil, nil)
+	relayInfo, err := relaycommon.GenRelayInfo(c, format, nil, nil)
 	if err != nil {
 		newAPIError = types.NewError(err, types.ErrorCodeInvalidRequest, types.ErrOptionWithSkipRetry())
 		return
