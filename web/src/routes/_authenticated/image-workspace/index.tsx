@@ -20,14 +20,17 @@ import { createFileRoute, redirect } from '@tanstack/react-router'
 
 import { Main } from '@/components/layout'
 import { isSidebarModuleEnabled } from '@/lib/nav-modules'
+import { statusQueryOptions } from '@/lib/status-query'
 
 // The actual Image Workspace is a separately buildable, same-origin UI bundle.
 // Deploy its VITE_API_MODE=embedded build at /pg-image-workspace/; it calls
 // authenticated /pg/image-playground/* endpoints using this site's cookies.
 // Keeping the iframe same-origin avoids placing API keys into frontend config.
 export const Route = createFileRoute('/_authenticated/image-workspace/')({
-  beforeLoad: () => {
-    if (!isSidebarModuleEnabled('chat', 'image-workspace')) {
+  beforeLoad: async ({ context }) => {
+    const status = await context.queryClient.fetchQuery(statusQueryOptions).catch(() => null)
+    if (status?.image_workspace_enabled !== true ||
+        !isSidebarModuleEnabled('chat', 'image-workspace')) {
       throw redirect({ to: '/dashboard' })
     }
   },
