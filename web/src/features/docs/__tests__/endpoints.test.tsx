@@ -162,6 +162,7 @@ describe('docs client addresses', () => {
       baseUrl: DOCS_OPENAI_BASE_URL,
       apiKey: 'sk-your-api-token',
     })
+    expect(screen.getByText('Enable the provider')).toBeVisible()
     await user.click(screen.getByRole('tab', { name: 'Grok' }))
     expect(
       decode(

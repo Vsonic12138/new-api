@@ -141,6 +141,9 @@ export function DocsClientSetup(props: {
                       'Confirm the import, replace the example key, and save.'
                     )}
                   />
+                  {cherry && (
+                    <DocsStep n={3} title={t('Enable the provider')} />
+                  )}
                 </DocsSteps>
                 <DocsCode label='Base URL' code={`${origin}/v1`} />
                 <div className='mx-auto max-w-xl'>
