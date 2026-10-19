@@ -33,6 +33,7 @@ import {
   CODEX_MCP_CONFIG,
   DOCS_MCP_CONFIG,
   NODE_CHECK,
+  DOCS_OPENAI_BASE_URL,
 } from '../site'
 
 export function DocsImageMcpPage() {
@@ -92,7 +93,26 @@ export function DocsImageMcpPage() {
           Node.js
         </DocsTextLink>
       </DocsSection>
-      <DocsSection title={t('2. Add MCP in your client')} id='clients'>
+      <DocsSection title={t('2. Let AI help configure MCP')} id='ai-setup'>
+        <p>
+          {t(
+            'Use an assistant that can read and edit local files, such as Codex, Claude Code or Cursor. Copy the prompt below into that assistant. Ordinary web chat can explain the steps but cannot directly edit your computer configuration. Choose this method or the manual method below; you do not need both.'
+          )}
+        </p>
+        <DocsCode
+          label={t('AI setup prompt')}
+          code={t(
+            'Please configure the imagegen MCP on this computer. First identify my OS and whether I use Codex, Claude Code or Cursor, and ask if unclear. Check Node.js 18+ and npx. Back up the existing configuration, then merge a local stdio server named imagegen using npx -y @bigyellow12138/imagegen-mcp@0.5.0. Set IMAGE_API_BASE_URL={{baseUrl}} and IMAGE_API_TOKEN=sk-your-image-key. Leave the key as a placeholder for me to fill locally; do not ask me to paste a real key into chat. Preserve other providers and MCP servers. For Codex set startup_timeout_sec=60 and tool_timeout_sec=600. Explain the changed file, how to restart, and how to check generate_image. Do not generate an image during setup.',
+            { baseUrl: DOCS_OPENAI_BASE_URL }
+          )}
+        />
+        <DocsNote>
+          {t(
+            'After AI finishes, fill the real image-group key locally, save, and restart the client. Then check imagegen and generate_image in the tool list. If the assistant cannot edit files, use the manual instructions below.'
+          )}
+        </DocsNote>
+      </DocsSection>
+      <DocsSection title={t('Manual setup (alternative)')} id='clients'>
         <p>
           {t(
             'Choose only the instructions for your client. Replace sk-your-image-key with the image key. Merge the new entry into existing configuration; do not overwrite your other providers or MCP servers.'

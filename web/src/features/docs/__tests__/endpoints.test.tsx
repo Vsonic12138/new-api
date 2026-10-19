@@ -89,6 +89,16 @@ async function renderWithRouter(
 }
 
 describe('docs client addresses', () => {
+  it('offers a copyable AI setup prompt with image credentials kept as a local placeholder', async () => {
+    await i18n.changeLanguage('en')
+    await renderWithRouter('/docs/image-mcp', DocsImageMcpPage)
+    const prompt =
+      (await screen.findByLabelText('AI setup prompt')).textContent ?? ''
+    expect(prompt).toContain('@bigyellow12138/imagegen-mcp@0.5.0')
+    expect(prompt).toContain(DOCS_OPENAI_BASE_URL)
+    expect(prompt).toContain('IMAGE_API_TOKEN')
+    expect(prompt).toContain('sk-your-image-key')
+  })
   it('updates the guide overview when the reader changes language', async () => {
     await renderWithRouter('/docs', DocsStartPage)
     expect(
