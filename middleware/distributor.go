@@ -353,6 +353,9 @@ func getJSONStringValue(result gjson.Result, field string) (string, error) {
 }
 
 func getModelRequest(c *gin.Context) (*ModelRequest, bool, error) {
+	// Route and bill the Image Workspace endpoints exactly like their /v1
+	// counterparts, including multipart image edits.
+	canonicalPath := relayconstant.CanonicalPlaygroundPath(c.Request.URL.Path)
 	var modelRequest ModelRequest
 	shouldSelectChannel := true
 	var err error
@@ -458,9 +461,16 @@ func getModelRequest(c *gin.Context) (*ModelRequest, bool, error) {
 			modelRequest.Model = c.Param("model")
 		}
 	}
-	if strings.HasPrefix(c.Request.URL.Path, "/v1/images/generations") {
+	// The routing name is also the billing name, so a model named in the body
+	// must not replace it: DeepSeek ignores that field.
+	if strings.HasPrefix(c.Request.URL.Path, "/v1/tools/search") {
+		modelRequest.Model = constant.DeepSeekSearchModel
+	} else if strings.HasPrefix(c.Request.URL.Path, "/v1/tools/fetch") {
+		modelRequest.Model = constant.DeepSeekFetchModel
+	}
+	if strings.HasPrefix(canonicalPath, "/v1/images/generations") {
 		modelRequest.Model = common.GetStringIfEmpty(modelRequest.Model, "dall-e")
-	} else if strings.HasPrefix(c.Request.URL.Path, "/v1/images/edits") {
+	} else if strings.HasPrefix(canonicalPath, "/v1/images/edits") {
 		//modelRequest.Model = common.GetStringIfEmpty(c.PostForm("model"), "gpt-image-1")
 		contentType := c.ContentType()
 		if slices.Contains([]string{gin.MIMEPOSTForm, gin.MIMEMultipartPOSTForm}, contentType) {
