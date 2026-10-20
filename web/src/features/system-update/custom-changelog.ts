@@ -44,6 +44,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     items: [
     {
       "tag": "fix",
+      "titleEn": "[relay] 防止轮询跨来源重定向转发凭据并验证退款",
+      "titleZh": "[relay] 防止轮询跨来源重定向转发凭据并验证退款",
+      "descEn": "Commit: a8ec01fda (2026-10-20)",
+      "descZh": "提交: a8ec01fda · 2026-10-20",
+      "commitHash": "a8ec01fda"
+    },
+    {
+      "tag": "fix",
       "titleEn": "[dashboard] 修复稀疏缓存趋势显示并提高主题线条对比度",
       "titleZh": "[dashboard] 修复稀疏缓存趋势显示并提高主题线条对比度",
       "descEn": "Commit: e3c896c19 (2026-10-20)",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: bd0c2b96e (2026-10-07)",
       "descZh": "提交: bd0c2b96e · 2026-10-07",
       "commitHash": "bd0c2b96e"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 对齐模型广场最新主力模型与 Magpie 风格网关路由预览",
-      "titleZh": "[home] 对齐模型广场最新主力模型与 Magpie 风格网关路由预览",
-      "descEn": "Commit: c23a21051 (2026-10-07)",
-      "descZh": "提交: c23a21051 · 2026-10-07",
-      "commitHash": "c23a21051"
     }
 ],
   },
