@@ -2,11 +2,14 @@ package service
 
 import (
 	"fmt"
+	"html"
 
 	"github.com/QuantumNous/new-api/common"
+	"github.com/QuantumNous/new-api/i18n"
 	"github.com/QuantumNous/new-api/model"
 	"github.com/QuantumNous/new-api/oauth"
 	"github.com/QuantumNous/new-api/setting/system_setting"
+	"github.com/gin-gonic/gin"
 )
 
 func UnbindAccountOAuth(identity AuthIdentity, providerID int) error {
@@ -28,18 +31,34 @@ func UnbindAccountOAuth(identity AuthIdentity, providerID int) error {
 	return model.UnbindUserOAuthForSession(identity, providerID, enabled)
 }
 
+// AccountMailLanguage is the language of mail about a user's account: the
+// language the user saved, else the one the request stated.
+func AccountMailLanguage(c *gin.Context, userId int) string {
+	if lang := model.GetUserLanguage(userId); lang != "" {
+		return lang
+	}
+	return i18n.StatedLang(c)
+}
+
 // NotifyAccountSecurityChange never includes credentials or tokens. The caller
 // records delivery failure independently from the already-committed change.
-func NotifyAccountSecurityChange(email, event string) error {
+// eventKey names the change; the notice is written in lang (see
+// AccountMailLanguage).
+func NotifyAccountSecurityChange(lang, email, eventKey string, eventArgs ...map[string]any) error {
 	if email == "" {
 		return nil
 	}
-	subject := common.SystemName + " — 账号安全通知"
-	content := common.BuildEmailHTML(common.EmailCardOptions{
-		Title:          "账号安全提醒",
-		Subtitle:       fmt.Sprintf("您的账号安全设置已变更：%s。", event),
-		ValidMinutes:   0,
-		SecurityNotice: "如非您本人操作，请立即登录账号检查安全设置，撤回异常登录会话并联系管理员。",
-	})
+	event := html.EscapeString(i18n.Translate(lang, eventKey, eventArgs...))
+	subject := i18n.Translate(lang, i18n.MsgEmailSecurityNoticeSubject, map[string]any{"SystemName": common.SystemName})
+	content := fmt.Sprintf("<p>%s</p><p>%s</p>",
+		i18n.Translate(lang, i18n.MsgEmailSecurityNoticeChanged, map[string]any{"Event": event}),
+		i18n.Translate(lang, i18n.MsgEmailSecurityNoticeAdvice))
+	if lang == "zh-CN" || lang == "zh" {
+		content = common.BuildEmailHTML(common.EmailCardOptions{
+			Title:          "账号安全提醒",
+			Subtitle:       i18n.Translate(lang, i18n.MsgEmailSecurityNoticeChanged, map[string]any{"Event": i18n.Translate(lang, eventKey, eventArgs...)}),
+			SecurityNotice: i18n.Translate(lang, i18n.MsgEmailSecurityNoticeAdvice),
+		})
+	}
 	return common.SendEmail(subject, email, content)
 }
