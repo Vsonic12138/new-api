@@ -219,7 +219,7 @@ export function CacheAnalysis() {
                 config={{
                   rate: {
                     label: t('Token cache hit rate'),
-                    color: 'var(--chart-3)',
+                    color: 'var(--foreground)',
                   },
                 }}
               >
@@ -268,7 +268,12 @@ export function CacheAnalysis() {
                     type='linear'
                     stroke='var(--color-rate)'
                     strokeWidth={2}
-                    dot={false}
+                    dot={{
+                      r: 3,
+                      fill: 'var(--color-rate)',
+                      stroke: 'var(--card)',
+                      strokeWidth: 1.5,
+                    }}
                     connectNulls={false}
                     isAnimationActive={false}
                   />
