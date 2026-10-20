@@ -9,8 +9,18 @@ import (
 	"gorm.io/gorm"
 )
 
+// CacheUsageStats aggregates only requests with a reliable upstream cache
+// report. Zero counters on historical rows mean unknown, not a cache miss.
+type CacheUsageStats struct {
+	CacheStatsInputTokens int64 `json:"cache_stats_input_tokens" gorm:"default:0"`
+	CacheStatsReadTokens  int64 `json:"cache_stats_read_tokens" gorm:"default:0"`
+	CacheStatsWriteTokens int64 `json:"cache_stats_write_tokens" gorm:"default:0"`
+	CacheStatsCount       int64 `json:"cache_stats_count" gorm:"default:0"`
+}
+
 // QuotaData 柱状图数据
 type QuotaData struct {
+	CacheUsageStats     `gorm:"embedded"`
 	Id                  int    `json:"id"`
 	UserID              int    `json:"user_id" gorm:"index"`
 	Username            string `json:"username" gorm:"index:idx_qdt_model_user_name,priority:2;size:64;default:''"`
@@ -28,6 +38,7 @@ type QuotaData struct {
 }
 
 type QuotaDataLogParams struct {
+	CacheUsageStats
 	UserID              int
 	Username            string
 	ModelName           string
@@ -74,6 +85,10 @@ func logQuotaDataCache(quotaData *QuotaData) {
 		cachedQuotaData.Count += count
 		cachedQuotaData.Quota += quota
 		cachedQuotaData.TokenUsed += tokenUsed
+		cachedQuotaData.CacheStatsInputTokens += quotaData.CacheStatsInputTokens
+		cachedQuotaData.CacheStatsReadTokens += quotaData.CacheStatsReadTokens
+		cachedQuotaData.CacheStatsWriteTokens += quotaData.CacheStatsWriteTokens
+		cachedQuotaData.CacheStatsCount += quotaData.CacheStatsCount
 		cachedQuotaData.CacheReadTokens += quotaData.CacheReadTokens
 		cachedQuotaData.CacheCreationTokens += quotaData.CacheCreationTokens
 		quotaData = cachedQuotaData
@@ -85,6 +100,7 @@ func LogQuotaData(params QuotaDataLogParams) {
 	// 只精确到小时
 	createdAt := params.CreatedAt - (params.CreatedAt % 3600)
 	quotaData := &QuotaData{
+		CacheUsageStats:     params.CacheUsageStats,
 		UserID:              params.UserID,
 		Username:            params.Username,
 		ModelName:           params.ModelName,
@@ -137,11 +153,15 @@ func increaseQuotaData(quotaData *QuotaData) {
 		Where("user_id = ? and username = ? and model_name = ? and created_at = ? and use_group = ? and token_id = ? and channel_id = ? and node_name = ?",
 			quotaData.UserID, quotaData.Username, quotaData.ModelName, quotaData.CreatedAt, quotaData.UseGroup, quotaData.TokenID, quotaData.ChannelID, quotaData.NodeName).
 		Updates(map[string]any{
-			"count":                 gorm.Expr("count + ?", quotaData.Count),
-			"quota":                 gorm.Expr("quota + ?", quotaData.Quota),
-			"token_used":            gorm.Expr("token_used + ?", quotaData.TokenUsed),
-			"cache_read_tokens":     gorm.Expr("cache_read_tokens + ?", quotaData.CacheReadTokens),
-			"cache_creation_tokens": gorm.Expr("cache_creation_tokens + ?", quotaData.CacheCreationTokens),
+			"cache_stats_input_tokens": gorm.Expr("cache_stats_input_tokens + ?", quotaData.CacheStatsInputTokens),
+			"cache_stats_read_tokens":  gorm.Expr("cache_stats_read_tokens + ?", quotaData.CacheStatsReadTokens),
+			"cache_stats_write_tokens": gorm.Expr("cache_stats_write_tokens + ?", quotaData.CacheStatsWriteTokens),
+			"cache_stats_count":        gorm.Expr("cache_stats_count + ?", quotaData.CacheStatsCount),
+			"count":                    gorm.Expr("count + ?", quotaData.Count),
+			"quota":                    gorm.Expr("quota + ?", quotaData.Quota),
+			"token_used":               gorm.Expr("token_used + ?", quotaData.TokenUsed),
+			"cache_read_tokens":        gorm.Expr("cache_read_tokens + ?", quotaData.CacheReadTokens),
+			"cache_creation_tokens":    gorm.Expr("cache_creation_tokens + ?", quotaData.CacheCreationTokens),
 		}).Error
 	if err != nil {
 		common.SysLog(common.LogText("increaseQuotaData error: %s", err))
@@ -152,7 +172,7 @@ func GetQuotaDataByUsername(username string, startTime int64, endTime int64) (qu
 	var quotaDatas []*QuotaData
 	// 从quota_data表中查询数据
 	err = DB.Table("quota_data").
-		Select("user_id, username, model_name, created_at, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used, sum(cache_read_tokens) as cache_read_tokens, sum(cache_creation_tokens) as cache_creation_tokens").
+		Select("user_id, username, model_name, created_at, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used, sum(cache_read_tokens) as cache_read_tokens, sum(cache_creation_tokens) as cache_creation_tokens, sum(cache_stats_input_tokens) as cache_stats_input_tokens, sum(cache_stats_read_tokens) as cache_stats_read_tokens, sum(cache_stats_write_tokens) as cache_stats_write_tokens, sum(cache_stats_count) as cache_stats_count").
 		Where("username = ? and created_at >= ? and created_at <= ?", username, startTime, endTime).
 		Group("user_id, username, model_name, created_at").
 		Find(&quotaDatas).Error
@@ -163,7 +183,7 @@ func GetQuotaDataByUserId(userId int, startTime int64, endTime int64) (quotaData
 	var quotaDatas []*QuotaData
 	// 从quota_data表中查询数据
 	err = DB.Table("quota_data").
-		Select("user_id, username, model_name, created_at, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used, sum(cache_read_tokens) as cache_read_tokens, sum(cache_creation_tokens) as cache_creation_tokens").
+		Select("user_id, username, model_name, created_at, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used, sum(cache_read_tokens) as cache_read_tokens, sum(cache_creation_tokens) as cache_creation_tokens, sum(cache_stats_input_tokens) as cache_stats_input_tokens, sum(cache_stats_read_tokens) as cache_stats_read_tokens, sum(cache_stats_write_tokens) as cache_stats_write_tokens, sum(cache_stats_count) as cache_stats_count").
 		Where("user_id = ? and created_at >= ? and created_at <= ?", userId, startTime, endTime).
 		Group("user_id, username, model_name, created_at").
 		Find(&quotaDatas).Error
@@ -173,7 +193,7 @@ func GetQuotaDataByUserId(userId int, startTime int64, endTime int64) (quotaData
 func GetQuotaDataGroupByUser(startTime int64, endTime int64) (quotaData []*QuotaData, err error) {
 	var quotaDatas []*QuotaData
 	err = DB.Table("quota_data").
-		Select("username, created_at, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used, sum(cache_read_tokens) as cache_read_tokens, sum(cache_creation_tokens) as cache_creation_tokens").
+		Select("username, created_at, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used, sum(cache_read_tokens) as cache_read_tokens, sum(cache_creation_tokens) as cache_creation_tokens, sum(cache_stats_input_tokens) as cache_stats_input_tokens, sum(cache_stats_read_tokens) as cache_stats_read_tokens, sum(cache_stats_write_tokens) as cache_stats_write_tokens, sum(cache_stats_count) as cache_stats_count").
 		Where("created_at >= ? and created_at <= ?", startTime, endTime).
 		Group("username, created_at").
 		Find(&quotaDatas).Error
@@ -188,6 +208,6 @@ func GetAllQuotaDates(startTime int64, endTime int64, username string) (quotaDat
 	// 从quota_data表中查询数据
 	// only select model_name, sum(count) as count, sum(quota) as quota, model_name, created_at from quota_data group by model_name, created_at;
 	//err = DB.Table("quota_data").Where("created_at >= ? and created_at <= ?", startTime, endTime).Find(&quotaDatas).Error
-	err = DB.Table("quota_data").Select("model_name, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used, sum(cache_read_tokens) as cache_read_tokens, sum(cache_creation_tokens) as cache_creation_tokens, created_at").Where("created_at >= ? and created_at <= ?", startTime, endTime).Group("model_name, created_at").Find(&quotaDatas).Error
+	err = DB.Table("quota_data").Select("model_name, sum(count) as count, sum(quota) as quota, sum(token_used) as token_used, sum(cache_read_tokens) as cache_read_tokens, sum(cache_creation_tokens) as cache_creation_tokens, sum(cache_stats_input_tokens) as cache_stats_input_tokens, sum(cache_stats_read_tokens) as cache_stats_read_tokens, sum(cache_stats_write_tokens) as cache_stats_write_tokens, sum(cache_stats_count) as cache_stats_count, created_at").Where("created_at >= ? and created_at <= ?", startTime, endTime).Group("model_name, created_at").Find(&quotaDatas).Error
 	return quotaDatas, err
 }

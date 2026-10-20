@@ -260,6 +260,7 @@ type OpenAIVideoResponse struct {
 }
 
 type InputTokenDetails struct {
+	CachedTokensReported bool                `json:"-"`
 	CachedTokens         int                 `json:"cached_tokens"`
 	CachedTokensDetails  *CachedTokenDetails `json:"cached_tokens_details,omitempty"`
 	CachedCreationTokens int                 `json:"cached_creation_tokens,omitempty"`

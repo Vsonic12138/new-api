@@ -35,6 +35,11 @@ const DASHBOARD_SECTIONS = [
     build: () => null,
   },
   {
+    id: 'cache',
+    titleKey: 'Cache Analysis',
+    build: () => null,
+  },
+  {
     id: 'flow',
     titleKey: 'Flow',
     build: () => null,

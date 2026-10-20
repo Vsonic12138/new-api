@@ -5,12 +5,9 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/glebarez/sqlite"
+	"github.com/QuantumNous/new-api/common"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"gorm.io/driver/mysql"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
 // The published v1.0.0-rc.45 schema, retained to exercise real upgrades.
@@ -34,24 +31,27 @@ func (quotaDataBeforeCache) TableName() string { return "quota_data" }
 func TestQuotaDataCacheDatabaseCompatibility(t *testing.T) {
 	for _, dialect := range []string{"sqlite", "mysql", "postgres"} {
 		t.Run(dialect, func(t *testing.T) {
-			var driver gorm.Dialector
+			var dsn string
+			savedSQLite := common.SQLitePath
+			t.Cleanup(func() { common.SQLitePath = savedSQLite })
 			switch dialect {
 			case "sqlite":
-				driver = sqlite.Open(filepath.Join(t.TempDir(), "quota.db"))
+				common.SQLitePath = filepath.Join(t.TempDir(), "quota.db")
 			case "mysql":
-				dsn := os.Getenv("TEST_MYSQL_DSN")
-				if dsn == "" {
-					t.Skip("TEST_MYSQL_DSN not configured")
-				}
-				driver = mysql.Open(dsn)
+				dsn = os.Getenv("TEST_MYSQL_DSN")
 			case "postgres":
-				dsn := os.Getenv("TEST_POSTGRES_DSN")
-				if dsn == "" {
-					t.Skip("TEST_POSTGRES_DSN not configured")
-				}
-				driver = postgres.Open(dsn)
+				dsn = os.Getenv("TEST_POSTGRES_DSN")
 			}
-			db, err := gorm.Open(driver, &gorm.Config{})
+			if dialect != "sqlite" && dsn == "" {
+				t.Skip("database DSN not configured")
+			}
+			t.Setenv("CACHE_STATS_TEST_DSN", dsn)
+			// Exercise the actual application's dialect wrappers and protocol settings.
+			db, dbType, err := chooseDB("CACHE_STATS_TEST_DSN", false)
+			previousType := common.MainDatabaseType()
+			common.SetMainDatabaseType(dbType)
+			initCol()
+			t.Cleanup(func() { common.SetMainDatabaseType(previousType); initCol() })
 			require.NoError(t, err)
 			sqlDB, err := db.DB()
 			require.NoError(t, err)
@@ -81,17 +81,18 @@ func TestQuotaDataCacheDatabaseCompatibility(t *testing.T) {
 				if upgrade {
 					var old QuotaData
 					require.NoError(t, db.First(&old).Error)
+					assert.Equal(t, CacheUsageStats{}, old.CacheUsageStats)
 					assert.Equal(t, 17, old.Quota)
 					assert.Equal(t, int64(0), old.CacheReadTokens)
 					assert.Equal(t, int64(0), old.CacheCreationTokens)
 				}
 				for range 2 {
-					LogQuotaData(QuotaDataLogParams{UserID: 1, Username: "alice", ModelName: "model-a", CreatedAt: 3605, Quota: 20, TokenUsed: 300, CacheReadTokens: 80, CacheCreationTokens: 10})
+					LogQuotaData(QuotaDataLogParams{UserID: 1, Username: "alice", ModelName: "model-a", CreatedAt: 3605, Quota: 20, TokenUsed: 300, CacheReadTokens: 80, CacheCreationTokens: 10, CacheUsageStats: CacheUsageStats{CacheStatsInputTokens: 200, CacheStatsReadTokens: 80, CacheStatsWriteTokens: 10, CacheStatsCount: 1}})
 				}
 				SaveQuotaDataCache()
 				// A later flush must add to the same hour, not replace its counters.
-				LogQuotaData(QuotaDataLogParams{UserID: 1, Username: "alice", ModelName: "model-a", CreatedAt: 3610, Quota: 10, TokenUsed: 100, CacheReadTokens: 40, CacheCreationTokens: 5})
-				LogQuotaData(QuotaDataLogParams{UserID: 2, Username: "bob", ModelName: "model-a", CreatedAt: 3610, Quota: 99, TokenUsed: 900, CacheReadTokens: 700})
+				LogQuotaData(QuotaDataLogParams{UserID: 1, Username: "alice", ModelName: "model-a", CreatedAt: 3610, Quota: 10, TokenUsed: 100, CacheReadTokens: 40, CacheCreationTokens: 5, CacheUsageStats: CacheUsageStats{CacheStatsInputTokens: 100, CacheStatsReadTokens: 40, CacheStatsWriteTokens: 5, CacheStatsCount: 1}})
+				LogQuotaData(QuotaDataLogParams{UserID: 2, Username: "bob", ModelName: "model-a", CreatedAt: 3610, Quota: 99, TokenUsed: 900, CacheReadTokens: 700, CacheUsageStats: CacheUsageStats{CacheStatsInputTokens: 800, CacheStatsReadTokens: 700, CacheStatsCount: 1}})
 				SaveQuotaDataCache()
 				own, err := GetQuotaDataByUserId(1, 3600, 7199)
 				require.NoError(t, err)
@@ -107,6 +108,7 @@ func TestQuotaDataCacheDatabaseCompatibility(t *testing.T) {
 				assert.Equal(t, wantTokens, own[0].TokenUsed)
 				assert.Equal(t, int64(200), own[0].CacheReadTokens)
 				assert.Equal(t, int64(25), own[0].CacheCreationTokens)
+				assert.Equal(t, CacheUsageStats{CacheStatsInputTokens: 500, CacheStatsReadTokens: 200, CacheStatsWriteTokens: 25, CacheStatsCount: 3}, own[0].CacheUsageStats)
 				byName, err := GetQuotaDataByUsername("alice", 3600, 7199)
 				require.NoError(t, err)
 				require.Len(t, byName, 1)
@@ -115,6 +117,7 @@ func TestQuotaDataCacheDatabaseCompatibility(t *testing.T) {
 				require.NoError(t, err)
 				require.Len(t, all, 1)
 				assert.Equal(t, int64(900), all[0].CacheReadTokens)
+				assert.Equal(t, CacheUsageStats{CacheStatsInputTokens: 1300, CacheStatsReadTokens: 900, CacheStatsWriteTokens: 25, CacheStatsCount: 4}, all[0].CacheUsageStats)
 				excluded, err := GetQuotaDataByUserId(1, 7200, 8000)
 				require.NoError(t, err)
 				assert.Empty(t, excluded)

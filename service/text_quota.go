@@ -529,6 +529,7 @@ func PostTextConsumeQuota(ctx *gin.Context, relayInfo *relaycommon.RelayInfo, us
 	attachQuotaSaturation(ctx, relayInfo, other)
 
 	model.RecordConsumeLog(ctx, relayInfo.UserId, model.RecordConsumeLogParams{
+		CacheUsageStats:  BuildDashboardCacheUsage(originUsage, summary.IsClaudeUsageSemantic, common.GetContextKeyBool(ctx, constant.ContextKeyLocalCountTokens)),
 		ChannelId:        relayInfo.ChannelId,
 		PromptTokens:     summary.PromptTokens,
 		CompletionTokens: summary.CompletionTokens,

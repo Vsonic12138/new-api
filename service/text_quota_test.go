@@ -1582,3 +1582,33 @@ func TestPostTextConsumeQuotaLogsMissingUsageAsStructuredContent(t *testing.T) {
 		map[string]any{"key": "Upstream returned no usage, so nothing was charged (possibly an upstream timeout)"},
 	}, other["content_parts"])
 }
+
+func TestDashboardCacheUsageNormalization(t *testing.T) {
+	for _, tc := range []struct {
+		name, body                  string
+		anthropic, local, estimated bool
+		want                        model.CacheUsageStats
+	}{
+		{name: "OpenAI total input includes cache", body: `{"prompt_tokens":1000,"completion_tokens":200,"prompt_tokens_details":{"cached_tokens":600}}`, want: model.CacheUsageStats{CacheStatsInputTokens: 1000, CacheStatsReadTokens: 600, CacheStatsCount: 1}},
+		{name: "explicit zero is a report", body: `{"prompt_tokens":100,"prompt_tokens_details":{"cached_tokens":0}}`, want: model.CacheUsageStats{CacheStatsInputTokens: 100, CacheStatsCount: 1}},
+		{name: "missing cache is unknown", body: `{"prompt_tokens":100}`},
+		{name: "unrelated details are unknown", body: `{"prompt_tokens":100,"input_tokens_details":{"image_tokens":100}}`},
+		{name: "Claude adds cache once and honors TTL split", body: `{"prompt_tokens":100,"prompt_tokens_details":{"cached_tokens":800,"cached_creation_tokens":70},"claude_cache_creation_5_m_tokens":50,"claude_cache_creation_1_h_tokens":20}`, anthropic: true, want: model.CacheUsageStats{CacheStatsInputTokens: 970, CacheStatsReadTokens: 800, CacheStatsWriteTokens: 70, CacheStatsCount: 1}},
+		{name: "overlapping writes do not inflate OpenAI input", body: `{"prompt_tokens":1000,"prompt_tokens_details":{"cached_tokens":900,"cache_write_tokens":200}}`, want: model.CacheUsageStats{CacheStatsInputTokens: 1000, CacheStatsReadTokens: 900, CacheStatsWriteTokens: 200, CacheStatsCount: 1}},
+		{name: "local estimates excluded", body: `{"prompt_tokens":100,"prompt_tokens_details":{"cached_tokens":20}}`, local: true},
+		{name: "canonical estimates excluded", body: `{"prompt_tokens":100,"prompt_tokens_details":{"cached_tokens":20}}`, estimated: true},
+		{name: "read exceeds total excluded", body: `{"prompt_tokens":100,"prompt_tokens_details":{"cached_tokens":200}}`},
+		{name: "negative count excluded", body: `{"prompt_tokens":100,"prompt_tokens_details":{"cached_tokens":-2}}`},
+		{name: "oversized total excluded", body: `{"prompt_tokens":100,"input_tokens":9223372036854775807,"prompt_tokens_details":{"cached_tokens":20}}`},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var usage dto.Usage
+			require.NoError(t, common.Unmarshal([]byte(tc.body), &usage))
+			if tc.estimated {
+				usage.BillingUsage = &dto.BillingUsage{Estimated: true}
+			}
+			assert.Equal(t, tc.want, BuildDashboardCacheUsage(&usage, tc.anthropic, tc.local))
+		})
+	}
+	assert.Equal(t, model.CacheUsageStats{}, BuildDashboardCacheUsage(nil, false, false))
+}

@@ -55,11 +55,11 @@ import { Route as AuthenticatedChatChatIdRouteImport } from './routes/_authentic
 import { Route as AuthenticatedDashboardIndexRouteImport } from './routes/_authenticated/dashboard/index'
 import { Route as AuthenticatedDashboardSectionRouteImport } from './routes/_authenticated/dashboard/$section'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
+import { Route as AuthenticatedImageWorkspaceIndexRouteImport } from './routes/_authenticated/image-workspace/index'
 import { Route as AuthenticatedKeysIndexRouteImport } from './routes/_authenticated/keys/index'
 import { Route as AuthenticatedModelsIndexRouteImport } from './routes/_authenticated/models/index'
 import { Route as AuthenticatedModelsSectionRouteImport } from './routes/_authenticated/models/$section'
 import { Route as AuthenticatedPlaygroundIndexRouteImport } from './routes/_authenticated/playground/index'
-import { Route as AuthenticatedImageWorkspaceIndexRouteImport } from './routes/_authenticated/image-workspace/index'
 import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile/index'
 import { Route as AuthenticatedRedemptionCodesIndexRouteImport } from './routes/_authenticated/redemption-codes/index'
 import { Route as AuthenticatedSecurityIndexRouteImport } from './routes/_authenticated/security/index'
@@ -323,6 +323,12 @@ const AuthenticatedErrorsErrorRoute =
     path: '/errors/$error',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedImageWorkspaceIndexRoute =
+  AuthenticatedImageWorkspaceIndexRouteImport.update({
+    id: '/image-workspace/',
+    path: '/image-workspace/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedKeysIndexRoute = AuthenticatedKeysIndexRouteImport.update({
   id: '/keys/',
   path: '/keys/',
@@ -344,12 +350,6 @@ const AuthenticatedPlaygroundIndexRoute =
   AuthenticatedPlaygroundIndexRouteImport.update({
     id: '/playground/',
     path: '/playground/',
-    getParentRoute: () => AuthenticatedRouteRoute,
-  } as any)
-const AuthenticatedImageWorkspaceIndexRoute =
-  AuthenticatedImageWorkspaceIndexRouteImport.update({
-    id: '/image-workspace/',
-    path: '/image-workspace/',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
 const AuthenticatedProfileIndexRoute =
@@ -573,10 +573,10 @@ export interface FileRoutesByFullPath {
   '/usage-logs/audit': typeof AuthenticatedUsageLogsAuditRoute
   '/channels/': typeof AuthenticatedChannelsIndexRoute
   '/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/image-workspace/': typeof AuthenticatedImageWorkspaceIndexRoute
   '/keys/': typeof AuthenticatedKeysIndexRoute
   '/models/': typeof AuthenticatedModelsIndexRoute
   '/playground/': typeof AuthenticatedPlaygroundIndexRoute
-  '/image-workspace/': typeof AuthenticatedImageWorkspaceIndexRoute
   '/profile/': typeof AuthenticatedProfileIndexRoute
   '/redemption-codes/': typeof AuthenticatedRedemptionCodesIndexRoute
   '/security/': typeof AuthenticatedSecurityIndexRoute
@@ -651,10 +651,10 @@ export interface FileRoutesByTo {
   '/usage-logs/audit': typeof AuthenticatedUsageLogsAuditRoute
   '/channels': typeof AuthenticatedChannelsIndexRoute
   '/dashboard': typeof AuthenticatedDashboardIndexRoute
+  '/image-workspace': typeof AuthenticatedImageWorkspaceIndexRoute
   '/keys': typeof AuthenticatedKeysIndexRoute
   '/models': typeof AuthenticatedModelsIndexRoute
   '/playground': typeof AuthenticatedPlaygroundIndexRoute
-  '/image-workspace': typeof AuthenticatedImageWorkspaceIndexRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/redemption-codes': typeof AuthenticatedRedemptionCodesIndexRoute
   '/security': typeof AuthenticatedSecurityIndexRoute
@@ -734,10 +734,10 @@ export interface FileRoutesById {
   '/_authenticated/usage-logs/audit': typeof AuthenticatedUsageLogsAuditRoute
   '/_authenticated/channels/': typeof AuthenticatedChannelsIndexRoute
   '/_authenticated/dashboard/': typeof AuthenticatedDashboardIndexRoute
+  '/_authenticated/image-workspace/': typeof AuthenticatedImageWorkspaceIndexRoute
   '/_authenticated/keys/': typeof AuthenticatedKeysIndexRoute
   '/_authenticated/models/': typeof AuthenticatedModelsIndexRoute
   '/_authenticated/playground/': typeof AuthenticatedPlaygroundIndexRoute
-  '/_authenticated/image-workspace/': typeof AuthenticatedImageWorkspaceIndexRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
   '/_authenticated/redemption-codes/': typeof AuthenticatedRedemptionCodesIndexRoute
   '/_authenticated/security/': typeof AuthenticatedSecurityIndexRoute
@@ -816,10 +816,10 @@ export interface FileRouteTypes {
     | '/usage-logs/audit'
     | '/channels/'
     | '/dashboard/'
+    | '/image-workspace/'
     | '/keys/'
     | '/models/'
     | '/playground/'
-    | '/image-workspace/'
     | '/profile/'
     | '/redemption-codes/'
     | '/security/'
@@ -894,10 +894,10 @@ export interface FileRouteTypes {
     | '/usage-logs/audit'
     | '/channels'
     | '/dashboard'
+    | '/image-workspace'
     | '/keys'
     | '/models'
     | '/playground'
-    | '/image-workspace'
     | '/profile'
     | '/redemption-codes'
     | '/security'
@@ -976,10 +976,10 @@ export interface FileRouteTypes {
     | '/_authenticated/usage-logs/audit'
     | '/_authenticated/channels/'
     | '/_authenticated/dashboard/'
+    | '/_authenticated/image-workspace/'
     | '/_authenticated/keys/'
     | '/_authenticated/models/'
     | '/_authenticated/playground/'
-    | '/_authenticated/image-workspace/'
     | '/_authenticated/profile/'
     | '/_authenticated/redemption-codes/'
     | '/_authenticated/security/'
@@ -1353,6 +1353,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedErrorsErrorRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/image-workspace/': {
+      id: '/_authenticated/image-workspace/'
+      path: '/image-workspace'
+      fullPath: '/image-workspace/'
+      preLoaderRoute: typeof AuthenticatedImageWorkspaceIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/keys/': {
       id: '/_authenticated/keys/'
       path: '/keys'
@@ -1379,13 +1386,6 @@ declare module '@tanstack/react-router' {
       path: '/playground'
       fullPath: '/playground/'
       preLoaderRoute: typeof AuthenticatedPlaygroundIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
-    }
-    '/_authenticated/image-workspace/': {
-      id: '/_authenticated/image-workspace/'
-      path: '/image-workspace'
-      fullPath: '/image-workspace/'
-      preLoaderRoute: typeof AuthenticatedImageWorkspaceIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/profile/': {
@@ -1694,10 +1694,10 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedUsageLogsAuditRoute: typeof AuthenticatedUsageLogsAuditRoute
   AuthenticatedChannelsIndexRoute: typeof AuthenticatedChannelsIndexRoute
   AuthenticatedDashboardIndexRoute: typeof AuthenticatedDashboardIndexRoute
+  AuthenticatedImageWorkspaceIndexRoute: typeof AuthenticatedImageWorkspaceIndexRoute
   AuthenticatedKeysIndexRoute: typeof AuthenticatedKeysIndexRoute
   AuthenticatedModelsIndexRoute: typeof AuthenticatedModelsIndexRoute
   AuthenticatedPlaygroundIndexRoute: typeof AuthenticatedPlaygroundIndexRoute
-  AuthenticatedImageWorkspaceIndexRoute: typeof AuthenticatedImageWorkspaceIndexRoute
   AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
   AuthenticatedRedemptionCodesIndexRoute: typeof AuthenticatedRedemptionCodesIndexRoute
   AuthenticatedSecurityIndexRoute: typeof AuthenticatedSecurityIndexRoute
@@ -1721,10 +1721,10 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedUsageLogsAuditRoute: AuthenticatedUsageLogsAuditRoute,
   AuthenticatedChannelsIndexRoute: AuthenticatedChannelsIndexRoute,
   AuthenticatedDashboardIndexRoute: AuthenticatedDashboardIndexRoute,
+  AuthenticatedImageWorkspaceIndexRoute: AuthenticatedImageWorkspaceIndexRoute,
   AuthenticatedKeysIndexRoute: AuthenticatedKeysIndexRoute,
   AuthenticatedModelsIndexRoute: AuthenticatedModelsIndexRoute,
   AuthenticatedPlaygroundIndexRoute: AuthenticatedPlaygroundIndexRoute,
-  AuthenticatedImageWorkspaceIndexRoute: AuthenticatedImageWorkspaceIndexRoute,
   AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
   AuthenticatedRedemptionCodesIndexRoute:
     AuthenticatedRedemptionCodesIndexRoute,

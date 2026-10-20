@@ -322,6 +322,7 @@ func RecordErrorLog(c *gin.Context, userId int, channelId int, modelName string,
 }
 
 type RecordConsumeLogParams struct {
+	CacheUsageStats  `gorm:"-"`
 	ChannelId        int               `json:"channel_id"`
 	PromptTokens     int               `json:"prompt_tokens"`
 	CompletionTokens int               `json:"completion_tokens"`
@@ -394,6 +395,7 @@ func RecordConsumeLog(c *gin.Context, userId int, params RecordConsumeLogParams)
 			cacheCreationTokens, _ = other.public["cache_write_tokens"].(int)
 		}
 		LogQuotaData(QuotaDataLogParams{
+			CacheUsageStats:     params.CacheUsageStats,
 			UserID:              userId,
 			Username:            username,
 			ModelName:           params.ModelName,

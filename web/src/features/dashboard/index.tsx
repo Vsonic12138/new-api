@@ -115,6 +115,12 @@ const LazyFlowCharts = lazy(() =>
   }))
 )
 
+const LazyCacheAnalysis = lazy(() =>
+  import('./components/cache/cache-analysis').then((m) => ({
+    default: m.CacheAnalysis,
+  }))
+)
+
 function LogStatCardsFallback() {
   return (
     <div className='overflow-hidden rounded-lg border'>
@@ -188,6 +194,7 @@ const SECTION_META: Record<DashboardSectionId, { titleKey: string }> = {
   models: {
     titleKey: 'Model Call Analytics',
   },
+  cache: { titleKey: 'Cache Analysis' },
   flow: {
     titleKey: 'Flow',
   },
@@ -351,6 +358,11 @@ export function Dashboard() {
               </div>
             )}
           </div>
+          {activeSection === 'cache' && (
+            <Suspense fallback={<ModelChartsFallback />}>
+              <LazyCacheAnalysis />
+            </Suspense>
+          )}
           {activeSection === 'models' && (
             <>
               <FadeIn>

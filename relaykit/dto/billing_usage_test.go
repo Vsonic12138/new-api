@@ -146,3 +146,33 @@ func TestBillingUsageJSONUsesProtocolNamedFields(t *testing.T) {
 	assert.Nil(t, clone.ClaudeUsage.BillingUsage)
 	assert.Nil(t, clone.GeminiUsageMetadata.BillingUsage)
 }
+
+func TestBillingUsagePreservesExplicitZeroCacheReports(t *testing.T) {
+	for _, tc := range []struct {
+		name, body string
+		reported   bool
+	}{
+		{"missing", `{"prompt_tokens":100}`, false},
+		{"unrelated details", `{"prompt_tokens":100,"prompt_tokens_details":{"text_tokens":100}}`, false},
+		{"explicit zero", `{"prompt_tokens":100,"prompt_tokens_details":{"cached_tokens":0}}`, true},
+		{"positive", `{"prompt_tokens":100,"prompt_tokens_details":{"cached_tokens":30}}`, true},
+		{"null", `{"prompt_tokens":100,"prompt_tokens_details":{"cached_tokens":null}}`, false},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			var usage Usage
+			require.NoError(t, kitutil.Unmarshal([]byte(tc.body), &usage))
+			assert.Equal(t, tc.reported, usage.PromptTokensDetails.CachedTokensReported)
+			canonical, ok := NewOpenAIChatBillingUsage(&usage).CanonicalUsage()
+			require.True(t, ok)
+			assert.Equal(t, tc.reported, canonical.PromptTokensDetails.CachedTokensReported)
+			encoded, err := kitutil.Marshal(canonical)
+			require.NoError(t, err)
+			assert.NotContains(t, string(encoded), "Reported")
+		})
+	}
+	var claude ClaudeUsage
+	require.NoError(t, kitutil.Unmarshal([]byte(`{"input_tokens":100,"cache_read_input_tokens":0}`), &claude))
+	canonical, ok := NewClaudeMessagesBillingUsage(&claude).CanonicalUsage()
+	require.True(t, ok)
+	assert.True(t, canonical.BillingUsage.ClaudeUsage.CacheReadReported)
+}
