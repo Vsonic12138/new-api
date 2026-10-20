@@ -2,11 +2,14 @@ package relay
 
 import (
 	"encoding/base64"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/QuantumNous/new-api/common"
 	"github.com/QuantumNous/new-api/constant"
@@ -23,28 +26,56 @@ import (
 	"github.com/glebarez/sqlite"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 )
 
 func setupRelayChannelDB(t *testing.T) *gorm.DB {
 	t.Helper()
 	previousDB := model.DB
-	previousType := common.MainDatabaseType()
+	previousType, previousLogType := common.MainDatabaseType(), common.LogDatabaseType()
 	previousCache := common.MemoryCacheEnabled
-	database, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+	dialect := common.DatabaseType(os.Getenv("TEST_TASK_DB_DIALECT"))
+	var driver gorm.Dialector
+	switch dialect {
+	case "", common.DatabaseTypeSQLite:
+		dialect = common.DatabaseTypeSQLite
+		driver = sqlite.Open(":memory:")
+	case common.DatabaseTypeMySQL:
+		require.NotEmpty(t, os.Getenv("TEST_MYSQL_DSN"))
+		driver = mysql.Open(os.Getenv("TEST_MYSQL_DSN"))
+	case common.DatabaseTypePostgreSQL:
+		require.NotEmpty(t, os.Getenv("TEST_POSTGRES_DSN"))
+		driver = postgres.New(postgres.Config{DSN: os.Getenv("TEST_POSTGRES_DSN"), PreferSimpleProtocol: true})
+	default:
+		t.Fatalf("unsupported test dialect %q", dialect)
+	}
+	database, err := gorm.Open(driver, &gorm.Config{NamingStrategy: schema.NamingStrategy{TablePrefix: fmt.Sprintf("trelay_%d_", time.Now().UnixNano())}})
 	require.NoError(t, err)
 	sqlDB, err := database.DB()
 	require.NoError(t, err)
 	sqlDB.SetMaxOpenConns(1)
+	t.Cleanup(func() { require.NoError(t, sqlDB.Close()) })
 	require.NoError(t, database.AutoMigrate(&model.Channel{}))
+	t.Cleanup(func() {
+		require.NoError(t, database.Migrator().DropTable(&model.Task{}, &model.User{}, &model.Log{}, &model.Channel{}))
+	})
+	var version string
+	versionQuery := "SELECT version()"
+	if dialect == common.DatabaseTypeSQLite {
+		versionQuery = "SELECT sqlite_version()"
+	}
+	require.NoError(t, database.Raw(versionQuery).Scan(&version).Error)
+	t.Logf("database: %s %s", dialect, version)
 	model.DB = database
-	common.SetMainDatabaseType(common.DatabaseTypeSQLite)
+	common.SetDatabaseTypes(dialect, dialect)
 	common.MemoryCacheEnabled = false
 	t.Cleanup(func() {
 		model.DB = previousDB
-		common.SetMainDatabaseType(previousType)
+		common.SetDatabaseTypes(previousType, previousLogType)
 		common.MemoryCacheEnabled = previousCache
-		require.NoError(t, sqlDB.Close())
 	})
 	return database
 }
@@ -126,6 +157,11 @@ func TestRealtimeFetchRefundsTaskItFindsFailed(t *testing.T) {
 	assert.Equal(t, "blocked by safety", stored.FailReason)
 	assert.Zero(t, stored.Quota, "the failed task is refunded")
 	var user model.User
+	require.NoError(t, database.First(&user, 7).Error)
+	assert.Equal(t, 1100, user.Quota)
+
+	// Repeated reads of the terminal task must not refund the reservation again.
+	tryRealtimeFetch(&stored, true)
 	require.NoError(t, database.First(&user, 7).Error)
 	assert.Equal(t, 1100, user.Quota)
 }

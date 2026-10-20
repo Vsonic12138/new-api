@@ -753,8 +753,26 @@ func (a *TaskAdaptor) doFetchDescriptor(baseURL, key, proxy string, descriptor r
 	if err != nil {
 		return nil, err
 	}
+	pollClient := *client
+	checkRedirect := client.CheckRedirect
+	pollClient.CheckRedirect = func(next *http.Request, via []*http.Request) error {
+		if checkRedirect != nil {
+			if err := checkRedirect(next, via); err != nil {
+				return err
+			}
+		} else if len(via) >= 10 {
+			return fmt.Errorf("stopped after 10 redirects")
+		}
+		// Custom header names can carry credentials too. Keep every configured
+		// header on its original origin while retaining the shared SSRF policy.
+		if !strings.EqualFold(next.URL.Scheme, req.URL.Scheme) || !strings.EqualFold(next.URL.Host, req.URL.Host) {
+			next.Header = make(http.Header)
+			next.Host = ""
+		}
+		return nil
+	}
 	started := time.Now()
-	resp, err := client.Do(req)
+	resp, err := pollClient.Do(req)
 	if err != nil {
 		logger.LogDebug(
 			context.Background(),

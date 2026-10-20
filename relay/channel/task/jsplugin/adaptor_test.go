@@ -27,6 +27,7 @@ import (
 	"github.com/QuantumNous/new-api/relay/helper"
 	"github.com/QuantumNous/new-api/relaykit/dto"
 	"github.com/QuantumNous/new-api/service"
+	"github.com/QuantumNous/new-api/setting/system_setting"
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -845,6 +846,79 @@ export function parseBatchResult() { return {}; }
 				assert.Equal(t, "channel-key", info.ApiKey, "polling must not change shared channel credentials")
 			})
 		}
+	}
+}
+
+func TestTaskPollingRedirectKeepsCredentialsOnOriginalOrigin(t *testing.T) {
+	saved := *system_setting.GetFetchSetting()
+	system_setting.GetFetchSetting().EnableSSRFProtection = true
+	system_setting.GetFetchSetting().AllowPrivateIp = true
+	system_setting.GetFetchSetting().AllowedPorts = []string{"1-65535"}
+	t.Cleanup(func() { *system_setting.GetFetchSetting() = saved })
+	service.InitHttpClient()
+	plugin, err := pluginruntime.NewRegistry().Register(mockPlugin, pluginruntime.Options{})
+	require.NoError(t, err)
+	for _, tc := range []struct {
+		name                 string
+		crossOrigin, blocked bool
+	}{
+		{name: "same origin"},
+		{name: "other origin", crossOrigin: true},
+		{name: "SSRF policy rejects redirect", crossOrigin: true, blocked: true},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			system_setting.GetFetchSetting().AllowPrivateIp = !tc.blocked
+			received := make(chan http.Header, 1)
+			destination := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				received <- r.Header.Clone()
+				_, _ = w.Write([]byte(`{}`))
+			}))
+			t.Cleanup(destination.Close)
+			origin := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+				if r.URL.Path == "/done" {
+					received <- r.Header.Clone()
+					_, _ = w.Write([]byte(`{}`))
+					return
+				}
+				assert.Equal(t, "saved-key", r.Header.Get("X-API-Key"))
+				target := "/done"
+				if tc.crossOrigin {
+					target = destination.URL + "/done"
+				}
+				http.Redirect(w, r, target, http.StatusFound)
+			}))
+			t.Cleanup(origin.Close)
+			adaptor := New(plugin)
+			adaptor.Init(&relaycommon.RelayInfo{ChannelMeta: &relaycommon.ChannelMeta{
+				ChannelBaseUrl: origin.URL,
+				HeadersOverride: map[string]any{
+					"X-API-Key": "{api_key}", "Authorization": "Bearer {api_key}",
+				},
+			}})
+			response, err := adaptor.FetchTask(origin.URL, "saved-key", &model.Task{TaskID: "job"}, "")
+			if tc.blocked {
+				require.Error(t, err)
+				if response != nil {
+					_ = response.Body.Close()
+				}
+				assert.Empty(t, received)
+				return
+			}
+			require.NoError(t, err)
+			require.NotNil(t, response)
+			t.Cleanup(func() { _ = response.Body.Close() })
+			assert.Equal(t, http.StatusOK, response.StatusCode, "poll redirects remain supported")
+			require.Len(t, received, 1)
+			headers := <-received
+			if tc.crossOrigin {
+				assert.Empty(t, headers.Get("X-API-Key"))
+				assert.Empty(t, headers.Get("Authorization"))
+				assert.Empty(t, headers.Get("X-Plugin"))
+			} else {
+				assert.Equal(t, "saved-key", headers.Get("X-API-Key"))
+				assert.Equal(t, "Bearer saved-key", headers.Get("Authorization"))
+			}
+		})
 	}
 }
 
