@@ -43,6 +43,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-20',
     items: [
     {
+      "tag": "fix",
+      "titleEn": "[dashboard] 修复缓存分析图表悬浮提示导致页面崩溃",
+      "titleZh": "[dashboard] 修复缓存分析图表悬浮提示导致页面崩溃",
+      "descEn": "Commit: 201aeb545 (2026-10-20)",
+      "descZh": "提交: 201aeb545 · 2026-10-20",
+      "commitHash": "201aeb545"
+    },
+    {
       "tag": "feat",
       "titleEn": "[dashboard] 增加历史缓存统计回填工具并防止重复计数",
       "titleZh": "[dashboard] 增加历史缓存统计回填工具并防止重复计数",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: ddddb90a0 (2026-10-07)",
       "descZh": "提交: ddddb90a0 · 2026-10-07",
       "commitHash": "ddddb90a0"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 更新首页模型展示墙，展示模型广场真实可用模型",
-      "titleZh": "[home] 更新首页模型展示墙，展示模型广场真实可用模型",
-      "descEn": "Commit: c6a80e8ec (2026-10-07)",
-      "descZh": "提交: c6a80e8ec · 2026-10-07",
-      "commitHash": "c6a80e8ec"
     }
 ],
   },
