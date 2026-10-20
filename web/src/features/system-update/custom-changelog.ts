@@ -38,10 +38,26 @@ export interface CustomReleaseGroup {
 
 export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
   {
-    version: 'v1.0.0-rc.44+custom',
-    upstreamBase: 'v1.0.0-rc.44',
-    date: '2026-10-19',
+    version: 'v1.0.0-rc.45+custom',
+    upstreamBase: 'v1.0.0-rc.45',
+    date: '2026-10-20',
     items: [
+    {
+      "tag": "fix",
+      "titleEn": "[dashboard] 修复稀疏缓存趋势显示并提高主题线条对比度",
+      "titleZh": "[dashboard] 修复稀疏缓存趋势显示并提高主题线条对比度",
+      "descEn": "Commit: e3c896c19 (2026-10-20)",
+      "descZh": "提交: e3c896c19 · 2026-10-20",
+      "commitHash": "e3c896c19"
+    },
+    {
+      "tag": "feat",
+      "titleEn": "[dashboard] 增加多语言缓存命中率面板与模型用量统计",
+      "titleZh": "[dashboard] 增加多语言缓存命中率面板与模型用量统计",
+      "descEn": "Commit: decd94905 (2026-10-20)",
+      "descZh": "提交: decd94905 · 2026-10-20",
+      "commitHash": "decd94905"
+    },
     {
       "tag": "fix",
       "titleEn": "[docs] 补充聊天客户端启用服务商的首次配置步骤",
@@ -265,22 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: c23a21051 (2026-10-07)",
       "descZh": "提交: c23a21051 · 2026-10-07",
       "commitHash": "c23a21051"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 对齐模型广场真实模型并重构网关体验卡与多语言",
-      "titleZh": "[home] 对齐模型广场真实模型并重构网关体验卡与多语言",
-      "descEn": "Commit: f1bf220fd (2026-10-07)",
-      "descZh": "提交: f1bf220fd · 2026-10-07",
-      "commitHash": "f1bf220fd"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 补齐首页网关流式体验卡与分类导航国际化翻译",
-      "titleZh": "[home] 补齐首页网关流式体验卡与分类导航国际化翻译",
-      "descEn": "Commit: b0a023a6f (2026-10-07)",
-      "descZh": "提交: b0a023a6f · 2026-10-07",
-      "commitHash": "b0a023a6f"
     }
 ],
   },
