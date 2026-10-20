@@ -256,7 +256,22 @@ export function CacheAnalysis() {
                   <ChartTooltip
                     content={
                       <ChartTooltipContent
-                        labelFormatter={(value) => date.format(Number(value))}
+                        labelFormatter={(_label, payload) => {
+                          // The shared tooltip resolves its label to the series
+                          // title; only the original point holds a timestamp.
+                          const timestamp: unknown =
+                            payload[0]?.payload?.timestamp
+                          if (
+                            typeof timestamp !== 'number' ||
+                            !Number.isFinite(timestamp)
+                          ) {
+                            return null
+                          }
+                          const pointDate = new Date(timestamp)
+                          return Number.isNaN(pointDate.getTime())
+                            ? null
+                            : date.format(pointDate)
+                        }}
                         formatter={(value) =>
                           `${t('Token cache hit rate')}: ${percent.format(Number(value))}`
                         }

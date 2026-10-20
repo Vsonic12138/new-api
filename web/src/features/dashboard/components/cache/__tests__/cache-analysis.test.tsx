@@ -46,6 +46,24 @@ function renderAnalysis() {
 }
 
 describe('cache analysis', () => {
+  it('shows the point date without crashing when the trend tooltip is activated', async () => {
+    vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockReturnValue(
+      new DOMRect(0, 0, 640, 256)
+    )
+    vi.spyOn(api, 'get').mockResolvedValue({
+      data: { success: true, data: rows },
+    })
+    const user = userEvent.setup()
+    renderAnalysis()
+    await screen.findAllByText('12.5%')
+    const chart = screen.getByRole('application')
+    act(() => chart.focus())
+    await user.keyboard('{ArrowRight}')
+    expect(
+      await screen.findByText('Jan 1', { selector: '.font-medium' })
+    ).toBeVisible()
+    expect(screen.getByRole('region', { name: 'Cache Analysis' })).toBeVisible()
+  })
   it('uses only self data for a normal user and applies time and model filters', async () => {
     const request = vi
       .spyOn(api, 'get')
