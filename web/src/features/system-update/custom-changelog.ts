@@ -43,6 +43,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     date: '2026-10-20',
     items: [
     {
+      "tag": "feat",
+      "titleEn": "[dashboard] 增加历史缓存统计回填工具并防止重复计数",
+      "titleZh": "[dashboard] 增加历史缓存统计回填工具并防止重复计数",
+      "descEn": "Commit: 78ec9a6e5 (2026-10-20)",
+      "descZh": "提交: 78ec9a6e5 · 2026-10-20",
+      "commitHash": "78ec9a6e5"
+    },
+    {
       "tag": "fix",
       "titleEn": "[relay] 防止轮询跨来源重定向转发凭据并验证退款",
       "titleZh": "[relay] 防止轮询跨来源重定向转发凭据并验证退款",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: c6a80e8ec (2026-10-07)",
       "descZh": "提交: c6a80e8ec · 2026-10-07",
       "commitHash": "c6a80e8ec"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "[i18n] 修复首页网关预览及客户端卡片多语言丢失与结构错位",
-      "titleZh": "[i18n] 修复首页网关预览及客户端卡片多语言丢失与结构错位",
-      "descEn": "Commit: bd0c2b96e (2026-10-07)",
-      "descZh": "提交: bd0c2b96e · 2026-10-07",
-      "commitHash": "bd0c2b96e"
     }
 ],
   },
