@@ -534,3 +534,57 @@ func TestApplyWebSocketSubprotocolAuthorizationReadsRepeatedHeaders(t *testing.T
 	assert.True(t, applyWebSocketSubprotocolAuthorization(header))
 	assert.Equal(t, "Bearer sk-later-field", header.Get("Authorization"))
 }
+
+func TestPlaygroundCredentialSelectionEnforcesOwnershipAndTokenRestrictions(t *testing.T) {
+	setupDashboardAuthMiddlewareTest(t)
+	require.NoError(t, i18n.Init())
+	previousMaster, previousLogType := common.IsMasterNode, common.LogDatabaseType()
+	common.IsMasterNode = false
+	t.Setenv("LOG_SQL_DSN", "")
+	t.Cleanup(func() { common.IsMasterNode = previousMaster; common.SetLogDatabaseType(previousLogType) })
+	require.NoError(t, model.InitLogDB())
+	require.NoError(t, model.DB.AutoMigrate(&model.Token{}))
+	owner := createMiddlewarePATUser(t, "image-owner", "owner-pat")
+	other := createMiddlewarePATUser(t, "image-other", "other-pat")
+	require.NoError(t, model.PublishUserAuthCache(owner.Id))
+	for index, tc := range []struct {
+		name           string
+		userID, status int
+		expired        int64
+		quota          int
+		group          string
+		want           int
+	}{
+		{"own valid token", owner.Id, common.TokenStatusEnabled, -1, 100, "", http.StatusNoContent},
+		{"another user's token", other.Id, common.TokenStatusEnabled, -1, 100, "", http.StatusForbidden},
+		{"disabled token", owner.Id, common.TokenStatusDisabled, -1, 100, "", http.StatusUnauthorized},
+		{"expired token", owner.Id, common.TokenStatusEnabled, time.Now().Unix() - 1, 100, "", http.StatusUnauthorized},
+		{"exhausted token", owner.Id, common.TokenStatusEnabled, -1, 0, "", http.StatusUnauthorized},
+		{"token group cannot be overridden", owner.Id, common.TokenStatusEnabled, -1, 100, "default", http.StatusBadRequest},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			token := model.Token{UserId: tc.userID, Key: fmt.Sprintf("%048d", index+1), Status: tc.status, ExpiredTime: tc.expired, RemainQuota: tc.quota, ModelLimitsEnabled: true, ModelLimits: "gpt-image-2.5-flare"}
+			require.NoError(t, model.DB.Create(&token).Error)
+			router := gin.New()
+			router.Use(func(c *gin.Context) {
+				c.Set("id", owner.Id)
+				c.Set("user_group", "default")
+				c.Set("group", "default")
+				c.Next()
+			})
+			router.POST("/pg/image-playground/images/generations", PlaygroundCredentialSelector(), StripPlaygroundAuthorization(), func(c *gin.Context) {
+				assert.Equal(t, "", c.GetHeader("Authorization"))
+				assert.Equal(t, owner.Id, c.GetInt("id"))
+				assert.True(t, c.GetBool("image_playground_selected_token"))
+				c.Status(http.StatusNoContent)
+			})
+			request := httptest.NewRequest(http.MethodPost, "/pg/image-playground/images/generations", nil)
+			request.Header.Set("X-Playground-Token-ID", fmt.Sprint(token.Id))
+			request.Header.Set("X-Playground-Group", tc.group)
+			response := httptest.NewRecorder()
+			router.ServeHTTP(response, request)
+			assert.Equal(t, tc.want, response.Code)
+			assert.NotContains(t, response.Body.String(), token.Key)
+		})
+	}
+}

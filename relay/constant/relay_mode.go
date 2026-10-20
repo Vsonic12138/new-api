@@ -54,7 +54,26 @@ const (
 	RelayModeToolsFetch
 )
 
+// CanonicalPlaygroundPath maps only the four explicitly registered Image
+// Workspace endpoints to standard Relay paths. Authentication and route
+// authorization still see the original /pg/ URL.
+func CanonicalPlaygroundPath(path string) string {
+	switch path {
+	case "/pg/image-playground/chat/completions":
+		return "/v1/chat/completions"
+	case "/pg/image-playground/responses":
+		return "/v1/responses"
+	case "/pg/image-playground/images/generations":
+		return "/v1/images/generations"
+	case "/pg/image-playground/images/edits":
+		return "/v1/images/edits"
+	default:
+		return path
+	}
+}
+
 func Path2RelayMode(path string) int {
+	path = CanonicalPlaygroundPath(path)
 	relayMode := RelayModeUnknown
 	if strings.HasPrefix(path, "/v1/chat/completions") || strings.HasPrefix(path, "/pg/chat/completions") {
 		relayMode = RelayModeChatCompletions

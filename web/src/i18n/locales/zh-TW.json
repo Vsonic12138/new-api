@@ -3519,6 +3519,7 @@
     "Image to Video": "圖生影片",
     "Image Tokens": "圖像 Token",
     "Image tool arguments": "圖片工具參數",
+    "Image Workspace": "圖片創作空間",
     "Imagine the pricing table has three groups: default (ratio 1.0), premium (ratio 0.5), and vip (ratio 0.8). Users whose account is in the vip group get user-level perks, and premium is a cheaper channel pool that users can pick for their tokens.": "假設定價分組表裡有三個分組：default（倍率 1.0）、premium（倍率 0.5）、vip（倍率 0.8）。賬號在 vip 分組的用戶享受用戶級待遇，premium 則是一個更便宜的渠道池，用戶建令牌時可以選它。",
     "Immersive AI-driven coding assistant. Built for fast completion, deep refactoring, and agentic development workflows.": "沉浸式 AI 驅動編程助手。專為極速補全、深度重構與 Agentic 開發流程量身打造。",
     "Implement an async task scheduler with debounce and cancellation support.": "實現一個支援防抖與取消機制的非同步任務排程器。",

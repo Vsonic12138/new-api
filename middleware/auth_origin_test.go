@@ -133,3 +133,36 @@ func TestSessionCookieOriginGuardDoesNotTrustForwardedProtoFromClient(t *testing
 
 	assert.Equal(t, http.StatusForbidden, response.Code)
 }
+
+func TestPlaygroundOriginGuardAlwaysChecksOrigin(t *testing.T) {
+	previousSecure := common.SessionCookieSecure
+	previousTrustedURLs := common.SessionCookieTrustedURLs
+	common.SessionCookieSecure = false
+	common.SessionCookieTrustedURLs = nil
+	t.Cleanup(func() {
+		common.SessionCookieSecure = previousSecure
+		common.SessionCookieTrustedURLs = previousTrustedURLs
+	})
+	gin.SetMode(gin.TestMode)
+	router := gin.New()
+	router.POST("/pg/image-playground/images/generations", PlaygroundOriginGuard(), func(c *gin.Context) {
+		c.Status(http.StatusNoContent)
+	})
+	for _, tc := range []struct {
+		origin string
+		status int
+	}{
+		{"http://panel.example.com", http.StatusNoContent},
+		{"https://attacker.example.com", http.StatusForbidden},
+		{"", http.StatusForbidden},
+	} {
+		req := httptest.NewRequest(http.MethodPost, "http://panel.example.com/pg/image-playground/images/generations", nil)
+		req.Host = "panel.example.com"
+		if tc.origin != "" {
+			req.Header.Set("Origin", tc.origin)
+		}
+		recorder := httptest.NewRecorder()
+		router.ServeHTTP(recorder, req)
+		assert.Equal(t, tc.status, recorder.Code)
+	}
+}

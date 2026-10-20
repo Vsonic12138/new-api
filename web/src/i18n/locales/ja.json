@@ -3519,6 +3519,7 @@
     "Image to Video": "画像から動画",
     "Image Tokens": "画像トークン",
     "Image tool arguments": "画像ツールの引数",
+    "Image Workspace": "画像ワークスペース",
     "Imagine the pricing table has three groups: default (ratio 1.0), premium (ratio 0.5), and vip (ratio 0.8). Users whose account is in the vip group get user-level perks, and premium is a cheaper channel pool that users can pick for their tokens.": "料金表に3つのグループがあるとします：default（倍率 1.0）、premium（倍率 0.5）、vip（倍率 0.8）。アカウントが vip グループのユーザーはユーザーレベルの特典を受けられ、premium はユーザーがトークン用に選べる安いチャネルプールです。",
     "Immersive AI-driven coding assistant. Built for fast completion, deep refactoring, and agentic development workflows.": "没入型 AI 駆動のコーディングアシスタント。高速な補完、詳細なリファクタリング、エージェント開発ワークフローのために構築されています。",
     "Implement an async task scheduler with debounce and cancellation support.": "デバウンスとキャンセルに対応した非同期タスクスケジューラを実装。",

@@ -3519,6 +3519,7 @@
     "Image to Video": "Image vers vidéo",
     "Image Tokens": "Tokens image",
     "Image tool arguments": "Paramètres de l’outil image",
+    "Image Workspace": "Espace de création d’images",
     "Imagine the pricing table has three groups: default (ratio 1.0), premium (ratio 0.5), and vip (ratio 0.8). Users whose account is in the vip group get user-level perks, and premium is a cheaper channel pool that users can pick for their tokens.": "Imaginez que le tableau tarifaire contient trois groupes : default (taux 1,0), premium (taux 0,5) et vip (taux 0,8). Les utilisateurs du groupe vip bénéficient d’avantages au niveau du compte, et premium est un pool de canaux moins cher que les utilisateurs peuvent choisir pour leurs jetons.",
     "Immersive AI-driven coding assistant. Built for fast completion, deep refactoring, and agentic development workflows.": "Assistant de codage immersif basé sur l'IA. Conçu pour une saisie semi-automatique rapide, une refactorisation approfondie et des flux de travail d'agents.",
     "Implement an async task scheduler with debounce and cancellation support.": "Implémenter un planificateur de tâches asynchrone avec prise en charge du débounce et de l annulation.",

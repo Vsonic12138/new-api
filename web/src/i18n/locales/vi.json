@@ -3519,6 +3519,7 @@
     "Image to Video": "Ảnh sang video",
     "Image Tokens": "Token hình ảnh",
     "Image tool arguments": "Tham số công cụ ảnh",
+    "Image Workspace": "Không gian tạo ảnh",
     "Imagine the pricing table has three groups: default (ratio 1.0), premium (ratio 0.5), and vip (ratio 0.8). Users whose account is in the vip group get user-level perks, and premium is a cheaper channel pool that users can pick for their tokens.": "Giả sử bảng định giá có ba nhóm: default (hệ số 1.0), premium (hệ số 0.5) và vip (hệ số 0.8). Người dùng có tài khoản thuộc nhóm vip nhận ưu đãi cấp người dùng, còn premium là một nhóm kênh rẻ hơn mà người dùng có thể chọn cho token của mình.",
     "Immersive AI-driven coding assistant. Built for fast completion, deep refactoring, and agentic development workflows.": "Trợ lý lập trình nhập vai được hỗ trợ bởi AI. Được xây dựng để hoàn thành nhanh, tái cấu trúc sâu và quy trình làm việc của đại lý.",
     "Implement an async task scheduler with debounce and cancellation support.": "Triển khai trình lập lịch tác vụ bất đồng bộ hỗ trợ debounce và hủy bỏ.",
