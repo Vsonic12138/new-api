@@ -16,7 +16,8 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-import { useMemo, useState } from 'react'
+import { getRouteApi } from '@tanstack/react-router'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts'
 
@@ -33,8 +34,10 @@ import { toIntlLocale } from '@/i18n/languages'
 import { formatCompactNumber, formatNumber } from '@/lib/format'
 import { ROLE } from '@/lib/roles'
 import { useAuthStore } from '@/stores/auth-store'
+import { useCachePreferencesStore } from '@/stores/cache-preferences-store'
 
 import { useCacheUsage } from '../../hooks/use-cache-usage'
+import type { CacheSearch } from '../../lib/cache-search'
 import {
   buildCacheUsageTrend,
   groupCacheUsageByModel,
@@ -43,20 +46,41 @@ import {
 import type { QuotaDataItem } from '../../types'
 import { PanelWrapper } from '../ui/panel-wrapper'
 
+const route = getRouteApi('/_authenticated/dashboard/$section')
+
 const EMPTY_DATA: QuotaDataItem[] = []
 
 export function CacheAnalysis() {
   const { t, i18n } = useTranslation()
   const locale = toIntlLocale(i18n.resolvedLanguage || i18n.language)
-  const isAdmin =
-    (useAuthStore((state) => state.auth.user?.role) ?? 0) >= ROLE.ADMIN
-  const [days, setDays] = useState(7)
-  const [scope, setScope] = useState<'self' | 'all'>('all')
-  const [model, setModel] = useState('')
+  const user = useAuthStore((state) => state.auth.user)
+  const isAdmin = (user?.role ?? 0) >= ROLE.ADMIN
+  const search = route.useSearch()
+  const navigate = route.useNavigate()
+  const savedScope = useCachePreferencesStore((state) =>
+    user?.id ? state.scopeByUser?.[user.id] : undefined
+  )
+  const saveScope = useCachePreferencesStore((state) => state.setScope)
+  const days = search.cacheDays ?? 7
+  const preferredScope = savedScope === 'all' ? 'all' : 'self'
+  const scope = isAdmin ? (search.cacheScope ?? preferredScope) : 'self'
+  const selectedModel = search.cacheModel ?? ''
+  useEffect(() => {
+    if (isAdmin && user?.id) saveScope(user.id, scope)
+  }, [isAdmin, user?.id, scope, saveScope])
+  const updateFilters = (patch: CacheSearch) => {
+    void navigate({
+      search: {
+        cacheScope: scope,
+        cacheDays: days,
+        cacheModel: selectedModel || undefined,
+        ...patch,
+      },
+    })
+  }
   const query = useCacheUsage(days, scope)
   const data = query.data ?? EMPTY_DATA
   const models = useMemo(() => groupCacheUsageByModel(data), [data])
-  const selectedModel = models.some((item) => item.model === model) ? model : ''
   const selected = useMemo(
     () =>
       selectedModel
@@ -78,6 +102,7 @@ export function CacheAnalysis() {
   )
   const percent = Intl.NumberFormat(locale, {
     style: 'percent',
+    minimumFractionDigits: 1,
     maximumFractionDigits: 1,
   })
   const date = Intl.DateTimeFormat(
@@ -91,12 +116,23 @@ export function CacheAnalysis() {
     hasReports ? formatCompactNumber(value, locale) : '—'
   const metrics = [
     {
-      label: t('Token cache hit rate'),
+      label: t('Valid sample cache hit rate'),
       value: summary.rate === null ? '—' : percent.format(summary.rate),
       description: t('Cache read tokens divided by total input tokens'),
     },
     {
-      label: t('Total input tokens'),
+      label: t('Report coverage'),
+      value:
+        summary.requests > 0
+          ? percent.format(summary.reported / summary.requests)
+          : '—',
+      description: t('Cache reports: {{reported}} / {{total}} requests', {
+        reported: formatNumber(summary.reported, locale),
+        total: formatNumber(summary.requests, locale),
+      }),
+    },
+    {
+      label: t('Reported input tokens'),
       value: compact(summary.input),
       description: t('Includes cached input; excludes output tokens'),
     },
@@ -127,10 +163,18 @@ export function CacheAnalysis() {
           <NativeSelect
             aria-label={t('Model filter')}
             value={selectedModel}
-            onChange={(event) => setModel(event.target.value)}
+            onChange={(event) =>
+              updateFilters({ cacheModel: event.target.value || undefined })
+            }
             className='max-w-full min-w-0 flex-1 sm:max-w-64'
           >
             <NativeSelectOption value=''>{t('All models')}</NativeSelectOption>
+            {selectedModel &&
+              !models.some((item) => item.model === selectedModel) && (
+                <NativeSelectOption value={selectedModel}>
+                  {selectedModel}
+                </NativeSelectOption>
+              )}
             {models
               .filter((item) => item.model)
               .map((item) => (
@@ -145,14 +189,16 @@ export function CacheAnalysis() {
               className='w-full sm:w-auto'
               value={scope}
               onChange={(event) =>
-                setScope(event.target.value === 'all' ? 'all' : 'self')
+                updateFilters({
+                  cacheScope: event.target.value === 'all' ? 'all' : 'self',
+                })
               }
             >
               <NativeSelectOption value='all'>
-                {t('All users')}
+                {t('Site-wide')}
               </NativeSelectOption>
               <NativeSelectOption value='self'>
-                {t('Only me')}
+                {t('Personal')}
               </NativeSelectOption>
             </NativeSelect>
           )}
@@ -160,7 +206,11 @@ export function CacheAnalysis() {
             aria-label={t('Time range')}
             className='w-full sm:w-auto'
             value={days}
-            onChange={(event) => setDays(Number(event.target.value))}
+            onChange={(event) =>
+              updateFilters({
+                cacheDays: Number(event.target.value) as 1 | 7 | 30,
+              })
+            }
           >
             <NativeSelectOption value={1}>
               {t('Last 24 hours')}
@@ -189,7 +239,7 @@ export function CacheAnalysis() {
             height='h-24'
           >
             <dl
-              className='grid grid-cols-2 gap-5 lg:grid-cols-4'
+              className='grid grid-cols-2 gap-5 xl:grid-cols-5'
               aria-live='polite'
             >
               {metrics.map((item) => (
@@ -218,7 +268,7 @@ export function CacheAnalysis() {
                 className='aspect-auto h-64 w-full min-w-0'
                 config={{
                   rate: {
-                    label: t('Token cache hit rate'),
+                    label: t('Valid sample cache hit rate'),
                     color: 'var(--foreground)',
                   },
                 }}
@@ -273,7 +323,7 @@ export function CacheAnalysis() {
                             : date.format(pointDate)
                         }}
                         formatter={(value) =>
-                          `${t('Token cache hit rate')}: ${percent.format(Number(value))}`
+                          `${t('Valid sample cache hit rate')}: ${percent.format(Number(value))}`
                         }
                       />
                     }
@@ -303,7 +353,7 @@ export function CacheAnalysis() {
             >
               <div className='space-y-5'>
                 <div className='flex flex-wrap justify-between gap-2 text-sm'>
-                  <span>{t('Total input tokens')}</span>
+                  <span>{t('Reported input tokens')}</span>
                   <strong className='tabular-nums'>
                     {formatCompactNumber(summary.input, locale)}
                   </strong>
@@ -344,17 +394,20 @@ export function CacheAnalysis() {
             title={t('Cache usage by model')}
             description={t('Top 20 models by reported input tokens')}
             loading={query.isLoading}
-            empty={!data.length}
+            empty={!tableRows.length}
             contentClassName='p-0 sm:p-0'
           >
             <StaticDataTable
               className='rounded-none border-0'
+              tableClassName='min-w-5xl table-fixed [&_th]:h-auto [&_th]:py-3 [&_th]:whitespace-normal [&_th]:leading-5'
               data={tableRows}
               getRowKey={(row) => row.model}
               columns={[
                 {
                   id: 'model',
                   header: t('Model'),
+                  className: 'w-1/4 pl-4 pr-4 sm:pl-5',
+                  cellClassName: 'pl-4 pr-4 sm:pl-5',
                   cell: (row) => (
                     <span className='break-all'>
                       {row.model || t('Unknown')}
@@ -363,31 +416,57 @@ export function CacheAnalysis() {
                 },
                 {
                   id: 'input',
-                  header: t('Total input tokens'),
-                  cellClassName: 'text-right tabular-nums',
+                  header: t('Reported input tokens'),
+                  className: 'px-4 text-right',
+                  cellClassName: 'px-4 text-right tabular-nums',
                   cell: (row) =>
                     row.reported ? formatNumber(row.input, locale) : '—',
                 },
                 {
                   id: 'read',
                   header: t('Cache Read'),
-                  cellClassName: 'text-right tabular-nums',
+                  className: 'px-4 text-right',
+                  cellClassName: 'px-4 text-right tabular-nums',
                   cell: (row) =>
                     row.reported ? formatNumber(row.read, locale) : '—',
                 },
                 {
                   id: 'write',
                   header: t('Cache Write'),
-                  cellClassName: 'text-right tabular-nums',
+                  className: 'px-4 text-right',
+                  cellClassName: 'px-4 text-right tabular-nums',
                   cell: (row) =>
                     row.reported ? formatNumber(row.write, locale) : '—',
                 },
                 {
                   id: 'rate',
-                  header: t('Token cache hit rate'),
-                  cellClassName: 'text-right tabular-nums',
+                  header: t('Valid sample cache hit rate'),
+                  className: 'px-4 text-right',
+                  cellClassName: 'px-4 text-right tabular-nums',
                   cell: (row) =>
                     row.rate === null ? '—' : percent.format(row.rate),
+                },
+                {
+                  id: 'coverage',
+                  header: t('Report coverage'),
+                  className: 'pl-4 pr-4 text-right sm:pr-5',
+                  cellClassName: 'pl-4 pr-4 text-right tabular-nums sm:pr-5',
+                  cell: (row) => (
+                    <div>
+                      <div>
+                        {row.requests > 0
+                          ? percent.format(row.reported / row.requests)
+                          : '—'}
+                      </div>
+                      <div
+                        data-table-text='secondary'
+                        className='text-muted-foreground'
+                      >
+                        {formatNumber(row.reported, locale)} /{' '}
+                        {formatNumber(row.requests, locale)}
+                      </div>
+                    </div>
+                  ),
                 },
               ]}
             />
@@ -395,19 +474,13 @@ export function CacheAnalysis() {
           {!query.isLoading && (
             <div className='text-muted-foreground space-y-1 text-xs'>
               <p>
-                {t('Cache reports: {{reported}} / {{total}} requests', {
-                  reported: formatNumber(summary.reported, locale),
-                  total: formatNumber(summary.requests, locale),
-                })}
-              </p>
-              <p>
                 {t(
                   'Missing cache reports are excluded, not counted as zero hits.'
                 )}
               </p>
               <p>
                 {t(
-                  'Cache rates are collected after this upgrade. Historical totals are not backfilled.'
+                  'Historical recovery is partial and may favor cache hits. These rates describe valid samples, not all requests.'
                 )}
               </p>
             </div>

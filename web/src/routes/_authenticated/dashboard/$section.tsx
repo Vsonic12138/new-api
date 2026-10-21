@@ -19,6 +19,7 @@ For commercial licensing, please contact support@quantumnous.com
 import { createFileRoute, redirect } from '@tanstack/react-router'
 
 import { Dashboard } from '@/features/dashboard'
+import { cacheSearchSchema } from '@/features/dashboard/lib/cache-search'
 import {
   DASHBOARD_SECTION_IDS,
   DASHBOARD_DEFAULT_SECTION,
@@ -34,5 +35,6 @@ export const Route = createFileRoute('/_authenticated/dashboard/$section')({
       })
     }
   },
+  validateSearch: cacheSearchSchema,
   component: Dashboard,
 })

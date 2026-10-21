@@ -36,6 +36,7 @@ export function CacheUsageSummary() {
   if (summary.rate !== null) {
     rate = Intl.NumberFormat(locale, {
       style: 'percent',
+      minimumFractionDigits: 1,
       maximumFractionDigits: 1,
     }).format(summary.rate)
   }
@@ -51,7 +52,11 @@ export function CacheUsageSummary() {
           variant='ghost'
           size='sm'
           render={
-            <Link to='/dashboard/$section' params={{ section: 'cache' }} />
+            <Link
+              to='/dashboard/$section'
+              params={{ section: 'cache' }}
+              search={{ cacheScope: 'self', cacheDays: 1 }}
+            />
           }
         >
           {t('View cache analysis')}
@@ -65,7 +70,7 @@ export function CacheUsageSummary() {
       ) : (
         <dl className='grid grid-cols-1 gap-4 sm:grid-cols-3'>
           {[
-            { label: t('Token cache hit rate'), value: rate },
+            { label: t('Valid sample cache hit rate'), value: rate },
             {
               label: t('Cache Read'),
               value: summary.reported
@@ -73,7 +78,7 @@ export function CacheUsageSummary() {
                 : '—',
             },
             {
-              label: t('Total input tokens'),
+              label: t('Reported input tokens'),
               value: summary.reported
                 ? formatCompactNumber(summary.input, locale)
                 : '—',
