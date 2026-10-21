@@ -40,8 +40,16 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
   {
     version: 'v1.0.0-rc.45+custom',
     upstreamBase: 'v1.0.0-rc.45',
-    date: '2026-10-20',
+    date: '2026-10-21',
     items: [
+    {
+      "tag": "fix",
+      "titleEn": "[dashboard] 修正缓存分析表格对齐并统一统计范围与样本口径",
+      "titleZh": "[dashboard] 修正缓存分析表格对齐并统一统计范围与样本口径",
+      "descEn": "Commit: a0b765e1c (2026-10-20)",
+      "descZh": "提交: a0b765e1c · 2026-10-20",
+      "commitHash": "a0b765e1c"
+    },
     {
       "tag": "fix",
       "titleEn": "[dashboard] 修复缓存分析图表悬浮提示导致页面崩溃",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 3238dc5af (2026-10-07)",
       "descZh": "提交: 3238dc5af · 2026-10-07",
       "commitHash": "3238dc5af"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 调整首页按钮排布并修正模型文案显示",
-      "titleZh": "[home] 调整首页按钮排布并修正模型文案显示",
-      "descEn": "Commit: ddddb90a0 (2026-10-07)",
-      "descZh": "提交: ddddb90a0 · 2026-10-07",
-      "commitHash": "ddddb90a0"
     }
 ],
   },
