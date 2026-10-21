@@ -44,6 +44,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     items: [
     {
       "tag": "fix",
+      "titleEn": "[dashboard] 精简缓存分析指标文案并折叠展示统计说明",
+      "titleZh": "[dashboard] 精简缓存分析指标文案并折叠展示统计说明",
+      "descEn": "Commit: d994c5e52 (2026-10-20)",
+      "descZh": "提交: d994c5e52 · 2026-10-20",
+      "commitHash": "d994c5e52"
+    },
+    {
+      "tag": "fix",
       "titleEn": "[dashboard] 对齐多语言缓存指标并补充表格列头语义",
       "titleZh": "[dashboard] 对齐多语言缓存指标并补充表格列头语义",
       "descEn": "Commit: 8cdc7551c (2026-10-20)",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: c24ff2c0c (2026-10-07)",
       "descZh": "提交: c24ff2c0c · 2026-10-07",
       "commitHash": "c24ff2c0c"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 加宽首页首屏并与模型区对齐",
-      "titleZh": "[home] 加宽首页首屏并与模型区对齐",
-      "descEn": "Commit: cabd23e79 (2026-10-07)",
-      "descZh": "提交: cabd23e79 · 2026-10-07",
-      "commitHash": "cabd23e79"
     }
 ],
   },
