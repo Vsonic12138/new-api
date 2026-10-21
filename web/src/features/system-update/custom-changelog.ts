@@ -44,6 +44,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     items: [
     {
       "tag": "fix",
+      "titleEn": "[dashboard] 对齐多语言缓存指标并补充表格列头语义",
+      "titleZh": "[dashboard] 对齐多语言缓存指标并补充表格列头语义",
+      "descEn": "Commit: 8cdc7551c (2026-10-20)",
+      "descZh": "提交: 8cdc7551c · 2026-10-20",
+      "commitHash": "8cdc7551c"
+    },
+    {
+      "tag": "fix",
       "titleEn": "[dashboard] 修正缓存分析表格对齐并统一统计范围与样本口径",
       "titleZh": "[dashboard] 修正缓存分析表格对齐并统一统计范围与样本口径",
       "descEn": "Commit: a0b765e1c (2026-10-20)",
@@ -273,14 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: cabd23e79 (2026-10-07)",
       "descZh": "提交: cabd23e79 · 2026-10-07",
       "commitHash": "cabd23e79"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[home] 选购按钮单独成行并移除网关预览",
-      "titleZh": "[home] 选购按钮单独成行并移除网关预览",
-      "descEn": "Commit: 3238dc5af (2026-10-07)",
-      "descZh": "提交: 3238dc5af · 2026-10-07",
-      "commitHash": "3238dc5af"
     }
 ],
   },
