@@ -120,7 +120,7 @@ function StaticDataTableWithColumns<TData>({
       <TableHeader>
         <TableRow className={headerRowClassName}>
           {columns.map((column) => (
-            <TableHead key={column.id} className={column.className}>
+            <TableHead key={column.id} scope='col' className={column.className}>
               {column.header}
             </TableHead>
           ))}

@@ -85,7 +85,9 @@ export function CacheUsageSummary() {
             },
           ].map((item) => (
             <div key={item.label}>
-              <dt className='text-muted-foreground text-xs'>{item.label}</dt>
+              <dt className='text-muted-foreground min-h-8 text-xs leading-4'>
+                {item.label}
+              </dt>
               <dd className='mt-1 text-xl font-semibold tabular-nums'>
                 {item.value}
               </dd>

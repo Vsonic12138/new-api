@@ -244,7 +244,7 @@ export function CacheAnalysis() {
             >
               {metrics.map((item) => (
                 <div key={item.label} className='min-w-0'>
-                  <dt className='text-muted-foreground text-xs'>
+                  <dt className='text-muted-foreground min-h-8 text-xs leading-4'>
                     {item.label}
                   </dt>
                   <dd className='mt-2 text-2xl font-semibold break-all tabular-nums'>

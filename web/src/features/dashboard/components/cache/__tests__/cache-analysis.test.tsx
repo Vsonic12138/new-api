@@ -189,6 +189,7 @@ describe('cache analysis', () => {
     const headers = screen.getAllByRole('columnheader')
     for (const header of headers.slice(1)) {
       expect(header).toHaveClass('text-right')
+      expect(header).toHaveAttribute('scope', 'col')
     }
     expect(headers[0]).toHaveClass('pl-4')
     expect(headers.at(-1)).toHaveClass('pr-4')
