@@ -171,13 +171,39 @@ describe('cache analysis', () => {
     })
     renderAnalysis()
     await screen.findAllByText('12.5%')
-    expect(screen.getAllByText('Report coverage')).not.toHaveLength(0)
+    expect(screen.getAllByText('Data coverage')).not.toHaveLength(0)
     expect(screen.getAllByText('50.0%')).not.toHaveLength(0)
-    expect(screen.getByText('Cache reports: 1 / 2 requests')).toBeVisible()
+    expect(screen.getByText('1 / 2 requests')).toBeVisible()
     expect(
       screen.queryByText(
         'Cache rates are collected after this upgrade. Historical totals are not backfilled.'
       )
+    ).not.toBeInTheDocument()
+  })
+  it('keeps the summary concise and reveals calculation details only when requested', async () => {
+    vi.spyOn(api, 'get').mockResolvedValue({
+      data: { success: true, data: rows },
+    })
+    const user = userEvent.setup()
+    renderAnalysis()
+    await screen.findAllByText('12.5%')
+    expect(
+      screen.queryByText('Cache read tokens divided by total input tokens')
+    ).not.toBeInTheDocument()
+    expect(screen.getByText('Only reported data is included.')).toBeVisible()
+    const details = screen.getByRole('button', { name: 'Statistics notes' })
+    expect(details).toHaveAttribute('aria-expanded', 'false')
+    await user.click(details)
+    expect(details).toHaveAttribute('aria-expanded', 'true')
+    expect(
+      await screen.findByText('Cache read tokens divided by total input tokens')
+    ).toBeVisible()
+    await user.keyboard(' ')
+    await waitFor(() =>
+      expect(details).toHaveAttribute('aria-expanded', 'false')
+    )
+    expect(
+      screen.queryByText('Cache read tokens divided by total input tokens')
     ).not.toBeInTheDocument()
   })
   it('aligns numeric headers with their values and gives the table consistent edge padding', async () => {

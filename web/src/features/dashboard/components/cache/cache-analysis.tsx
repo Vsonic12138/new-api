@@ -17,17 +17,24 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 For commercial licensing, please contact support@quantumnous.com
 */
 import { getRouteApi } from '@tanstack/react-router'
+import { ChevronDown } from 'lucide-react'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts'
 
 import { StaticDataTable } from '@/components/data-table'
 import { ErrorState } from '@/components/error-state'
+import { Button } from '@/components/ui/button'
 import {
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
 } from '@/components/ui/chart'
+import {
+  Collapsible,
+  CollapsibleTrigger,
+  CollapsibleContent,
+} from '@/components/ui/collapsible'
 import { NativeSelect, NativeSelectOption } from '@/components/ui/native-select'
 import { Progress } from '@/components/ui/progress'
 import { toIntlLocale } from '@/i18n/languages'
@@ -116,35 +123,31 @@ export function CacheAnalysis() {
     hasReports ? formatCompactNumber(value, locale) : '—'
   const metrics = [
     {
-      label: t('Valid sample cache hit rate'),
+      label: t('Cache hit rate'),
       value: summary.rate === null ? '—' : percent.format(summary.rate),
-      description: t('Cache read tokens divided by total input tokens'),
     },
     {
-      label: t('Report coverage'),
+      label: t('Data coverage'),
       value:
         summary.requests > 0
           ? percent.format(summary.reported / summary.requests)
           : '—',
-      description: t('Cache reports: {{reported}} / {{total}} requests', {
+      description: t('{{reported}} / {{total}} requests', {
         reported: formatNumber(summary.reported, locale),
         total: formatNumber(summary.requests, locale),
       }),
     },
     {
-      label: t('Reported input tokens'),
+      label: t('Input tokens'),
       value: compact(summary.input),
-      description: t('Includes cached input; excludes output tokens'),
     },
     {
       label: t('Cache Read'),
       value: compact(summary.read),
-      description: t('Input tokens reused from cache'),
     },
     {
       label: t('Cache Write'),
       value: compact(summary.write),
-      description: t('Input tokens written to cache'),
     },
   ]
 
@@ -155,10 +158,7 @@ export function CacheAnalysis() {
       aria-label={t('Cache Analysis')}
       aria-busy={query.isLoading}
     >
-      <div className='flex flex-wrap items-center justify-between gap-3'>
-        <p className='text-muted-foreground text-sm'>
-          {t('Cache statistics use hourly dashboard data and may be delayed.')}
-        </p>
+      <div className='flex flex-wrap justify-end gap-3'>
         <div className='flex w-full flex-wrap gap-2 sm:w-auto'>
           <NativeSelect
             aria-label={t('Model filter')}
@@ -250,12 +250,50 @@ export function CacheAnalysis() {
                   <dd className='mt-2 text-2xl font-semibold break-all tabular-nums'>
                     {item.value}
                   </dd>
-                  <p className='text-muted-foreground mt-1 text-xs'>
-                    {item.description}
-                  </p>
+                  {item.description && (
+                    <p className='text-muted-foreground mt-1 text-xs'>
+                      {item.description}
+                    </p>
+                  )}
                 </div>
               ))}
             </dl>
+            <Collapsible className='mt-4 border-t pt-3'>
+              <div className='flex flex-wrap items-center justify-between gap-2'>
+                <p className='text-muted-foreground text-xs'>
+                  {t('Only reported data is included.')}
+                </p>
+                <CollapsibleTrigger
+                  className='group/notes'
+                  render={
+                    <Button variant='ghost' size='sm' className='text-xs' />
+                  }
+                >
+                  {t('Statistics notes')}
+                  <ChevronDown
+                    className='size-3.5 transition-transform group-data-[panel-open]/notes:rotate-180'
+                    aria-hidden='true'
+                  />
+                </CollapsibleTrigger>
+              </div>
+              <CollapsibleContent className='text-muted-foreground mt-2 space-y-2 text-xs leading-relaxed'>
+                <p>{t('Cache read tokens divided by total input tokens')}</p>
+                <p>
+                  {t('Coverage shows how many requests include cache data.')}
+                </p>
+                <p>
+                  {t(
+                    'Missing reports are excluded. Historical data may be incomplete and overstate cache hit rates.'
+                  )}
+                </p>
+                <p>
+                  {t(
+                    'Cache writes may overlap other input categories and are shown separately.'
+                  )}
+                </p>
+                <p>{t('Updates may take a few minutes.')}</p>
+              </CollapsibleContent>
+            </Collapsible>
           </PanelWrapper>
           <div className='grid min-w-0 gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]'>
             <PanelWrapper
@@ -268,7 +306,7 @@ export function CacheAnalysis() {
                 className='aspect-auto h-64 w-full min-w-0'
                 config={{
                   rate: {
-                    label: t('Valid sample cache hit rate'),
+                    label: t('Cache hit rate'),
                     color: 'var(--foreground)',
                   },
                 }}
@@ -323,7 +361,7 @@ export function CacheAnalysis() {
                             : date.format(pointDate)
                         }}
                         formatter={(value) =>
-                          `${t('Valid sample cache hit rate')}: ${percent.format(Number(value))}`
+                          `${t('Cache hit rate')}: ${percent.format(Number(value))}`
                         }
                       />
                     }
@@ -353,7 +391,7 @@ export function CacheAnalysis() {
             >
               <div className='space-y-5'>
                 <div className='flex flex-wrap justify-between gap-2 text-sm'>
-                  <span>{t('Reported input tokens')}</span>
+                  <span>{t('Input tokens')}</span>
                   <strong className='tabular-nums'>
                     {formatCompactNumber(summary.input, locale)}
                   </strong>
@@ -370,7 +408,7 @@ export function CacheAnalysis() {
                     </dd>
                   </div>
                   <div className='flex flex-wrap justify-between gap-2'>
-                    <dt>{t('Other input (including cache writes)')}</dt>
+                    <dt>{t('Other input')}</dt>
                     <dd className='tabular-nums'>
                       {percent.format(1 - (summary.rate ?? 0))}
                     </dd>
@@ -382,17 +420,12 @@ export function CacheAnalysis() {
                     </dd>
                   </div>
                 </dl>
-                <p className='text-muted-foreground text-xs'>
-                  {t(
-                    'Cache writes may overlap other input categories and are shown separately.'
-                  )}
-                </p>
               </div>
             </PanelWrapper>
           </div>
           <PanelWrapper
             title={t('Cache usage by model')}
-            description={t('Top 20 models by reported input tokens')}
+            description={t('Top 20 models')}
             loading={query.isLoading}
             empty={!tableRows.length}
             contentClassName='p-0 sm:p-0'
@@ -416,7 +449,7 @@ export function CacheAnalysis() {
                 },
                 {
                   id: 'input',
-                  header: t('Reported input tokens'),
+                  header: t('Input tokens'),
                   className: 'px-4 text-right',
                   cellClassName: 'px-4 text-right tabular-nums',
                   cell: (row) =>
@@ -440,7 +473,7 @@ export function CacheAnalysis() {
                 },
                 {
                   id: 'rate',
-                  header: t('Valid sample cache hit rate'),
+                  header: t('Cache hit rate'),
                   className: 'px-4 text-right',
                   cellClassName: 'px-4 text-right tabular-nums',
                   cell: (row) =>
@@ -448,7 +481,7 @@ export function CacheAnalysis() {
                 },
                 {
                   id: 'coverage',
-                  header: t('Report coverage'),
+                  header: t('Data coverage'),
                   className: 'pl-4 pr-4 text-right sm:pr-5',
                   cellClassName: 'pl-4 pr-4 text-right tabular-nums sm:pr-5',
                   cell: (row) => (
@@ -471,20 +504,6 @@ export function CacheAnalysis() {
               ]}
             />
           </PanelWrapper>
-          {!query.isLoading && (
-            <div className='text-muted-foreground space-y-1 text-xs'>
-              <p>
-                {t(
-                  'Missing cache reports are excluded, not counted as zero hits.'
-                )}
-              </p>
-              <p>
-                {t(
-                  'Historical recovery is partial and may favor cache hits. These rates describe valid samples, not all requests.'
-                )}
-              </p>
-            </div>
-          )}
         </>
       )}
     </div>

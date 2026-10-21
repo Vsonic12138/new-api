@@ -70,7 +70,7 @@ export function CacheUsageSummary() {
       ) : (
         <dl className='grid grid-cols-1 gap-4 sm:grid-cols-3'>
           {[
-            { label: t('Valid sample cache hit rate'), value: rate },
+            { label: t('Cache hit rate'), value: rate },
             {
               label: t('Cache Read'),
               value: summary.reported
@@ -78,7 +78,7 @@ export function CacheUsageSummary() {
                 : '—',
             },
             {
-              label: t('Reported input tokens'),
+              label: t('Input tokens'),
               value: summary.reported
                 ? formatCompactNumber(summary.input, locale)
                 : '—',
@@ -96,7 +96,7 @@ export function CacheUsageSummary() {
         </dl>
       )}
       <p className='text-muted-foreground mt-3 text-xs'>
-        {t('Missing cache reports are excluded, not counted as zero hits.')}
+        {t('Only reported data is included.')}
       </p>
     </PanelWrapper>
   )
