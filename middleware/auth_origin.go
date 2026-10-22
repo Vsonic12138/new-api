@@ -34,6 +34,24 @@ func SessionCookieOriginGuard() gin.HandlerFunc {
 	}
 }
 
+// PlaygroundOriginGuard always verifies a same-origin (or administrator-trusted)
+// browser request, independent of whether secure cookies are configured.
+// A cookie-authenticated image request may incur charges even in development.
+func PlaygroundOriginGuard() gin.HandlerFunc {
+  return func(c *gin.Context) {
+    origin, ok := requestBrowserOrigin(c.Request)
+    if !ok || !isAllowedSessionOrigin(c.Request, origin) {
+      c.AbortWithStatusJSON(http.StatusForbidden, gin.H{
+        "success": false,
+        "code": "PLAYGROUND_ORIGIN_FORBIDDEN",
+        "message": "request origin is not allowed",
+      })
+      return
+    }
+    c.Next()
+  }
+}
+
 func requestBrowserOrigin(request *http.Request) (string, bool) {
 	originValues := request.Header.Values("Origin")
 	if len(originValues) > 1 {

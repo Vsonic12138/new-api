@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
+	"mime/multipart"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -361,4 +362,24 @@ func TestSharedEndpointRebindsToBoundNewAPIExtension(t *testing.T) {
 	require.Nil(t, SetupContextForSelectedChannel(c, channel, "task-model"))
 	assert.Equal(t, "alpha", c.GetString("task_plugin_key"), "the first bound candidate executes regardless of the earlier pin")
 	assert.Equal(t, "alpha", c.MustGet(jsplugin.ContextKeyPinnedEndpoint).(jsplugin.PinnedEndpoint).Plugin.Meta.Key)
+}
+
+// The workspace's multipart edit route must resolve the chosen model before
+// Distribute checks token model limits and selects a billing channel.
+func TestGetModelRequestImagePlaygroundMultipartEdit(t *testing.T) {
+	gin.SetMode(gin.TestMode)
+	var body bytes.Buffer
+	writer := multipart.NewWriter(&body)
+	assert.NoError(t, writer.WriteField("model", "gpt-image-2.5-flare"))
+	assert.NoError(t, writer.WriteField("prompt", "Change the background"))
+	assert.NoError(t, writer.Close())
+	c, _ := gin.CreateTestContext(httptest.NewRecorder())
+	c.Request = httptest.NewRequest(http.MethodPost, "/pg/image-playground/images/edits", &body)
+	c.Request.Header.Set("Content-Type", writer.FormDataContentType())
+	request, shouldSelect, err := getModelRequest(c)
+	assert.NoError(t, err)
+	assert.True(t, shouldSelect)
+	if assert.NotNil(t, request) {
+		assert.Equal(t, "gpt-image-2.5-flare", request.Model)
+	}
 }

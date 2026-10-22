@@ -306,6 +306,11 @@ var accessTokenRouteRules = map[string]accessTokenRouteRule{
 
 	// router/relay-router.go
 	"POST /pg/chat/completions": accessTokenSessionRule,
+	// Session-only image Playground. PATs must not select dashboard user tokens.
+	"POST /pg/image-playground/chat/completions": accessTokenSessionRule,
+	"POST /pg/image-playground/responses":         accessTokenSessionRule,
+	"POST /pg/image-playground/images/generations": accessTokenSessionRule,
+	"POST /pg/image-playground/images/edits":       accessTokenSessionRule,
 }
 
 var (
