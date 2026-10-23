@@ -38,9 +38,9 @@ export interface CustomReleaseGroup {
 
 export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
   {
-    version: 'v1.0.0-rc.45+custom',
-    upstreamBase: 'v1.0.0-rc.45',
-    date: '2026-10-21',
+    version: 'v1.0.0-rc.46+custom',
+    upstreamBase: 'v1.0.0-rc.46',
+    date: '2026-10-23',
     items: [
     {
       "tag": "fix",
