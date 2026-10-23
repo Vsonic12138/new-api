@@ -44,6 +44,22 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     items: [
     {
       "tag": "fix",
+      "titleEn": "[changelog] 保留人工上游合并记录以展示二开系统更新",
+      "titleZh": "[changelog] 保留人工上游合并记录以展示二开系统更新",
+      "descEn": "Commit: d5858ecae (2026-10-23)",
+      "descZh": "提交: d5858ecae · 2026-10-23",
+      "commitHash": "d5858ecae"
+    },
+    {
+      "tag": "chore",
+      "titleEn": "[merge] 合并官方主线更新并保留二开缓存统计与模型定价",
+      "titleZh": "[merge] 合并官方主线更新并保留二开缓存统计与模型定价",
+      "descEn": "Commit: 5504ff7f9 (2026-10-23)",
+      "descZh": "提交: 5504ff7f9 · 2026-10-23",
+      "commitHash": "5504ff7f9"
+    },
+    {
+      "tag": "fix",
       "titleEn": "[dashboard] 精简缓存分析指标文案并折叠展示统计说明",
       "titleZh": "[dashboard] 精简缓存分析指标文案并折叠展示统计说明",
       "descEn": "Commit: d994c5e52 (2026-10-20)",
@@ -91,6 +107,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "commitHash": "a8ec01fda"
     },
     {
+      "tag": "chore",
+      "titleEn": "[merge] 合并官方任务请求头覆盖与实时查询退款修复",
+      "titleZh": "[merge] 合并官方任务请求头覆盖与实时查询退款修复",
+      "descEn": "Commit: 6001b2c76 (2026-10-20)",
+      "descZh": "提交: 6001b2c76 · 2026-10-20",
+      "commitHash": "6001b2c76"
+    },
+    {
       "tag": "fix",
       "titleEn": "[dashboard] 修复稀疏缓存趋势显示并提高主题线条对比度",
       "titleZh": "[dashboard] 修复稀疏缓存趋势显示并提高主题线条对比度",
@@ -105,6 +129,22 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: decd94905 (2026-10-20)",
       "descZh": "提交: decd94905 · 2026-10-20",
       "commitHash": "decd94905"
+    },
+    {
+      "tag": "chore",
+      "titleEn": "[merge] 集成远程生图工作台并保留官方安全校验",
+      "titleZh": "[merge] 集成远程生图工作台并保留官方安全校验",
+      "descEn": "Commit: 3784da896 (2026-10-20)",
+      "descZh": "提交: 3784da896 · 2026-10-20",
+      "commitHash": "3784da896"
+    },
+    {
+      "tag": "chore",
+      "titleEn": "[merge] 合并官方主线更新并保留二开邮件与模型配置",
+      "titleZh": "[merge] 合并官方主线更新并保留二开邮件与模型配置",
+      "descEn": "Commit: b322ce6e8 (2026-10-20)",
+      "descZh": "提交: b322ce6e8 · 2026-10-20",
+      "commitHash": "b322ce6e8"
     },
     {
       "tag": "fix",
@@ -219,6 +259,14 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "commitHash": "f35ab4dcb"
     },
     {
+      "tag": "chore",
+      "titleEn": "[merge] 合并官方主线更新至二开分支",
+      "titleZh": "[merge] 合并官方主线更新至二开分支",
+      "descEn": "Commit: 8db55963a (2026-10-15)",
+      "descZh": "提交: 8db55963a · 2026-10-15",
+      "commitHash": "8db55963a"
+    },
+    {
       "tag": "fix",
       "titleEn": "[ci] 部署脚本改用 SSH 长连接并支持替换步骤可重入",
       "titleZh": "[ci] 部署脚本改用 SSH 长连接并支持替换步骤可重入",
@@ -233,54 +281,6 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
       "descEn": "Commit: 482044d1f (2026-10-14)",
       "descZh": "提交: 482044d1f · 2026-10-14",
       "commitHash": "482044d1f"
-    },
-    {
-      "tag": "perf",
-      "titleEn": "[ci] 部署脚本改为压缩上传并增加断线重试",
-      "titleZh": "[ci] 部署脚本改为压缩上传并增加断线重试",
-      "descEn": "Commit: f32b2d4af (2026-10-14)",
-      "descZh": "提交: f32b2d4af · 2026-10-14",
-      "commitHash": "f32b2d4af"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "[ci] 修正部署脚本远端调用缺少目标主机",
-      "titleZh": "[ci] 修正部署脚本远端调用缺少目标主机",
-      "descEn": "Commit: eaa5b22f0 (2026-10-14)",
-      "descZh": "提交: eaa5b22f0 · 2026-10-14",
-      "commitHash": "eaa5b22f0"
-    },
-    {
-      "tag": "chore",
-      "titleEn": "[ci] 部署脚本增加备份裁剪与健康检查回滚",
-      "titleZh": "[ci] 部署脚本增加备份裁剪与健康检查回滚",
-      "descEn": "Commit: bbc642d1b (2026-10-14)",
-      "descZh": "提交: bbc642d1b · 2026-10-14",
-      "commitHash": "bbc642d1b"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[docs] 补全使用文档步骤并加入页面截图",
-      "titleZh": "[docs] 补全使用文档步骤并加入页面截图",
-      "descEn": "Commit: 06c5dfbca (2026-10-07)",
-      "descZh": "提交: 06c5dfbca · 2026-10-07",
-      "commitHash": "06c5dfbca"
-    },
-    {
-      "tag": "fix",
-      "titleEn": "[home] 显示站内文档并去掉重复价格按钮",
-      "titleZh": "[home] 显示站内文档并去掉重复价格按钮",
-      "descEn": "Commit: 8dd3595dd (2026-10-07)",
-      "descZh": "提交: 8dd3595dd · 2026-10-07",
-      "commitHash": "8dd3595dd"
-    },
-    {
-      "tag": "feat",
-      "titleEn": "[docs] 增加站内使用文档并接入顶部文档入口",
-      "titleZh": "[docs] 增加站内使用文档并接入顶部文档入口",
-      "descEn": "Commit: c24ff2c0c (2026-10-07)",
-      "descZh": "提交: c24ff2c0c · 2026-10-07",
-      "commitHash": "c24ff2c0c"
     }
 ],
   },
