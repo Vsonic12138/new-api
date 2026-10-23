@@ -16,7 +16,6 @@ along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 For commercial licensing, please contact support@quantumnous.com
 */
-
 import { execSync } from 'node:child_process'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -102,14 +101,9 @@ function parseCommitToItem(commit) {
 
   if (match) {
     const rawTag = match[1].toLowerCase()
-    tag =
-      rawTag === 'perf'
-        ? 'perf'
-        : rawTag === 'feat'
-          ? 'feat'
-          : rawTag === 'fix'
-            ? 'fix'
-            : 'chore'
+    if (rawTag === 'perf' || rawTag === 'feat' || rawTag === 'fix') {
+      tag = rawTag
+    }
     scope = match[2] ? match[2].trim() : ''
     rawSubject = match[3].trim()
   }
@@ -133,14 +127,13 @@ export function syncGitChangelog() {
   const customVersion = `${latestTag}+custom`
   const commits = getRecentCommits()
 
-  // 过滤排除自动化同步机器人的提交、官方合并提交以及更新日志自同步提交，保留所有对用户有价值的真实二开改动
+  // 排除机器人、默认合并消息和日志自同步；保留二开主线明确描述的上游整合更新。
   const customCommits = commits.filter(
     (c) =>
       c.author !== 'sync-bot' &&
       !c.subject.startsWith('Merge branch') &&
       !c.subject.includes('merge official-main into custom-main') &&
       !c.subject.startsWith('chore: merge') &&
-      !c.subject.startsWith('chore(merge)') &&
       !c.subject.startsWith('chore(changelog)') &&
       !c.subject.includes('update auto-generated custom changelog')
   )
@@ -191,7 +184,7 @@ export const CUSTOM_CHANGELOG_DATA: CustomReleaseGroup[] = [
     version: '${customVersion}',
     upstreamBase: '${latestTag}',
     date: '${today}',
-    items: ${JSON.stringify(items, null, 6).replace(/ {4}/g, '  ')},
+    items: ${JSON.stringify(items, null, 6).replaceAll(/ {4}/g, '  ')},
   },
   {
     version: 'v1.0.0-rc.40+custom',
